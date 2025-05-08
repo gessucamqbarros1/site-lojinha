@@ -33,7 +33,7 @@ const Index = () => {
         
         if (productsData) {
           const formattedProducts = productsData.map(product => ({
-            id: String(product.id),
+            id: String(product.id), // Convert ID to string
             name: product.name,
             description: product.description,
             price: parseFloat(product.price),

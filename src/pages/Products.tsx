@@ -28,7 +28,7 @@ const Products = () => {
         
         if (data) {
           const formattedProducts = data.map(product => ({
-            id: String(product.id),
+            id: String(product.id), // Convert ID to string
             name: product.name,
             description: product.description,
             price: parseFloat(product.price),
