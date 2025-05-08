@@ -52,7 +52,7 @@ const Admin = () => {
       
       if (data) {
         const formattedProducts = data.map(product => ({
-          id: product.id,
+          id: String(product.id), // Convert ID to string
           name: product.name,
           description: product.description,
           price: parseFloat(product.price),
@@ -239,7 +239,7 @@ const Admin = () => {
         price: editingProduct.price,
         category: editingProduct.category,
         image: imageUrl,
-        purchase_link: editingProduct.purchaseLink,
+        purchaseLink: editingProduct.purchaseLink,
         updated_at: new Date().toISOString()
       };
       
