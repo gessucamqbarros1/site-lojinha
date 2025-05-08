@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { products, storeSettings, categories } from '@/lib/mockData';
 import { Product } from '@/components/ui/ProductCard';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, Trash, Plus, ArrowLeft } from 'lucide-react';
+import { Pencil, Trash, Plus, ArrowLeft, Upload } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { uploadProductImage, deleteProductImage } from '@/lib/fileUploader';
 
 const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -14,23 +15,104 @@ const Admin = () => {
   const [activeTab, setActiveTab] = useState('products');
   
   const [storeData, setStoreData] = useState({
-    name: storeSettings.name,
-    logo: storeSettings.logo,
-    banner: storeSettings.banner,
-    about: storeSettings.about,
+    name: '',
+    logo: '',
+    banner: '',
+    about: '',
   });
   
-  const [productList, setProductList] = useState<Product[]>(products);
+  const [productList, setProductList] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(['Maquiagem', 'Skincare', 'Perfumaria', 'Acessórios']);
   
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [fileUpload, setFileUpload] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
   
   const { toast } = useToast();
+
+  // Fetch products and store settings when logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchProducts();
+      fetchStoreSettings();
+    }
+  }, [isLoggedIn]);
+  
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('name');
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (data) {
+        const formattedProducts = data.map(product => ({
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: parseFloat(product.price),
+          image: product.image || '/placeholder.svg',
+          category: product.category,
+          purchaseLink: product.purchase_link
+        }));
+        
+        setProductList(formattedProducts);
+        
+        // Extract unique categories
+        const uniqueCategories = [...new Set(formattedProducts.map(p => p.category))];
+        if (uniqueCategories.length > 0) {
+          setCategories(uniqueCategories);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast({
+        title: "Erro ao carregar produtos",
+        description: "Não foi possível carregar os produtos. Tente novamente.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const fetchStoreSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('store_settings')
+        .select('*')
+        .single();
+      
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
+      
+      if (data) {
+        setStoreData({
+          name: data.name,
+          logo: data.logo || '',
+          banner: data.banner || '',
+          about: data.about || '',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching store settings:', error);
+      toast({
+        title: "Erro ao carregar configurações",
+        description: "Não foi possível carregar as configurações da loja.",
+        variant: "destructive",
+      });
+    }
+  };
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple mock login - in a real app, this would connect to Supabase
+    // Simple mock login - in a real app, this would connect to Supabase Auth
     if (email === 'admin@example.com' && password === 'password') {
       setIsLoggedIn(true);
       toast({
@@ -46,12 +128,36 @@ const Admin = () => {
     }
   };
   
-  const handleDeleteProduct = (id: string) => {
-    setProductList(productList.filter(product => product.id !== id));
-    toast({
-      title: "Produto excluído",
-      description: "O produto foi removido com sucesso",
-    });
+  const handleDeleteProduct = async (id: string, imageUrl?: string) => {
+    try {
+      // If there's an image and it's not the placeholder, delete it from storage
+      if (imageUrl && !imageUrl.includes('/placeholder.svg')) {
+        await deleteProductImage(imageUrl);
+      }
+      
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      setProductList(productList.filter(product => product.id !== id));
+      
+      toast({
+        title: "Produto excluído",
+        description: "O produto foi removido com sucesso",
+      });
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast({
+        title: "Erro ao excluir produto",
+        description: "Não foi possível excluir o produto. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
   
   const handleEditProduct = (product: Product) => {
@@ -59,38 +165,130 @@ const Admin = () => {
     setIsEditing(true);
   };
   
-  const handleSaveSettings = () => {
-    // In a real app, this would save to Supabase
-    toast({
-      title: "Configurações salvas",
-      description: "As configurações da loja foram atualizadas",
-    });
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFileUpload(e.target.files[0]);
+    }
   };
   
-  const handleSaveProduct = () => {
+  const handleSaveSettings = async () => {
+    try {
+      setSaving(true);
+      
+      const { error } = await supabase
+        .from('store_settings')
+        .update({
+          name: storeData.name,
+          logo: storeData.logo,
+          banner: storeData.banner,
+          about: storeData.about,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', 'any')  // Update the first record
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "Configurações salvas",
+        description: "As configurações da loja foram atualizadas",
+      });
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast({
+        title: "Erro ao salvar configurações",
+        description: "Não foi possível salvar as configurações. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
+    }
+  };
+  
+  const handleSaveProduct = async () => {
     if (!editingProduct) return;
     
-    if (isEditing) {
-      setProductList(productList.map(p => p.id === editingProduct.id ? editingProduct : p));
-      toast({
-        title: "Produto atualizado",
-        description: "O produto foi atualizado com sucesso",
-      });
-    } else {
-      // Generate a random ID for the new product
-      const newProduct = {
-        ...editingProduct,
-        id: Date.now().toString(),
+    try {
+      setSaving(true);
+      
+      let imageUrl = editingProduct.image;
+      
+      // If there's a new file to upload
+      if (fileUpload) {
+        setUploading(true);
+        // If there's an old image and it's not the placeholder, delete it
+        if (isEditing && editingProduct.image && !editingProduct.image.includes('/placeholder.svg')) {
+          await deleteProductImage(editingProduct.image);
+        }
+        
+        // Generate a temporary ID for new products
+        const tempId = isEditing ? editingProduct.id : `temp_${Date.now()}`;
+        
+        // Upload the new image
+        const newImageUrl = await uploadProductImage(fileUpload, tempId);
+        if (newImageUrl) {
+          imageUrl = newImageUrl;
+        }
+        setUploading(false);
+      }
+      
+      const productData = {
+        name: editingProduct.name,
+        description: editingProduct.description,
+        price: editingProduct.price,
+        category: editingProduct.category,
+        image: imageUrl,
+        purchase_link: editingProduct.purchaseLink,
+        updated_at: new Date().toISOString()
       };
-      setProductList([...productList, newProduct]);
+      
+      let result;
+      
+      if (isEditing) {
+        // Update existing product
+        result = await supabase
+          .from('products')
+          .update(productData)
+          .eq('id', editingProduct.id);
+      } else {
+        // Create new product
+        result = await supabase
+          .from('products')
+          .insert(productData)
+          .select();
+      }
+      
+      if (result.error) {
+        throw result.error;
+      }
+      
+      // Refresh the product list
+      fetchProducts();
+      
       toast({
-        title: "Produto adicionado",
-        description: "O produto foi adicionado com sucesso",
+        title: isEditing ? "Produto atualizado" : "Produto adicionado",
+        description: isEditing
+          ? "O produto foi atualizado com sucesso"
+          : "O produto foi adicionado com sucesso",
       });
+      
+      // Reset form
+      setIsEditing(false);
+      setEditingProduct(null);
+      setFileUpload(null);
+      
+    } catch (error) {
+      console.error('Error saving product:', error);
+      toast({
+        title: "Erro ao salvar produto",
+        description: "Não foi possível salvar o produto. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setSaving(false);
     }
-    
-    setIsEditing(false);
-    setEditingProduct(null);
   };
   
   const handleAddNewProduct = () => {
@@ -100,10 +298,11 @@ const Admin = () => {
       description: '',
       price: 0,
       image: '/placeholder.svg',
-      category: categories[1], // Default to first category after "Todos"
+      category: categories[0] || 'Maquiagem',
       purchaseLink: '',
     });
     setIsEditing(false);
+    setFileUpload(null);
   };
   
   const renderLoginForm = () => (
@@ -213,6 +412,7 @@ const Admin = () => {
                       onClick={() => {
                         setIsEditing(false);
                         setEditingProduct(null);
+                        setFileUpload(null);
                       }}
                       className="text-vintage-dark/80 hover:text-vintage-brown flex items-center"
                     >
@@ -293,7 +493,7 @@ const Admin = () => {
                           className="vintage-input w-full"
                           required
                         >
-                          {categories.slice(1).map((category) => (
+                          {categories.map((category) => (
                             <option key={category} value={category}>
                               {category}
                             </option>
@@ -303,22 +503,37 @@ const Admin = () => {
                     </div>
                     
                     <div>
-                      <label htmlFor="image" className="block text-sm font-medium text-vintage-dark mb-1">
-                        URL da Imagem
+                      <label className="block text-sm font-medium text-vintage-dark mb-1">
+                        Imagem do Produto
                       </label>
-                      <input
-                        id="image"
-                        type="text"
-                        value={editingProduct?.image || ''}
-                        onChange={(e) => setEditingProduct({
-                          ...editingProduct!,
-                          image: e.target.value
-                        })}
-                        className="vintage-input w-full"
-                      />
-                      <p className="text-xs text-vintage-dark/60 mt-1">
-                        Use uma URL válida ou deixe em branco para usar a imagem padrão
-                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                        <div className="w-full aspect-square bg-vintage-cream rounded-md overflow-hidden border border-vintage-beige/30">
+                          <img 
+                            src={fileUpload ? URL.createObjectURL(fileUpload) : (editingProduct?.image || '/placeholder.svg')} 
+                            alt="Preview" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div>
+                          <label 
+                            htmlFor="image-upload" 
+                            className="vintage-button-secondary flex items-center justify-center w-full cursor-pointer"
+                          >
+                            <Upload size={16} className="mr-2" />
+                            Selecionar Imagem
+                          </label>
+                          <input
+                            id="image-upload"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleFileChange}
+                          />
+                          <p className="text-xs text-vintage-dark/60 mt-2">
+                            Formatos recomendados: JPG, PNG. Tamanho máximo: 5MB
+                          </p>
+                        </div>
+                      </div>
                     </div>
                     
                     <div>
@@ -334,6 +549,7 @@ const Admin = () => {
                           purchaseLink: e.target.value
                         })}
                         className="vintage-input w-full"
+                        placeholder="https://wa.me/5511999999999?text=Olá! Gostaria de informações sobre o produto"
                       />
                       <p className="text-xs text-vintage-dark/60 mt-1">
                         Ex: Link do WhatsApp ou página de checkout
@@ -343,9 +559,10 @@ const Admin = () => {
                     <div className="flex justify-end mt-6">
                       <button
                         onClick={handleSaveProduct}
+                        disabled={uploading || saving}
                         className="vintage-button"
                       >
-                        Salvar Produto
+                        {(uploading || saving) ? 'Salvando...' : 'Salvar Produto'}
                       </button>
                     </div>
                   </div>
@@ -376,49 +593,65 @@ const Admin = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {productList.map((product) => (
-                          <tr key={product.id} className="border-b border-vintage-beige/30 hover:bg-vintage-beige/5">
-                            <td className="py-3 px-4">
-                              <div className="flex items-center">
-                                <div className="w-10 h-10 mr-3 bg-vintage-cream rounded-md overflow-hidden">
-                                  <img 
-                                    src={product.image || "/placeholder.svg"} 
-                                    alt={product.name} 
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                                <span className="font-medium">{product.name}</span>
-                              </div>
-                            </td>
-                            <td className="py-3 px-4 hidden md:table-cell">
-                              {product.category}
-                            </td>
-                            <td className="py-3 px-4 text-right">
-                              {new Intl.NumberFormat('pt-BR', {
-                                style: 'currency',
-                                currency: 'BRL'
-                              }).format(product.price)}
-                            </td>
-                            <td className="py-3 px-4 text-right">
-                              <div className="flex items-center justify-end space-x-2">
+                        {productList.length === 0 ? (
+                          <tr>
+                            <td colSpan={4} className="py-8 text-center text-vintage-dark/70">
+                              Nenhum produto cadastrado ainda.
+                              <div className="mt-2">
                                 <button
-                                  onClick={() => handleEditProduct(product)}
-                                  className="p-1 rounded-md hover:bg-vintage-beige/30 text-vintage-dark/80"
-                                  aria-label="Editar produto"
+                                  onClick={handleAddNewProduct}
+                                  className="text-primary hover:text-primary-dark underline"
                                 >
-                                  <Pencil size={16} />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteProduct(product.id)}
-                                  className="p-1 rounded-md hover:bg-vintage-beige/30 text-vintage-dark/80"
-                                  aria-label="Excluir produto"
-                                >
-                                  <Trash size={16} />
+                                  Adicionar primeiro produto
                                 </button>
                               </div>
                             </td>
                           </tr>
-                        ))}
+                        ) : (
+                          productList.map((product) => (
+                            <tr key={product.id} className="border-b border-vintage-beige/30 hover:bg-vintage-beige/5">
+                              <td className="py-3 px-4">
+                                <div className="flex items-center">
+                                  <div className="w-10 h-10 mr-3 bg-vintage-cream rounded-md overflow-hidden">
+                                    <img 
+                                      src={product.image || "/placeholder.svg"} 
+                                      alt={product.name} 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </div>
+                                  <span className="font-medium">{product.name}</span>
+                                </div>
+                              </td>
+                              <td className="py-3 px-4 hidden md:table-cell">
+                                {product.category}
+                              </td>
+                              <td className="py-3 px-4 text-right">
+                                {new Intl.NumberFormat('pt-BR', {
+                                  style: 'currency',
+                                  currency: 'BRL'
+                                }).format(product.price)}
+                              </td>
+                              <td className="py-3 px-4 text-right">
+                                <div className="flex items-center justify-end space-x-2">
+                                  <button
+                                    onClick={() => handleEditProduct(product)}
+                                    className="p-1 rounded-md hover:bg-vintage-beige/30 text-vintage-dark/80"
+                                    aria-label="Editar produto"
+                                  >
+                                    <Pencil size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteProduct(product.id, product.image)}
+                                    className="p-1 rounded-md hover:bg-vintage-beige/30 text-vintage-dark/80"
+                                    aria-label="Excluir produto"
+                                  >
+                                    <Trash size={16} />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -498,9 +731,10 @@ const Admin = () => {
                 <div className="flex justify-end mt-6">
                   <button
                     onClick={handleSaveSettings}
+                    disabled={saving}
                     className="vintage-button"
                   >
-                    Salvar Configurações
+                    {saving ? 'Salvando...' : 'Salvar Configurações'}
                   </button>
                 </div>
               </div>

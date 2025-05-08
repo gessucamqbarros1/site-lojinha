@@ -3,23 +3,90 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { products } from '@/lib/mockData';
 import { Product as ProductType } from '@/components/ui/ProductCard';
 import { ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<ProductType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [suggestedProducts, setSuggestedProducts] = useState<ProductType[]>([]);
+  const { toast } = useToast();
   
   useEffect(() => {
-    // Simulate API fetch
-    setTimeout(() => {
-      const foundProduct = products.find(p => p.id === id) || null;
-      setProduct(foundProduct);
-      setLoading(false);
-    }, 300);
-  }, [id]);
+    const fetchProduct = async () => {
+      setLoading(true);
+      
+      try {
+        if (!id) return;
+        
+        // Fetch product details
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
+          
+        if (error) {
+          if (error.code === 'PGRST116') {
+            // No rows returned
+            setProduct(null);
+          } else {
+            throw error;
+          }
+        } else if (data) {
+          const formattedProduct: ProductType = {
+            id: data.id,
+            name: data.name,
+            description: data.description,
+            price: parseFloat(data.price),
+            image: data.image || '/placeholder.svg',
+            category: data.category,
+            purchaseLink: data.purchase_link
+          };
+          
+          setProduct(formattedProduct);
+          
+          // Fetch suggested products - same category but different id
+          const { data: suggested, error: suggestedError } = await supabase
+            .from('products')
+            .select('*')
+            .eq('category', data.category)
+            .neq('id', id)
+            .limit(4);
+            
+          if (suggestedError) {
+            console.error('Error fetching suggested products:', suggestedError);
+          } else if (suggested) {
+            const formattedSuggested = suggested.map(item => ({
+              id: item.id,
+              name: item.name,
+              description: item.description,
+              price: parseFloat(item.price),
+              image: item.image || '/placeholder.svg',
+              category: item.category,
+              purchaseLink: item.purchase_link
+            }));
+            
+            setSuggestedProducts(formattedSuggested);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        toast({
+          title: "Erro ao carregar produto",
+          description: "Não foi possível carregar os detalhes do produto.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchProduct();
+  }, [id, toast]);
   
   if (loading) {
     return (
@@ -59,7 +126,7 @@ const Product = () => {
       
       <main className="flex-grow vintage-section">
         <div className="vintage-container">
-          <Link to="/" className="inline-flex items-center text-vintage-brown hover:text-primary mb-6 transition-colors">
+          <Link to="/products" className="inline-flex items-center text-vintage-brown hover:text-primary mb-6 transition-colors">
             <ArrowLeft size={18} className="mr-1" />
             Voltar para produtos
           </Link>
@@ -121,16 +188,14 @@ const Product = () => {
           </div>
           
           {/* Suggested Products */}
-          <div className="mt-16">
-            <h2 className="text-2xl font-playfair text-vintage-brown mb-8 text-center">
-              Você também pode gostar
-            </h2>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products
-                .filter(p => p.id !== product.id && p.category === product.category)
-                .slice(0, 4)
-                .map(product => (
+          {suggestedProducts.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-2xl font-playfair text-vintage-brown mb-8 text-center">
+                Você também pode gostar
+              </h2>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {suggestedProducts.map(product => (
                   <Link key={product.id} to={`/product/${product.id}`} className="block group">
                     <div className="vintage-card overflow-hidden">
                       <div className="aspect-square overflow-hidden bg-vintage-cream">
@@ -154,8 +219,9 @@ const Product = () => {
                     </div>
                   </Link>
                 ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
       

@@ -1,16 +1,39 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, ShoppingBag, User } from 'lucide-react';
-
-// Mock data - will be replaced with dynamic data from admin settings
-const defaultStoreName = "Minha Lojinha";
-const defaultLogo = "/placeholder.svg";
+import { Menu, X, User } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [storeName, setStoreName] = useState(defaultStoreName);
-  const [logo, setLogo] = useState(defaultLogo);
+  const [storeName, setStoreName] = useState("Minha Lojinha");
+  const [logo, setLogo] = useState("/placeholder.svg");
+  
+  useEffect(() => {
+    // Fetch store settings
+    const fetchStoreSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('store_settings')
+          .select('name, logo')
+          .single();
+          
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error fetching store settings:', error);
+          return;
+        }
+        
+        if (data) {
+          setStoreName(data.name);
+          if (data.logo) setLogo(data.logo);
+        }
+      } catch (error) {
+        console.error('Error in fetchStoreSettings:', error);
+      }
+    };
+    
+    fetchStoreSettings();
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
