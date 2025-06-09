@@ -28,10 +28,10 @@ const Products = () => {
         
         if (data) {
           const formattedProducts = data.map(product => ({
-            id: product.id.toString(), // Convert ID to string
+            id: product.id.toString(),
             name: product.name,
             description: product.description,
-            price: parseFloat(product.price),
+            price: parseFloat(product.price.toString()),
             image: product.image || '/placeholder.svg',
             category: product.category,
             purchaseLink: product.purchase_link

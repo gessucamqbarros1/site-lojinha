@@ -183,6 +183,42 @@ export type Database = {
           },
         ]
       }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image: string | null
+          name: string
+          price: number
+          purchase_link: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          name: string
+          price: number
+          purchase_link?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          name?: string
+          price?: number
+          purchase_link?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           client_id: string
@@ -217,6 +253,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      store_settings: {
+        Row: {
+          about: string | null
+          banner: string | null
+          created_at: string
+          id: string
+          logo: string | null
+          name: string
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          about?: string | null
+          banner?: string | null
+          created_at?: string
+          id?: string
+          logo?: string | null
+          name?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          about?: string | null
+          banner?: string | null
+          created_at?: string
+          id?: string
+          logo?: string | null
+          name?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

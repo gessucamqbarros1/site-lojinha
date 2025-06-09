@@ -38,10 +38,10 @@ const Product = () => {
           }
         } else if (data) {
           const formattedProduct: ProductType = {
-            id: data.id.toString(), // Convert ID to string
+            id: data.id.toString(),
             name: data.name,
             description: data.description,
-            price: parseFloat(data.price),
+            price: parseFloat(data.price.toString()),
             image: data.image || '/placeholder.svg',
             category: data.category,
             purchaseLink: data.purchase_link
@@ -61,10 +61,10 @@ const Product = () => {
             console.error('Error fetching suggested products:', suggestedError);
           } else if (suggested) {
             const formattedSuggested = suggested.map(item => ({
-              id: item.id.toString(), // Convert ID to string
+              id: item.id.toString(),
               name: item.name,
               description: item.description,
-              price: parseFloat(item.price),
+              price: parseFloat(item.price.toString()),
               image: item.image || '/placeholder.svg',
               category: item.category,
               purchaseLink: item.purchase_link
@@ -181,7 +181,7 @@ const Product = () => {
                 </a>
                 
                 <div className="mt-4 text-center text-sm text-vintage-dark/70">
-                  <p>Ao clicar em comprar você será redirecionado para o checkout.</p>
+                  <p>Ao clicar em comprar você será redirecionado para o WhatsApp.</p>
                 </div>
               </div>
             </div>

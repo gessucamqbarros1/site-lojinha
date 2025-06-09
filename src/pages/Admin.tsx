@@ -18,6 +18,7 @@ const Admin = () => {
     logo: '',
     banner: '',
     about: '',
+    whatsapp_number: '',
   });
   
   const [productList, setProductList] = useState<Product[]>([]);
@@ -52,10 +53,10 @@ const Admin = () => {
       
       if (data) {
         const formattedProducts = data.map(product => ({
-          id: product.id.toString(), // Convert ID to string
+          id: product.id.toString(),
           name: product.name,
           description: product.description,
-          price: parseFloat(product.price),
+          price: parseFloat(product.price.toString()),
           image: product.image || '/placeholder.svg',
           category: product.category,
           purchaseLink: product.purchase_link
@@ -96,6 +97,7 @@ const Admin = () => {
           logo: data.logo || '',
           banner: data.banner || '',
           about: data.about || '',
+          whatsapp_number: data.whatsapp_number || '',
         });
       }
     } catch (error) {
@@ -106,6 +108,21 @@ const Admin = () => {
         variant: "destructive",
       });
     }
+  };
+
+  // Generate WhatsApp link based on store settings and product info
+  const generateWhatsAppLink = (productName: string, productPrice: number) => {
+    const whatsappNumber = storeData.whatsapp_number || '5511999999999';
+    const storeName = storeData.name || 'Gessica';
+    const formattedPrice = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(productPrice);
+    
+    const message = `Olá, ${storeName}! Quero mais informações sobre o ${productName} de ${formattedPrice}.`;
+    const encodedMessage = encodeURIComponent(message);
+    
+    return `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
   };
   
   const handleLogin = (e: React.FormEvent) => {
@@ -181,10 +198,10 @@ const Admin = () => {
           logo: storeData.logo,
           banner: storeData.banner,
           about: storeData.about,
+          whatsapp_number: storeData.whatsapp_number,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', 'any')  // Update the first record
-        .single();
+        .eq('id', (await supabase.from('store_settings').select('id').single()).data?.id);
       
       if (error) {
         throw error;
@@ -232,6 +249,9 @@ const Admin = () => {
         }
         setUploading(false);
       }
+
+      // Generate WhatsApp link automatically
+      const whatsappLink = generateWhatsAppLink(editingProduct.name, editingProduct.price);
       
       const productData = {
         name: editingProduct.name,
@@ -239,7 +259,7 @@ const Admin = () => {
         price: editingProduct.price,
         category: editingProduct.category,
         image: imageUrl,
-        purchaseLink: editingProduct.purchaseLink,
+        purchase_link: whatsappLink,
         updated_at: new Date().toISOString()
       };
       
@@ -535,25 +555,14 @@ const Admin = () => {
                       </div>
                     </div>
                     
-                    <div>
-                      <label htmlFor="purchaseLink" className="block text-sm font-medium text-vintage-dark mb-1">
-                        Link de Compra
-                      </label>
-                      <input
-                        id="purchaseLink"
-                        type="text"
-                        value={editingProduct?.purchaseLink || ''}
-                        onChange={(e) => setEditingProduct({
-                          ...editingProduct!,
-                          purchaseLink: e.target.value
-                        })}
-                        className="vintage-input w-full"
-                        placeholder="https://wa.me/5511999999999?text=Olá! Gostaria de informações sobre o produto"
-                      />
-                      <p className="text-xs text-vintage-dark/60 mt-1">
-                        Ex: Link do WhatsApp ou página de checkout
-                      </p>
-                    </div>
+                    {editingProduct && editingProduct.name && editingProduct.price > 0 && (
+                      <div className="bg-vintage-beige/20 p-4 rounded-md">
+                        <h4 className="text-sm font-medium text-vintage-dark mb-2">Preview do Link do WhatsApp:</h4>
+                        <p className="text-xs text-vintage-dark/80 break-all">
+                          {generateWhatsAppLink(editingProduct.name, editingProduct.price)}
+                        </p>
+                      </div>
+                    )}
                     
                     <div className="flex justify-end mt-6">
                       <button
@@ -677,6 +686,23 @@ const Admin = () => {
                     onChange={(e) => setStoreData({...storeData, name: e.target.value})}
                     className="vintage-input w-full"
                   />
+                </div>
+
+                <div>
+                  <label htmlFor="whatsappNumber" className="block text-sm font-medium text-vintage-dark mb-1">
+                    Número do WhatsApp
+                  </label>
+                  <input
+                    id="whatsappNumber"
+                    type="text"
+                    value={storeData.whatsapp_number}
+                    onChange={(e) => setStoreData({...storeData, whatsapp_number: e.target.value})}
+                    className="vintage-input w-full"
+                    placeholder="5511999999999"
+                  />
+                  <p className="text-xs text-vintage-dark/60 mt-1">
+                    Número no formato: 5511999999999 (código do país + DDD + número)
+                  </p>
                 </div>
                 
                 <div>
