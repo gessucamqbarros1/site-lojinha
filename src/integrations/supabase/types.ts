@@ -9,260 +9,214 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      campaigns: {
+      clients: {
         Row: {
-          active: boolean
           created_at: string
-          custom_message: string | null
           id: string
           name: string
-          phone: string | null
-          redirect_type: string
-          require_contact: boolean
-          require_name: boolean
-          roi: number | null
-          total_leads: number
-          total_sales: number
           updated_at: string
-          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      form_responses: {
+        Row: {
+          answers: Json
+          created_at: string
+          form_id: string
+          id: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          form_id: string
+          id?: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          form_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_responses_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forms: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          pixel_code: string | null
+          questions: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          pixel_code?: string | null
+          questions?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          pixel_code?: string | null
+          questions?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      link_clicks: {
+        Row: {
+          contact_index: number
+          contact_used: string
+          created_at: string
+          id: string
+          ip_address: string | null
+          link_id: string
+          referrer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          contact_index: number
+          contact_used: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          link_id: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          contact_index?: number
+          contact_used?: string
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          link_id?: string
+          referrer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "link_clicks_link_id_fkey"
+            columns: ["link_id"]
+            isOneToOne: false
+            referencedRelation: "links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      links: {
+        Row: {
+          contacts: Json
+          created_at: string
+          current_contact_index: number
+          default_message: string | null
+          id: string
+          name: string
+          project_id: string
+          slug: string
+          updated_at: string
           utm_campaign: string | null
           utm_medium: string | null
           utm_source: string | null
         }
         Insert: {
-          active?: boolean
+          contacts?: Json
           created_at?: string
-          custom_message?: string | null
+          current_contact_index?: number
+          default_message?: string | null
           id?: string
           name: string
-          phone?: string | null
-          redirect_type?: string
-          require_contact?: boolean
-          require_name?: boolean
-          roi?: number | null
-          total_leads?: number
-          total_sales?: number
+          project_id: string
+          slug: string
           updated_at?: string
-          user_id?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
         }
         Update: {
-          active?: boolean
+          contacts?: Json
           created_at?: string
-          custom_message?: string | null
+          current_contact_index?: number
+          default_message?: string | null
           id?: string
           name?: string
-          phone?: string | null
-          redirect_type?: string
-          require_contact?: boolean
-          require_name?: boolean
-          roi?: number | null
-          total_leads?: number
-          total_sales?: number
+          project_id?: string
+          slug?: string
           updated_at?: string
-          user_id?: string | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "links_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      forms: {
+      projects: {
         Row: {
+          client_id: string
           created_at: string
+          description: string | null
           id: string
-          questions: Json
-          settings: Json
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          questions: Json
-          settings: Json
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          questions?: Json
-          settings?: Json
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      leads: {
-        Row: {
-          campaign: string | null
-          created_at: string
-          id: string
-          last_contact: string | null
-          name: string
-          notes: string | null
-          phone: string
-          status: string
-          tags: string[] | null
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          campaign?: string | null
-          created_at?: string
-          id?: string
-          last_contact?: string | null
-          name: string
-          notes?: string | null
-          phone: string
-          status?: string
-          tags?: string[] | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          campaign?: string | null
-          created_at?: string
-          id?: string
-          last_contact?: string | null
-          name?: string
-          notes?: string | null
-          phone?: string
-          status?: string
-          tags?: string[] | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      products: {
-        Row: {
-          category: string
-          created_at: string
-          description: string
-          id: string
-          image: string | null
-          name: string
-          price: number
-          purchase_link: string | null
-          updated_at: string
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          description: string
-          id?: string
-          image?: string | null
-          name: string
-          price: number
-          purchase_link?: string | null
-          updated_at?: string
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          description?: string
-          id?: string
-          image?: string | null
-          name?: string
-          price?: number
-          purchase_link?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      store_settings: {
-        Row: {
-          about: string | null
-          banner: string | null
-          contact: Json | null
-          created_at: string
-          id: string
-          logo: string | null
           name: string
           updated_at: string
         }
         Insert: {
-          about?: string | null
-          banner?: string | null
-          contact?: Json | null
+          client_id: string
           created_at?: string
+          description?: string | null
           id?: string
-          logo?: string | null
-          name?: string
+          name: string
           updated_at?: string
         }
         Update: {
-          about?: string | null
-          banner?: string | null
-          contact?: Json | null
+          client_id?: string
           created_at?: string
+          description?: string | null
           id?: string
-          logo?: string | null
           name?: string
           updated_at?: string
         }
-        Relationships: []
-      }
-      user_settings: {
-        Row: {
-          auto_archive: boolean | null
-          created_at: string | null
-          currency: string | null
-          date_format: string | null
-          id: string
-          language: string | null
-          notifications: Json | null
-          profile: Json | null
-          read_receipts: boolean | null
-          security: Json | null
-          timezone: string | null
-          updated_at: string | null
-          user_id: string
-          webhook_enabled: boolean | null
-          webhook_url: string | null
-          whatsapp: Json | null
-        }
-        Insert: {
-          auto_archive?: boolean | null
-          created_at?: string | null
-          currency?: string | null
-          date_format?: string | null
-          id?: string
-          language?: string | null
-          notifications?: Json | null
-          profile?: Json | null
-          read_receipts?: boolean | null
-          security?: Json | null
-          timezone?: string | null
-          updated_at?: string | null
-          user_id: string
-          webhook_enabled?: boolean | null
-          webhook_url?: string | null
-          whatsapp?: Json | null
-        }
-        Update: {
-          auto_archive?: boolean | null
-          created_at?: string | null
-          currency?: string | null
-          date_format?: string | null
-          id?: string
-          language?: string | null
-          notifications?: Json | null
-          profile?: Json | null
-          read_receipts?: boolean | null
-          security?: Json | null
-          timezone?: string | null
-          updated_at?: string | null
-          user_id?: string
-          webhook_enabled?: boolean | null
-          webhook_url?: string | null
-          whatsapp?: Json | null
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

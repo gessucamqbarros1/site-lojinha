@@ -38,7 +38,7 @@ const Product = () => {
           }
         } else if (data) {
           const formattedProduct: ProductType = {
-            id: String(data.id), // Convert ID to string
+            id: data.id.toString(), // Convert ID to string
             name: data.name,
             description: data.description,
             price: parseFloat(data.price),
@@ -61,7 +61,7 @@ const Product = () => {
             console.error('Error fetching suggested products:', suggestedError);
           } else if (suggested) {
             const formattedSuggested = suggested.map(item => ({
-              id: String(item.id), // Convert ID to string
+              id: item.id.toString(), // Convert ID to string
               name: item.name,
               description: item.description,
               price: parseFloat(item.price),
