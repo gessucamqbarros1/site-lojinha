@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -36,7 +35,7 @@ const Index = () => {
             id: product.id.toString(), // Convert ID to string
             name: product.name,
             description: product.description,
-            price: parseFloat(product.price),
+            price: parseFloat(product.price.toString()),
             image: product.image || '/placeholder.svg',
             category: product.category,
             purchaseLink: product.purchase_link
