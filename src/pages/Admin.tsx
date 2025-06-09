@@ -149,21 +149,44 @@ const Admin = () => {
     try {
       setSaving(true);
       
-      // Save store settings
-      const { error: settingsError } = await supabase
+      // First try to get existing settings
+      const { data: existingData } = await supabase
         .from('store_settings')
-        .update({
-          name: storeData.name,
-          logo: storeData.logo,
-          banner: storeData.banner,
-          about: storeData.about,
-          whatsapp_number: storeData.whatsapp_number,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', (await supabase.from('store_settings').select('id').single()).data?.id);
+        .select('id')
+        .single();
       
-      if (settingsError) {
-        throw settingsError;
+      if (existingData) {
+        // Update existing record
+        const { error: settingsError } = await supabase
+          .from('store_settings')
+          .update({
+            name: storeData.name,
+            logo: storeData.logo,
+            banner: storeData.banner,
+            about: storeData.about,
+            whatsapp_number: storeData.whatsapp_number,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingData.id);
+        
+        if (settingsError) {
+          throw settingsError;
+        }
+      } else {
+        // Create new record if none exists
+        const { error: settingsError } = await supabase
+          .from('store_settings')
+          .insert({
+            name: storeData.name,
+            logo: storeData.logo,
+            banner: storeData.banner,
+            about: storeData.about,
+            whatsapp_number: storeData.whatsapp_number,
+          });
+        
+        if (settingsError) {
+          throw settingsError;
+        }
       }
       
       toast({
@@ -181,7 +204,7 @@ const Admin = () => {
       setSaving(false);
     }
   };
-
+  
   const handleDeleteAllData = async () => {
     const confirmDelete = window.confirm(
       "⚠️ ATENÇÃO: Esta ação irá apagar TODOS os produtos permanentemente. Esta ação não pode ser desfeita. Tem certeza?"
@@ -285,20 +308,44 @@ const Admin = () => {
     try {
       setSaving(true);
       
-      const { error } = await supabase
+      // First try to get existing settings
+      const { data: existingData } = await supabase
         .from('store_settings')
-        .update({
-          name: storeData.name,
-          logo: storeData.logo,
-          banner: storeData.banner,
-          about: storeData.about,
-          whatsapp_number: storeData.whatsapp_number,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', (await supabase.from('store_settings').select('id').single()).data?.id);
+        .select('id')
+        .single();
       
-      if (error) {
-        throw error;
+      if (existingData) {
+        // Update existing record
+        const { error } = await supabase
+          .from('store_settings')
+          .update({
+            name: storeData.name,
+            logo: storeData.logo,
+            banner: storeData.banner,
+            about: storeData.about,
+            whatsapp_number: storeData.whatsapp_number,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingData.id);
+        
+        if (error) {
+          throw error;
+        }
+      } else {
+        // Create new record if none exists
+        const { error } = await supabase
+          .from('store_settings')
+          .insert({
+            name: storeData.name,
+            logo: storeData.logo,
+            banner: storeData.banner,
+            about: storeData.about,
+            whatsapp_number: storeData.whatsapp_number,
+          });
+        
+        if (error) {
+          throw error;
+        }
       }
       
       toast({
