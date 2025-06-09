@@ -43,14 +43,19 @@ const Admin = () => {
   
   const fetchProducts = async () => {
     try {
+      console.log('Attempting to fetch products...');
+      
       const { data, error } = await supabase
         .from('products')
         .select('*')
         .order('name');
       
       if (error) {
+        console.error('Supabase error fetching products:', error);
         throw error;
       }
+      
+      console.log('Products fetched successfully:', data);
       
       if (data) {
         const formattedProducts = data.map(product => ({
@@ -75,7 +80,7 @@ const Admin = () => {
       console.error('Error fetching products:', error);
       toast({
         title: "Erro ao carregar produtos",
-        description: "Não foi possível carregar os produtos. Tente novamente.",
+        description: `Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         variant: "destructive",
       });
     }
@@ -83,14 +88,19 @@ const Admin = () => {
   
   const fetchStoreSettings = async () => {
     try {
+      console.log('Attempting to fetch store settings...');
+      
       const { data, error } = await supabase
         .from('store_settings')
         .select('*')
-        .single();
+        .maybeSingle();
       
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
+        console.error('Supabase error fetching store settings:', error);
         throw error;
       }
+      
+      console.log('Store settings fetched successfully:', data);
       
       if (data) {
         setStoreData({
@@ -105,7 +115,7 @@ const Admin = () => {
       console.error('Error fetching store settings:', error);
       toast({
         title: "Erro ao carregar configurações",
-        description: "Não foi possível carregar as configurações da loja.",
+        description: `Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         variant: "destructive",
       });
     }
@@ -148,15 +158,24 @@ const Admin = () => {
   const handleSaveAllData = async () => {
     try {
       setSaving(true);
+      console.log('Attempting to save all data...');
       
       // First try to get existing settings
-      const { data: existingData } = await supabase
+      const { data: existingData, error: fetchError } = await supabase
         .from('store_settings')
         .select('id')
-        .single();
+        .maybeSingle();
+      
+      if (fetchError) {
+        console.error('Error fetching existing data:', fetchError);
+        throw fetchError;
+      }
+      
+      console.log('Existing data check:', existingData);
       
       if (existingData) {
         // Update existing record
+        console.log('Updating existing record with ID:', existingData.id);
         const { error: settingsError } = await supabase
           .from('store_settings')
           .update({
@@ -170,10 +189,13 @@ const Admin = () => {
           .eq('id', existingData.id);
         
         if (settingsError) {
+          console.error('Error updating settings:', settingsError);
           throw settingsError;
         }
+        console.log('Settings updated successfully');
       } else {
         // Create new record if none exists
+        console.log('Creating new record...');
         const { error: settingsError } = await supabase
           .from('store_settings')
           .insert({
@@ -185,8 +207,10 @@ const Admin = () => {
           });
         
         if (settingsError) {
+          console.error('Error inserting settings:', settingsError);
           throw settingsError;
         }
+        console.log('Settings inserted successfully');
       }
       
       toast({
@@ -197,7 +221,7 @@ const Admin = () => {
       console.error('Error saving all data:', error);
       toast({
         title: "Erro ao salvar dados",
-        description: "Não foi possível salvar todos os dados. Tente novamente.",
+        description: `Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         variant: "destructive",
       });
     } finally {
@@ -307,15 +331,24 @@ const Admin = () => {
   const handleSaveSettings = async () => {
     try {
       setSaving(true);
+      console.log('Attempting to save settings...');
       
       // First try to get existing settings
-      const { data: existingData } = await supabase
+      const { data: existingData, error: fetchError } = await supabase
         .from('store_settings')
         .select('id')
-        .single();
+        .maybeSingle();
+      
+      if (fetchError) {
+        console.error('Error fetching existing data:', fetchError);
+        throw fetchError;
+      }
+      
+      console.log('Existing data check:', existingData);
       
       if (existingData) {
         // Update existing record
+        console.log('Updating existing record with ID:', existingData.id);
         const { error } = await supabase
           .from('store_settings')
           .update({
@@ -329,10 +362,13 @@ const Admin = () => {
           .eq('id', existingData.id);
         
         if (error) {
+          console.error('Error updating settings:', error);
           throw error;
         }
+        console.log('Settings updated successfully');
       } else {
         // Create new record if none exists
+        console.log('Creating new record...');
         const { error } = await supabase
           .from('store_settings')
           .insert({
@@ -344,8 +380,10 @@ const Admin = () => {
           });
         
         if (error) {
+          console.error('Error inserting settings:', error);
           throw error;
         }
+        console.log('Settings inserted successfully');
       }
       
       toast({
@@ -356,7 +394,7 @@ const Admin = () => {
       console.error('Error saving settings:', error);
       toast({
         title: "Erro ao salvar configurações",
-        description: "Não foi possível salvar as configurações. Tente novamente.",
+        description: `Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
         variant: "destructive",
       });
     } finally {
