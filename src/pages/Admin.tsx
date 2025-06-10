@@ -41,6 +41,17 @@ const Admin = () => {
     }
   }, [isLoggedIn]);
   
+  // Auto-save product when data changes (except for new products)
+  useEffect(() => {
+    if (editingProduct && isEditing && editingProduct.name && editingProduct.price > 0) {
+      const timeoutId = setTimeout(() => {
+        handleAutoSaveProduct();
+      }, 2000); // Auto-save após 2 segundos de inatividade
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [editingProduct?.name, editingProduct?.description, editingProduct?.price, editingProduct?.category]);
+  
   const fetchProducts = async () => {
     try {
       console.log('Attempting to fetch products...');
@@ -152,6 +163,46 @@ const Admin = () => {
         description: "Email ou senha inválidos",
         variant: "destructive",
       });
+    }
+  };
+  
+  const handleAutoSaveProduct = async () => {
+    if (!editingProduct || !isEditing) return;
+    
+    try {
+      console.log('Auto-saving product...');
+      
+      // Generate WhatsApp link automatically
+      const whatsappLink = generateWhatsAppLink(editingProduct.name, editingProduct.price);
+      
+      const productData = {
+        name: editingProduct.name,
+        description: editingProduct.description,
+        price: editingProduct.price,
+        category: editingProduct.category,
+        image: editingProduct.image,
+        purchase_link: whatsappLink,
+        updated_at: new Date().toISOString()
+      };
+      
+      const { error } = await supabase
+        .from('products')
+        .update(productData)
+        .eq('id', editingProduct.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      console.log('Product auto-saved successfully');
+      
+      // Update the product in the local list
+      setProductList(prev => prev.map(p => 
+        p.id === editingProduct.id ? { ...editingProduct, purchaseLink: whatsappLink } : p
+      ));
+      
+    } catch (error) {
+      console.error('Error auto-saving product:', error);
     }
   };
   
@@ -320,11 +371,51 @@ const Admin = () => {
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setIsEditing(true);
+    setFileUpload(null);
   };
   
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFileUpload(e.target.files[0]);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0] && editingProduct) {
+      const file = e.target.files[0];
+      setFileUpload(file);
+      
+      // Upload image immediately when selected
+      try {
+        setUploading(true);
+        
+        // Generate a temporary ID for new products or use existing ID
+        const productId = editingProduct.id || `temp_${Date.now()}`;
+        
+        // If there's an old image and it's not the placeholder, delete it
+        if (editingProduct.image && !editingProduct.image.includes('/placeholder.svg')) {
+          await deleteProductImage(editingProduct.image);
+        }
+        
+        // Upload the new image
+        const newImageUrl = await uploadProductImage(file, productId);
+        
+        if (newImageUrl) {
+          // Update the editing product with the new image URL
+          setEditingProduct({
+            ...editingProduct,
+            image: newImageUrl
+          });
+          
+          toast({
+            title: "Imagem carregada",
+            description: "A imagem foi salva com sucesso",
+          });
+        }
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        toast({
+          title: "Erro no upload",
+          description: error instanceof Error ? error.message : "Erro ao fazer upload da imagem",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
     }
   };
   
@@ -1026,3 +1117,5 @@ const Admin = () => {
 };
 
 export default Admin;
+
+</edits_to_apply>
