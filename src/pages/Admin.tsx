@@ -27,6 +27,7 @@ const Admin = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [fileUpload, setFileUpload] = useState<File | null>(null);
+  const [logoUpload, setLogoUpload] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -411,6 +412,48 @@ const Admin = () => {
         toast({
           title: "Erro no upload",
           description: error instanceof Error ? error.message : "Erro ao fazer upload da imagem",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
+    }
+  };
+
+  const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setLogoUpload(file);
+      
+      // Upload logo immediately when selected
+      try {
+        setUploading(true);
+        
+        // If there's an old logo and it's not the placeholder, delete it
+        if (storeData.logo && !storeData.logo.includes('/placeholder.svg')) {
+          await deleteProductImage(storeData.logo);
+        }
+        
+        // Upload the new logo using a fixed logo ID
+        const newLogoUrl = await uploadProductImage(file, 'store_logo');
+        
+        if (newLogoUrl) {
+          // Update the store data with the new logo URL
+          setStoreData({
+            ...storeData,
+            logo: newLogoUrl
+          });
+          
+          toast({
+            title: "Logo carregada",
+            description: "A logo foi salva com sucesso",
+          });
+        }
+      } catch (error) {
+        console.error('Error uploading logo:', error);
+        toast({
+          title: "Erro no upload da logo",
+          description: error instanceof Error ? error.message : "Erro ao fazer upload da logo",
           variant: "destructive",
         });
       } finally {
@@ -988,19 +1031,38 @@ const Admin = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="logoUrl" className="block text-sm font-medium text-vintage-dark mb-1">
-                    URL da Logo
+                  <label className="block text-sm font-medium text-vintage-dark mb-1">
+                    Logo da Loja
                   </label>
-                  <input
-                    id="logoUrl"
-                    type="text"
-                    value={storeData.logo}
-                    onChange={(e) => setStoreData({...storeData, logo: e.target.value})}
-                    className="vintage-input w-full"
-                  />
-                  <p className="text-xs text-vintage-dark/60 mt-1">
-                    URL da imagem da logo (recomendado: formato quadrado)
-                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                    <div className="w-32 h-32 bg-vintage-cream rounded-md overflow-hidden border border-vintage-beige/30 mx-auto">
+                      <img 
+                        src={logoUpload ? URL.createObjectURL(logoUpload) : (storeData.logo || '/placeholder.svg')} 
+                        alt="Logo Preview" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <label 
+                        htmlFor="logo-upload" 
+                        className="vintage-button-secondary flex items-center justify-center w-full cursor-pointer"
+                      >
+                        <Upload size={16} className="mr-2" />
+                        {uploading ? 'Carregando...' : 'Selecionar Logo'}
+                      </label>
+                      <input
+                        id="logo-upload"
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleLogoChange}
+                        disabled={uploading}
+                      />
+                      <p className="text-xs text-vintage-dark/60 mt-2">
+                        Formatos recomendados: JPG, PNG. Formato quadrado recomendado. Tamanho máximo: 5MB
+                      </p>
+                    </div>
+                  </div>
                 </div>
                 
                 <div>
@@ -1038,7 +1100,7 @@ const Admin = () => {
                 <div className="flex justify-end mt-6">
                   <button
                     onClick={handleSaveSettings}
-                    disabled={saving}
+                    disabled={saving || uploading}
                     className="vintage-button"
                   >
                     {saving ? 'Salvando...' : 'Salvar Configurações'}
