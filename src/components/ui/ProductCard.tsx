@@ -7,7 +7,8 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  image: string;
+  image: string; // Mantido para compatibilidade
+  images: string[]; // Array de URLs de imagem
   category: string;
   purchaseLink?: string;
 }
@@ -17,17 +18,33 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  // Usa a primeira imagem do array ou a imagem antiga para compatibilidade
+  const mainImage = product.images?.length > 0 
+    ? product.images[0] 
+    : (product.image || '/placeholder.svg');
+
   return (
     <Link to={`/product/${product.id}`} className="block group">
-      <div className="vintage-card overflow-hidden flex flex-col h-full transition-transform duration-300 group-hover:-translate-y-1">
+      <div className="vintage-card overflow-hidden flex flex-col h-full transition-transform duration-300 group-hover:-translate-y-1 shadow-sm hover:shadow-md">
         {/* Product image with overlay on hover */}
         <div className="relative aspect-square overflow-hidden bg-vintage-cream">
           <img 
-            src={product.image || '/placeholder.svg'} 
+            src={mainImage} 
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-vintage-brown/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          {/* Indicador de múltiplas imagens */}
+          {product.images && product.images.length > 1 && (
+            <div className="absolute bottom-2 right-2 bg-white/80 px-2 py-1 rounded-full text-xs font-medium text-vintage-dark flex items-center">
+              <span className="mr-1">{product.images.length}</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="18" height="14" x="3" y="5" rx="2" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </div>
+          )}
         </div>
         
         {/* Product info */}

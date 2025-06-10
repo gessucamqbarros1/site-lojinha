@@ -33,15 +33,28 @@ const Products = () => {
             description: product.description,
             price: parseFloat(product.price.toString()),
             image: product.image || '/placeholder.svg',
+            images: Array.isArray(product.images) ? product.images : [],
             category: product.category,
             purchaseLink: product.purchase_link
           }));
+          
+          // Para cada produto, se não tiver imagens mas tiver image, use-a
+          formattedProducts.forEach(p => {
+            if ((!p.images || p.images.length === 0) && p.image) {
+              p.images = [p.image];
+            }
+            if (!p.images || p.images.length === 0) {
+              p.images = ['/placeholder.svg'];
+            }
+          });
           
           setProducts(formattedProducts);
           
           // Extract unique categories from products
           const uniqueCategories = ['Todos', ...new Set(formattedProducts.map(p => p.category))];
-          setCategories(uniqueCategories);
+          if (uniqueCategories.length > 0) {
+            setCategories(uniqueCategories);
+          }
         }
       } catch (error) {
         console.error('Error fetching products:', error);
