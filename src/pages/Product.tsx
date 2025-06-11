@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -6,13 +7,6 @@ import { Product as ProductType } from '@/components/ui/ProductCard';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem, 
-  CarouselNext, 
-  CarouselPrevious 
-} from '@/components/ui/carousel';
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
@@ -43,29 +37,15 @@ const Product = () => {
             throw error;
           }
         } else if (data) {
-          // Processar os dados do produto
           const formattedProduct: ProductType = {
             id: data.id.toString(),
             name: data.name,
             description: data.description,
             price: parseFloat(data.price.toString()),
             image: data.image || '/placeholder.svg',
-            images: Array.isArray(data.images) ? 
-              (data.images as string[]).filter((img): img is string => typeof img === 'string') : 
-              [],
             category: data.category,
             purchaseLink: data.purchase_link
           };
-          
-          // Se não houver imagens no array mas houver uma imagem antiga
-          if ((!formattedProduct.images || formattedProduct.images.length === 0) && formattedProduct.image) {
-            formattedProduct.images = [formattedProduct.image];
-          }
-          
-          // Se ainda assim não houver imagens, use o placeholder
-          if (!formattedProduct.images || formattedProduct.images.length === 0) {
-            formattedProduct.images = ['/placeholder.svg'];
-          }
           
           setProduct(formattedProduct);
           
@@ -80,28 +60,15 @@ const Product = () => {
           if (suggestedError) {
             console.error('Error fetching suggested products:', suggestedError);
           } else if (suggested) {
-            const formattedSuggested: ProductType[] = suggested.map(item => ({
+            const formattedSuggested = suggested.map(item => ({
               id: item.id.toString(),
               name: item.name,
               description: item.description,
               price: parseFloat(item.price.toString()),
               image: item.image || '/placeholder.svg',
-              images: Array.isArray(item.images) ? 
-                (item.images as string[]).filter((img): img is string => typeof img === 'string') : 
-                [],
               category: item.category,
               purchaseLink: item.purchase_link
             }));
-            
-            // Para cada produto sugerido, se não tiver imagens mas tiver image, use-a
-            formattedSuggested.forEach(p => {
-              if ((!p.images || p.images.length === 0) && p.image) {
-                p.images = [p.image];
-              }
-              if (!p.images || p.images.length === 0) {
-                p.images = ['/placeholder.svg'];
-              }
-            });
             
             setSuggestedProducts(formattedSuggested);
           }
@@ -165,30 +132,13 @@ const Product = () => {
           </Link>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {/* Product Image Carousel */}
+            {/* Product Image */}
             <div className="aspect-square bg-white rounded-md overflow-hidden border border-vintage-beige/30 shadow-sm">
-              <Carousel className="w-full h-full">
-                <CarouselContent className="h-full">
-                  {product.images.map((img, idx) => (
-                    <CarouselItem key={idx} className="h-full">
-                      <div className="h-full w-full flex items-center justify-center p-0">
-                        <img 
-                          src={img} 
-                          alt={`${product.name} - Imagem ${idx + 1}`} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                
-                {product.images.length > 1 && (
-                  <>
-                    <CarouselPrevious className="-left-3 md:-left-5 bg-white shadow-md hover:bg-vintage-cream" />
-                    <CarouselNext className="-right-3 md:-right-5 bg-white shadow-md hover:bg-vintage-cream" />
-                  </>
-                )}
-              </Carousel>
+              <img 
+                src={product.image || "/placeholder.svg"} 
+                alt={product.name} 
+                className="w-full h-full object-cover"
+              />
             </div>
             
             {/* Product Info */}
@@ -237,26 +187,6 @@ const Product = () => {
             </div>
           </div>
           
-          {/* Product Image Thumbnails */}
-          {product.images.length > 1 && (
-            <div className="mt-4">
-              <div className="flex justify-center gap-2">
-                {product.images.map((img, idx) => (
-                  <div 
-                    key={idx} 
-                    className="w-16 h-16 cursor-pointer border-2 border-transparent hover:border-primary rounded-md overflow-hidden"
-                  >
-                    <img 
-                      src={img} 
-                      alt={`${product.name} - Miniatura ${idx + 1}`} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-          
           {/* Suggested Products */}
           {suggestedProducts.length > 0 && (
             <div className="mt-16">
@@ -267,10 +197,10 @@ const Product = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {suggestedProducts.map(product => (
                   <Link key={product.id} to={`/product/${product.id}`} className="block group">
-                    <div className="vintage-card overflow-hidden shadow-sm hover:shadow-md">
+                    <div className="vintage-card overflow-hidden">
                       <div className="aspect-square overflow-hidden bg-vintage-cream">
                         <img 
-                          src={product.images[0] || product.image || '/placeholder.svg'} 
+                          src={product.image || '/placeholder.svg'} 
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />

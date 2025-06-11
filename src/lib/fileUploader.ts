@@ -1,71 +1,106 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
-export const uploadProductImage = async (file: File, productId: string) => {
+export async function uploadProductImage(
+  file: File,
+  productId: string
+): Promise<string | null> {
   try {
-    // Generate unique file name to prevent collisions
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${productId}_${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-    const filePath = `${fileName}`;
+    if (!file) return null;
 
-    // Upload the file to the products bucket
-    const { data, error } = await supabase
-      .storage
+    console.log('Starting file upload for product:', productId);
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Tipo de arquivo não permitido. Use JPG, PNG ou WebP.');
+    }
+
+    // Validate file size (5MB max)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      throw new Error('Arquivo muito grande. Tamanho máximo: 5MB.');
+    }
+
+    // Create a unique file path using the productId and a timestamp
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${productId}_${Date.now()}.${fileExt}`;
+    const filePath = `products/${fileName}`;
+
+    console.log('Uploading file to path:', filePath);
+
+    // Upload the file to Supabase Storage
+    const { data, error } = await supabase.storage
       .from('products')
       .upload(filePath, file, {
         cacheControl: '3600',
-        upsert: true,
+        upsert: false
       });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase storage upload error:', error);
+      throw new Error(`Erro no upload: ${error.message}`);
+    }
+
+    console.log('File uploaded successfully:', data);
 
     // Get the public URL for the uploaded file
-    const { data: publicURL } = supabase
-      .storage
+    const { data: publicUrlData } = supabase.storage
       .from('products')
-      .getPublicUrl(data.path);
+      .getPublicUrl(filePath);
 
-    return publicURL.publicUrl;
+    console.log('Public URL generated:', publicUrlData.publicUrl);
+
+    return publicUrlData.publicUrl;
   } catch (error) {
-    console.error('Error uploading file:', error);
-    throw new Error('Error uploading image. Please try again.');
+    console.error('Error in uploadProductImage:', error);
+    throw error; // Re-throw to let the calling function handle it
   }
-};
+}
 
-export const deleteProductImage = async (imageUrl: string) => {
+export async function deleteProductImage(url: string): Promise<boolean> {
   try {
-    // Extract the file name from the URL
-    const fileName = imageUrl.split('/').pop();
+    if (!url || url.includes('/placeholder.svg')) {
+      return true; // No need to delete placeholder images
+    }
+
+    console.log('Attempting to delete image:', url);
+
+    // Extract the file path from the URL
+    const urlObj = new URL(url);
+    const pathParts = urlObj.pathname.split('/');
     
-    if (!fileName) {
-      throw new Error('Invalid image URL');
+    // Find the 'products' segment and get everything after it
+    const productsIndex = pathParts.findIndex(part => part === 'products');
+    if (productsIndex === -1) {
+      console.warn('Invalid URL format for deletion:', url);
+      return false;
     }
     
-    const { error } = await supabase
-      .storage
-      .from('products')
-      .remove([fileName]);
-      
-    if (error) throw error;
+    // Get the file path relative to the bucket
+    const filePath = pathParts.slice(productsIndex + 1).join('/');
     
+    if (!filePath) {
+      console.warn('Could not extract file path from URL:', url);
+      return false;
+    }
+
+    console.log('Extracted file path for deletion:', filePath);
+
+    // Delete the file from Supabase Storage
+    const { error } = await supabase.storage
+      .from('products')
+      .remove([`products/${filePath}`]);
+
+    if (error) {
+      console.error('Error deleting image from storage:', error);
+      return false;
+    }
+
+    console.log('Image deleted successfully from storage');
     return true;
   } catch (error) {
-    console.error('Error deleting file:', error);
-    throw new Error('Error deleting image. Please try again.');
+    console.error('Error in deleteProductImage:', error);
+    return false;
   }
-};
-
-// Função para verificar se um arquivo é uma imagem válida
-export const validateImageFile = (file: File): boolean => {
-  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/gif'];
-  const maxSize = 5 * 1024 * 1024; // 5MB
-  
-  if (!validTypes.includes(file.type)) {
-    throw new Error('Tipo de arquivo inválido. Apenas imagens JPG, PNG, WEBP ou GIF são permitidas.');
-  }
-  
-  if (file.size > maxSize) {
-    throw new Error('Arquivo muito grande. O tamanho máximo permitido é 5MB.');
-  }
-  
-  return true;
-};
+}
