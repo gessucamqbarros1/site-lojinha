@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -301,38 +302,6 @@ const Admin = () => {
     }
   };
 
-  const handleImageUpload = async (productId: string, images: string[]) => {
-    try {
-      const { error } = await supabase
-        .from('products')
-        .update({ images })
-        .eq('id', productId);
-
-      if (error) throw error;
-
-      // Atualizar o estado local
-      setProducts(prevProducts => 
-        prevProducts.map(product => 
-          product.id === productId 
-            ? { ...product, images }
-            : product
-        )
-      );
-
-      toast({
-        title: "Imagens atualizadas!",
-        description: "As imagens do produto foram atualizadas com sucesso.",
-      });
-    } catch (error) {
-      console.error('Error updating product images:', error);
-      toast({
-        title: "Erro ao atualizar imagens",
-        description: "Não foi possível atualizar as imagens do produto.",
-        variant: "destructive",
-      });
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -594,7 +563,7 @@ const Admin = () => {
                       <div className="mt-4">
                         <ProductImageUploader
                           productId={product.id}
-                          initialImages={product.images}
+                          initialImages={product.images || []}
                           onChange={(images) => {
                             setProducts(prevProducts => 
                               prevProducts.map(p => 
