@@ -76,7 +76,9 @@ const Admin = () => {
           description: product.description,
           price: parseFloat(product.price.toString()),
           image: product.image || '/placeholder.svg',
-          images: Array.isArray(product.images) ? product.images : [],
+          images: Array.isArray(product.images) ? 
+            product.images.filter((img): img is string => typeof img === 'string') : 
+            [],
           category: product.category,
           purchaseLink: product.purchase_link
         }));
