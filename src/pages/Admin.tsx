@@ -76,6 +76,7 @@ const Admin = () => {
           description: product.description,
           price: parseFloat(product.price.toString()),
           image: product.image || '/placeholder.svg',
+          images: Array.isArray(product.images) ? product.images : [],
           category: product.category,
           purchaseLink: product.purchase_link
         }));
@@ -116,7 +117,7 @@ const Admin = () => {
       
       if (data) {
         setStoreData({
-          name: data.name,
+          name: data.name || '',
           logo: data.logo || '',
           banner: data.banner || '',
           about: data.about || '',
@@ -182,6 +183,7 @@ const Admin = () => {
         price: editingProduct.price,
         category: editingProduct.category,
         image: editingProduct.image,
+        images: editingProduct.images || [],
         purchase_link: whatsappLink,
         updated_at: new Date().toISOString()
       };
@@ -572,6 +574,7 @@ const Admin = () => {
         price: editingProduct.price,
         category: editingProduct.category,
         image: imageUrl,
+        images: editingProduct.images || [],
         purchase_link: whatsappLink,
         updated_at: new Date().toISOString()
       };
@@ -630,6 +633,7 @@ const Admin = () => {
       description: '',
       price: 0,
       image: '/placeholder.svg',
+      images: [],
       category: categories[0] || 'Maquiagem',
       purchaseLink: '',
     });
