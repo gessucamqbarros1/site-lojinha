@@ -31,15 +31,28 @@ const Index = () => {
         }
         
         if (productsData) {
-          const formattedProducts = productsData.map(product => ({
-            id: product.id.toString(), // Convert ID to string
+          const formattedProducts: Product[] = productsData.map(product => ({
+            id: product.id.toString(),
             name: product.name,
             description: product.description,
             price: parseFloat(product.price.toString()),
             image: product.image || '/placeholder.svg',
+            images: Array.isArray(product.images) ? 
+              (product.images as string[]).filter((img): img is string => typeof img === 'string') : 
+              [],
             category: product.category,
             purchaseLink: product.purchase_link
           }));
+          
+          // Para cada produto, se não tiver imagens mas tiver image, use-a
+          formattedProducts.forEach(p => {
+            if ((!p.images || p.images.length === 0) && p.image) {
+              p.images = [p.image];
+            }
+            if (!p.images || p.images.length === 0) {
+              p.images = ['/placeholder.svg'];
+            }
+          });
           
           setProducts(formattedProducts);
           

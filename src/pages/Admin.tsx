@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -595,8 +594,16 @@ const Admin = () => {
                       <div className="mt-4">
                         <ProductImageUploader
                           productId={product.id}
-                          currentImages={product.images}
-                          onImageUpload={(images) => handleImageUpload(product.id, images)}
+                          initialImages={product.images}
+                          onChange={(images) => {
+                            setProducts(prevProducts => 
+                              prevProducts.map(p => 
+                                p.id === product.id 
+                                  ? { ...p, images }
+                                  : p
+                              )
+                            );
+                          }}
                         />
                       </div>
                     </div>
