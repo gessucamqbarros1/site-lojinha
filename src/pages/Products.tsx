@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -27,13 +26,15 @@ const Products = () => {
         }
         
         if (data) {
-          const formattedProducts = data.map(product => ({
+          const formattedProducts: Product[] = data.map(product => ({
             id: product.id.toString(),
             name: product.name,
             description: product.description,
             price: parseFloat(product.price.toString()),
             image: product.image || '/placeholder.svg',
-            images: Array.isArray(product.images) ? product.images : [],
+            images: Array.isArray(product.images) ? 
+              (product.images as string[]).filter((img): img is string => typeof img === 'string') : 
+              [],
             category: product.category,
             purchaseLink: product.purchase_link
           }));

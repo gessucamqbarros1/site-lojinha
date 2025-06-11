@@ -9,6 +9,7 @@ export const products: Product[] = [
     description: "Batom com textura macia e hidratante que garante longa duração e conforto.",
     price: 49.90,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Maquiagem"
   },
   {
@@ -17,6 +18,7 @@ export const products: Product[] = [
     description: "Sérum iluminador para todos os tipos de pele que proporciona hidratação profunda.",
     price: 89.90,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Skincare"
   },
   {
@@ -25,6 +27,7 @@ export const products: Product[] = [
     description: "Brinco artesanal com design floral inspirado no estilo provençal.",
     price: 65.00,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Acessórios"
   },
   {
@@ -33,6 +36,7 @@ export const products: Product[] = [
     description: "Nécessaire espaçosa com estampa delicada para organizar seus itens de beleza.",
     price: 78.50,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Acessórios"
   },
   {
@@ -41,6 +45,7 @@ export const products: Product[] = [
     description: "Fragrância floral com notas de lavanda e baunilha, inspirada nos jardins franceses.",
     price: 129.90,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Perfumaria"
   },
   {
@@ -49,6 +54,7 @@ export const products: Product[] = [
     description: "Paleta com 12 tons neutros e terrosos para criar looks sofisticados para o dia ou noite.",
     price: 85.00,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Maquiagem"
   },
   {
@@ -57,6 +63,7 @@ export const products: Product[] = [
     description: "Pó facial com partículas iluminadoras para um acabamento natural e radiante.",
     price: 59.90,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Maquiagem"
   },
   {
@@ -65,6 +72,7 @@ export const products: Product[] = [
     description: "Bracelete com detalhes delicados e acabamento dourado envelhecido.",
     price: 45.00,
     image: "/placeholder.svg",
+    images: ["/placeholder.svg"],
     category: "Acessórios"
   },
 ];

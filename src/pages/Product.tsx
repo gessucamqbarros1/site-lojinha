@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Product as ProductType } from '@/components/ui/ProductCard';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -51,7 +50,9 @@ const Product = () => {
             description: data.description,
             price: parseFloat(data.price.toString()),
             image: data.image || '/placeholder.svg',
-            images: Array.isArray(data.images) ? data.images : [],
+            images: Array.isArray(data.images) ? 
+              (data.images as string[]).filter((img): img is string => typeof img === 'string') : 
+              [],
             category: data.category,
             purchaseLink: data.purchase_link
           };
@@ -79,13 +80,15 @@ const Product = () => {
           if (suggestedError) {
             console.error('Error fetching suggested products:', suggestedError);
           } else if (suggested) {
-            const formattedSuggested = suggested.map(item => ({
+            const formattedSuggested: ProductType[] = suggested.map(item => ({
               id: item.id.toString(),
               name: item.name,
               description: item.description,
               price: parseFloat(item.price.toString()),
               image: item.image || '/placeholder.svg',
-              images: Array.isArray(item.images) ? item.images : [],
+              images: Array.isArray(item.images) ? 
+                (item.images as string[]).filter((img): img is string => typeof img === 'string') : 
+                [],
               category: item.category,
               purchaseLink: item.purchase_link
             }));
