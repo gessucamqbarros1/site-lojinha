@@ -40,10 +40,14 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         const newLogoUrl = await uploadProductImage(file, 'store_logo');
         
         if (newLogoUrl) {
-          setStoreData({
+          const updatedStoreData = {
             ...storeData,
             logo: newLogoUrl
-          });
+          };
+          
+          setStoreData(updatedStoreData);
+          
+          console.log('SettingsTab: Logo uploaded successfully:', newLogoUrl);
           
           toast({
             title: "Logo carregada",
@@ -51,7 +55,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           });
         }
       } catch (error) {
-        console.error('Error uploading logo:', error);
+        console.error('SettingsTab: Error uploading logo:', error);
         toast({
           title: "Erro no upload da logo",
           description: error instanceof Error ? error.message : "Erro ao fazer upload da logo",
@@ -66,7 +70,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   const handleSaveSettings = async () => {
     try {
       setSaving(true);
-      console.log('Attempting to save settings...', storeData);
+      console.log('SettingsTab: Attempting to save settings...', storeData);
       
       if (!storeData.name || storeData.name.trim() === '') {
         throw new Error('Nome da loja é obrigatório');
@@ -80,11 +84,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         .limit(1);
       
       if (fetchError) {
-        console.error('Error fetching existing data:', fetchError);
+        console.error('SettingsTab: Error fetching existing data:', fetchError);
         throw new Error(`Erro ao buscar configurações: ${fetchError.message}`);
       }
       
-      console.log('Existing data check:', existingData);
+      console.log('SettingsTab: Existing data check:', existingData);
       
       const settingsPayload = {
         name: storeData.name.trim(),
@@ -95,7 +99,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         updated_at: new Date().toISOString(),
       };
       
-      console.log('Settings payload:', settingsPayload);
+      console.log('SettingsTab: Settings payload:', settingsPayload);
       
       if (existingData && existingData.length > 0) {
         // Atualiza a primeira configuração encontrada
@@ -105,10 +109,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           .eq('id', existingData[0].id);
         
         if (error) {
-          console.error('Error updating settings:', error);
+          console.error('SettingsTab: Error updating settings:', error);
           throw new Error(`Erro ao atualizar: ${error.message}`);
         }
-        console.log('Settings updated successfully');
+        console.log('SettingsTab: Settings updated successfully');
       } else {
         // Cria uma nova configuração
         const { error } = await supabase
@@ -119,18 +123,24 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           });
         
         if (error) {
-          console.error('Error inserting settings:', error);
+          console.error('SettingsTab: Error inserting settings:', error);
           throw new Error(`Erro ao criar: ${error.message}`);
         }
-        console.log('Settings inserted successfully');
+        console.log('SettingsTab: Settings inserted successfully');
       }
       
       toast({
         title: "Configurações salvas",
-        description: "As configurações da loja foram atualizadas com sucesso",
+        description: "As configurações da loja foram atualizadas com sucesso. A página será atualizada automaticamente.",
       });
+      
+      // Force a page refresh after a short delay to ensure changes are visible
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+      
     } catch (error) {
-      console.error('Error saving settings:', error);
+      console.error('SettingsTab: Error saving settings:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       toast({
         title: "Erro ao salvar configurações",
@@ -159,7 +169,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             value={storeData.name}
             onChange={(e) => setStoreData({...storeData, name: e.target.value})}
             className="vintage-input w-full"
+            placeholder="Digite o nome da sua loja"
           />
+          <p className="text-xs text-vintage-dark/60 mt-1">
+            Este nome aparecerá ao lado da logo no site
+          </p>
         </div>
 
         <div>
@@ -189,6 +203,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                 src={logoUpload ? URL.createObjectURL(logoUpload) : (storeData.logo || '/placeholder.svg')} 
                 alt="Logo Preview" 
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.log('SettingsTab: Logo preview failed to load');
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
               />
             </div>
             <div>
@@ -224,6 +242,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             value={storeData.banner}
             onChange={(e) => setStoreData({...storeData, banner: e.target.value})}
             className="vintage-input w-full"
+            placeholder="https://exemplo.com/banner.jpg"
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
             URL da imagem do banner (recomendado: formato 16:9)
@@ -240,6 +259,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             value={storeData.about}
             onChange={(e) => setStoreData({...storeData, about: e.target.value})}
             className="vintage-input w-full"
+            placeholder="Conte um pouco sobre sua loja..."
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
             Você pode usar HTML básico para formatação

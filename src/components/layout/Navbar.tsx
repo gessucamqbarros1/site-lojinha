@@ -13,26 +13,56 @@ const Navbar = () => {
     // Fetch store settings
     const fetchStoreSettings = async () => {
       try {
+        console.log('Navbar: Fetching store settings...');
+        
         const { data, error } = await supabase
           .from('store_settings')
           .select('name, logo')
-          .single();
+          .order('created_at', { ascending: false })
+          .limit(1);
           
-        if (error && error.code !== 'PGRST116') {
-          console.error('Error fetching store settings:', error);
+        if (error) {
+          console.error('Navbar: Error fetching store settings:', error);
           return;
         }
         
-        if (data) {
-          setStoreName(data.name);
-          if (data.logo) setLogo(data.logo);
+        console.log('Navbar: Store settings fetched:', data);
+        
+        if (data && data.length > 0) {
+          const settings = data[0];
+          console.log('Navbar: Setting store name to:', settings.name);
+          console.log('Navbar: Setting logo to:', settings.logo);
+          
+          if (settings.name) setStoreName(settings.name);
+          if (settings.logo) setLogo(settings.logo);
         }
       } catch (error) {
-        console.error('Error in fetchStoreSettings:', error);
+        console.error('Navbar: Error in fetchStoreSettings:', error);
       }
     };
     
     fetchStoreSettings();
+    
+    // Set up real-time subscription for store settings changes
+    const subscription = supabase
+      .channel('store_settings_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'store_settings' 
+        }, 
+        (payload) => {
+          console.log('Navbar: Store settings changed:', payload);
+          // Refetch settings when they change
+          fetchStoreSettings();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const toggleMenu = () => {
@@ -58,6 +88,10 @@ const Navbar = () => {
               src={logo} 
               alt={`${storeName} logo`}
               className="h-10 w-10 object-contain mr-2"
+              onError={(e) => {
+                console.log('Navbar: Logo failed to load, using placeholder');
+                e.currentTarget.src = '/placeholder.svg';
+              }}
             />
             <h1 className="text-xl md:text-2xl font-playfair font-medium text-vintage-brown">
               {storeName}

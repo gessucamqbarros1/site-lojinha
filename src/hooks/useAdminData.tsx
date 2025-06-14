@@ -82,9 +82,8 @@ export const useAdminData = () => {
   
   const fetchStoreSettings = async () => {
     try {
-      console.log('Fetching store settings from Supabase...');
+      console.log('useAdminData: Fetching store settings from Supabase...');
       
-      // Primeiro, vamos buscar todas as configurações e pegar apenas a primeira
       const { data, error } = await supabase
         .from('store_settings')
         .select('*')
@@ -92,26 +91,29 @@ export const useAdminData = () => {
         .limit(1);
       
       if (error) {
-        console.error('Supabase error fetching store settings:', error);
+        console.error('useAdminData: Supabase error fetching store settings:', error);
         throw error;
       }
       
-      console.log('Store settings fetched successfully:', data);
+      console.log('useAdminData: Store settings fetched successfully:', data);
       
       if (data && data.length > 0) {
         const settings = data[0];
-        setStoreData({
+        const newStoreData = {
           name: settings.name || '',
           logo: settings.logo || '',
           banner: settings.banner || '',
           about: settings.about || '',
           whatsapp_number: settings.whatsapp_number || '',
-        });
+        };
+        
+        console.log('useAdminData: Setting store data to:', newStoreData);
+        setStoreData(newStoreData);
       } else {
-        console.log('No store settings found, using defaults');
+        console.log('useAdminData: No store settings found, using defaults');
       }
     } catch (error) {
-      console.error('Error fetching store settings:', error);
+      console.error('useAdminData: Error fetching store settings:', error);
       toast({
         title: "Erro ao carregar configurações",
         description: `Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
