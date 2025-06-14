@@ -13,29 +13,13 @@ const Admin = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('products');
   
-  const {
-    storeData,
-    setStoreData,
-    productList,
-    setProductList,
-    categories,
-    uploading,
-    setUploading,
-    saving,
-    setSaving,
-    deleting,
-    setDeleting,
-    fetchProducts,
-    fetchStoreSettings,
-    generateWhatsAppLink,
-    toast
-  } = useAdminData();
+  const adminData = useAdminData();
 
-  // Fetch products and store settings when logged in
+  // Fetch data when logged in
   useEffect(() => {
     if (isLoggedIn) {
-      fetchProducts();
-      fetchStoreSettings();
+      adminData.fetchProducts();
+      adminData.fetchStoreSettings();
     }
   }, [isLoggedIn]);
 
@@ -45,6 +29,7 @@ const Admin = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setActiveTab('products');
   };
 
   const renderAdminPanel = () => (
@@ -59,41 +44,41 @@ const Admin = () => {
         <div className="md:w-3/4">
           {activeTab === 'products' && (
             <ProductsTab
-              productList={productList}
-              setProductList={setProductList}
-              categories={categories}
-              fetchProducts={fetchProducts}
-              generateWhatsAppLink={generateWhatsAppLink}
-              uploading={uploading}
-              setUploading={setUploading}
-              saving={saving}
-              setSaving={setSaving}
-              toast={toast}
+              productList={adminData.productList}
+              setProductList={adminData.setProductList}
+              categories={adminData.categories}
+              fetchProducts={adminData.fetchProducts}
+              generateWhatsAppLink={adminData.generateWhatsAppLink}
+              uploading={adminData.uploading}
+              setUploading={adminData.setUploading}
+              saving={adminData.saving}
+              setSaving={adminData.setSaving}
+              toast={adminData.toast}
             />
           )}
           
           {activeTab === 'settings' && (
             <SettingsTab
-              storeData={storeData}
-              setStoreData={setStoreData}
-              uploading={uploading}
-              setUploading={setUploading}
-              saving={saving}
-              setSaving={setSaving}
-              toast={toast}
+              storeData={adminData.storeData}
+              setStoreData={adminData.setStoreData}
+              uploading={adminData.uploading}
+              setUploading={adminData.setUploading}
+              saving={adminData.saving}
+              setSaving={adminData.setSaving}
+              toast={adminData.toast}
             />
           )}
 
           {activeTab === 'backup' && (
             <BackupTab
-              storeData={storeData}
-              productList={productList}
-              setProductList={setProductList}
-              saving={saving}
-              setSaving={setSaving}
-              deleting={deleting}
-              setDeleting={setDeleting}
-              toast={toast}
+              storeData={adminData.storeData}
+              productList={adminData.productList}
+              setProductList={adminData.setProductList}
+              saving={adminData.saving}
+              setSaving={adminData.setSaving}
+              deleting={adminData.deleting}
+              setDeleting={adminData.setDeleting}
+              toast={adminData.toast}
             />
           )}
         </div>

@@ -76,9 +76,12 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
       
       console.log('Product auto-saved successfully');
       
-      setProductList(prev => prev.map(p => 
-        p.id === editingProduct.id ? { ...editingProduct, purchaseLink: whatsappLink } : p
-      ));
+      // Fixed TypeScript error: properly type the callback function
+      setProductList((prevProducts: Product[]) => 
+        prevProducts.map(p => 
+          p.id === editingProduct.id ? { ...editingProduct, purchaseLink: whatsappLink } : p
+        )
+      );
       
     } catch (error) {
       console.error('Error auto-saving product:', error);

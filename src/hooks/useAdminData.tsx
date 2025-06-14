@@ -1,12 +1,19 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Product } from '@/components/ui/ProductCard';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { uploadProductImage, deleteProductImage } from '@/lib/fileUploader';
+
+interface StoreData {
+  name: string;
+  logo: string;
+  banner: string;
+  about: string;
+  whatsapp_number: string;
+}
 
 export const useAdminData = () => {
-  const [storeData, setStoreData] = useState({
+  const [storeData, setStoreData] = useState<StoreData>({
     name: '',
     logo: '',
     banner: '',
@@ -24,12 +31,12 @@ export const useAdminData = () => {
 
   const fetchProducts = async () => {
     try {
-      console.log('Attempting to fetch products...');
+      console.log('Fetching products from Supabase...');
       
       const { data, error } = await supabase
         .from('products')
         .select('*')
-        .order('name');
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Supabase error fetching products:', error);
@@ -39,25 +46,28 @@ export const useAdminData = () => {
       console.log('Products fetched successfully:', data);
       
       if (data) {
-        const formattedProducts = data.map(product => ({
+        const formattedProducts: Product[] = data.map(product => ({
           id: product.id.toString(),
-          name: product.name,
-          description: product.description,
-          price: parseFloat(product.price.toString()),
+          name: product.name || '',
+          description: product.description || '',
+          price: parseFloat(product.price?.toString() || '0'),
           image: product.image || '/placeholder.svg',
           images: Array.isArray(product.images) ? 
             product.images.filter((img): img is string => typeof img === 'string') : 
             [],
-          category: product.category,
-          purchaseLink: product.purchase_link
+          category: product.category || 'Maquiagem',
+          purchaseLink: product.purchase_link || ''
         }));
         
         setProductList(formattedProducts);
         
         // Extract unique categories
-        const uniqueCategories = [...new Set(formattedProducts.map(p => p.category))];
+        const uniqueCategories = [...new Set(formattedProducts.map(p => p.category).filter(Boolean))];
         if (uniqueCategories.length > 0) {
-          setCategories(uniqueCategories);
+          setCategories(prevCategories => {
+            const combinedCategories = [...new Set([...prevCategories, ...uniqueCategories])];
+            return combinedCategories;
+          });
         }
       }
     } catch (error) {
@@ -72,18 +82,16 @@ export const useAdminData = () => {
   
   const fetchStoreSettings = async () => {
     try {
-      console.log('Attempting to fetch store settings...');
+      console.log('Fetching store settings from Supabase...');
       
       const { data, error } = await supabase
         .from('store_settings')
         .select('*')
         .maybeSingle();
       
-      if (error) {
+      if (error && error.code !== 'PGRST116') {
         console.error('Supabase error fetching store settings:', error);
-        if (error.code !== 'PGRST116') {
-          throw error;
-        }
+        throw error;
       }
       
       console.log('Store settings fetched successfully:', data);
@@ -98,29 +106,21 @@ export const useAdminData = () => {
         });
       } else {
         console.log('No store settings found, using defaults');
-        setStoreData({
-          name: '',
-          logo: '',
-          banner: '',
-          about: '',
-          whatsapp_number: '',
-        });
       }
     } catch (error) {
       console.error('Error fetching store settings:', error);
-      setStoreData({
-        name: '',
-        logo: '',
-        banner: '',
-        about: '',
-        whatsapp_number: '',
+      toast({
+        title: "Erro ao carregar configurações",
+        description: `Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+        variant: "destructive",
       });
     }
   };
 
-  const generateWhatsAppLink = (productName: string, productPrice: number) => {
+  const generateWhatsAppLink = (productName: string, productPrice: number): string => {
     const whatsappNumber = storeData.whatsapp_number || '5511999999999';
     const storeName = storeData.name || 'Gessica';
+    
     const formattedPrice = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
