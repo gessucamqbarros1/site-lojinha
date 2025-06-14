@@ -72,10 +72,12 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         throw new Error('Nome da loja é obrigatório');
       }
       
+      // Primeiro, vamos buscar se já existe alguma configuração
       const { data: existingData, error: fetchError } = await supabase
         .from('store_settings')
         .select('id')
-        .maybeSingle();
+        .order('created_at', { ascending: false })
+        .limit(1);
       
       if (fetchError) {
         console.error('Error fetching existing data:', fetchError);
@@ -95,11 +97,12 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       
       console.log('Settings payload:', settingsPayload);
       
-      if (existingData) {
+      if (existingData && existingData.length > 0) {
+        // Atualiza a primeira configuração encontrada
         const { error } = await supabase
           .from('store_settings')
           .update(settingsPayload)
-          .eq('id', existingData.id);
+          .eq('id', existingData[0].id);
         
         if (error) {
           console.error('Error updating settings:', error);
@@ -107,6 +110,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         }
         console.log('Settings updated successfully');
       } else {
+        // Cria uma nova configuração
         const { error } = await supabase
           .from('store_settings')
           .insert({

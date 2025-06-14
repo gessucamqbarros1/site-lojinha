@@ -84,25 +84,28 @@ export const useAdminData = () => {
     try {
       console.log('Fetching store settings from Supabase...');
       
+      // Primeiro, vamos buscar todas as configurações e pegar apenas a primeira
       const { data, error } = await supabase
         .from('store_settings')
         .select('*')
-        .maybeSingle();
+        .order('created_at', { ascending: false })
+        .limit(1);
       
-      if (error && error.code !== 'PGRST116') {
+      if (error) {
         console.error('Supabase error fetching store settings:', error);
         throw error;
       }
       
       console.log('Store settings fetched successfully:', data);
       
-      if (data) {
+      if (data && data.length > 0) {
+        const settings = data[0];
         setStoreData({
-          name: data.name || '',
-          logo: data.logo || '',
-          banner: data.banner || '',
-          about: data.about || '',
-          whatsapp_number: data.whatsapp_number || '',
+          name: settings.name || '',
+          logo: settings.logo || '',
+          banner: settings.banner || '',
+          about: settings.about || '',
+          whatsapp_number: settings.whatsapp_number || '',
         });
       } else {
         console.log('No store settings found, using defaults');
