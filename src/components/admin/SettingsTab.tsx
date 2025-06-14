@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -96,6 +95,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         banner: storeData.banner || null,
         about: storeData.about || null,
         whatsapp_number: storeData.whatsapp_number || null,
+        instagram_link: storeData.instagram_link || null,
         updated_at: new Date().toISOString(),
       };
       
@@ -190,6 +190,23 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
             Número no formato: 5511999999999 (código do país + DDD + número)
+          </p>
+        </div>
+
+        <div>
+          <label htmlFor="instagramLink" className="block text-sm font-medium text-vintage-dark mb-1">
+            Link do Instagram
+          </label>
+          <input
+            id="instagramLink"
+            type="text"
+            value={storeData.instagram_link}
+            onChange={(e) => setStoreData({...storeData, instagram_link: e.target.value})}
+            className="vintage-input w-full"
+            placeholder="https://instagram.com/seuusuario"
+          />
+          <p className="text-xs text-vintage-dark/60 mt-1">
+            Link completo do seu perfil no Instagram
           </p>
         </div>
         

@@ -10,6 +10,7 @@ interface StoreSettings {
   banner: string;
   about: string;
   whatsapp_number: string;
+  instagram_link: string;
 }
 
 const About = () => {
@@ -18,7 +19,8 @@ const About = () => {
     logo: '/placeholder.svg',
     banner: '',
     about: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
-    whatsapp_number: ''
+    whatsapp_number: '',
+    instagram_link: ''
   });
 
   useEffect(() => {
@@ -46,7 +48,8 @@ const About = () => {
             logo: settings.logo || '/placeholder.svg',
             banner: settings.banner || '',
             about: settings.about || 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
-            whatsapp_number: settings.whatsapp_number || ''
+            whatsapp_number: settings.whatsapp_number || '',
+            instagram_link: settings.instagram_link || ''
           });
         }
       } catch (error) {
@@ -138,25 +141,39 @@ const About = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Instagram */}
-                <div className="vintage-card p-6 hover:border-primary/30 transition-colors flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-vintage-pink/20 flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-vintage-brown">
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
+                {storeSettings.instagram_link ? (
+                  <a 
+                    href={storeSettings.instagram_link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="vintage-card p-6 hover:border-primary/30 transition-colors flex flex-col items-center"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-vintage-pink/20 flex items-center justify-center mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-vintage-brown">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                      </svg>
+                    </div>
+                    <h3 className="font-playfair text-lg mb-2 text-vintage-brown">Instagram</h3>
+                    <p className="text-sm text-vintage-dark/70">Siga-nos para novidades e dicas</p>
+                  </a>
+                ) : (
+                  <div className="vintage-card p-6 hover:border-primary/30 transition-colors flex flex-col items-center">
+                    <div className="w-12 h-12 rounded-full bg-vintage-pink/20 flex items-center justify-center mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-vintage-brown">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                      </svg>
+                    </div>
+                    <h3 className="font-playfair text-lg mb-2 text-vintage-brown">Instagram</h3>
+                    <p className="text-sm text-vintage-dark/70 mb-4">Siga-nos para novidades e dicas</p>
+                    <p className="text-xs text-vintage-dark/60 text-center">
+                      Configure o link do Instagram nas configurações da loja
+                    </p>
                   </div>
-                  <h3 className="font-playfair text-lg mb-2 text-vintage-brown">Instagram</h3>
-                  <p className="text-sm text-vintage-dark/70 mb-4">Siga-nos para novidades e dicas</p>
-                  <input
-                    type="text"
-                    placeholder="Cole o link do seu Instagram aqui"
-                    className="vintage-input w-full text-sm"
-                  />
-                  <p className="text-xs text-vintage-dark/60 mt-2">
-                    Configure o link do Instagram nas configurações da loja
-                  </p>
-                </div>
+                )}
                 
                 {/* WhatsApp */}
                 <a 

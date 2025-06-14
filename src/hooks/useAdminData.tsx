@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Product } from '@/components/ui/ProductCard';
 import { useToast } from '@/hooks/use-toast';
@@ -10,6 +9,7 @@ interface StoreData {
   banner: string;
   about: string;
   whatsapp_number: string;
+  instagram_link: string;
 }
 
 export const useAdminData = () => {
@@ -19,6 +19,7 @@ export const useAdminData = () => {
     banner: '',
     about: '',
     whatsapp_number: '',
+    instagram_link: '',
   });
   
   const [productList, setProductList] = useState<Product[]>([]);
@@ -105,6 +106,7 @@ export const useAdminData = () => {
           banner: settings.banner || '',
           about: settings.about || '',
           whatsapp_number: settings.whatsapp_number || '',
+          instagram_link: settings.instagram_link || '',
         };
         
         console.log('useAdminData: Setting store data to:', newStoreData);
