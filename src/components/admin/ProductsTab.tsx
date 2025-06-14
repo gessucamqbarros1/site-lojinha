@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Product } from '@/components/ui/ProductCard';
 import ProductList from './ProductList';
@@ -76,12 +75,11 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
       
       console.log('Product auto-saved successfully');
       
-      // Fixed TypeScript error: properly type the callback function
-      setProductList((prevProducts: Product[]) => 
-        prevProducts.map(p => 
-          p.id === editingProduct.id ? { ...editingProduct, purchaseLink: whatsappLink } : p
-        )
+      // Fixed TypeScript error: update productList directly with new array
+      const updatedProducts = productList.map(p => 
+        p.id === editingProduct.id ? { ...editingProduct, purchaseLink: whatsappLink } : p
       );
+      setProductList(updatedProducts);
       
     } catch (error) {
       console.error('Error auto-saving product:', error);
