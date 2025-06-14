@@ -1,10 +1,69 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { storeSettings } from '@/lib/mockData';
+import { supabase } from '@/integrations/supabase/client';
+
+interface StoreSettings {
+  name: string;
+  logo: string;
+  banner: string;
+  about: string;
+  whatsapp_number: string;
+}
 
 const About = () => {
+  const [storeSettings, setStoreSettings] = useState<StoreSettings>({
+    name: 'Minha Lojinha',
+    logo: '/placeholder.svg',
+    banner: '',
+    about: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+    whatsapp_number: ''
+  });
+
+  useEffect(() => {
+    const fetchStoreSettings = async () => {
+      try {
+        console.log('About: Fetching store settings...');
+        
+        const { data, error } = await supabase
+          .from('store_settings')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(1);
+          
+        if (error) {
+          console.error('About: Error fetching store settings:', error);
+          return;
+        }
+        
+        console.log('About: Store settings fetched:', data);
+        
+        if (data && data.length > 0) {
+          const settings = data[0];
+          setStoreSettings({
+            name: settings.name || 'Minha Lojinha',
+            logo: settings.logo || '/placeholder.svg',
+            banner: settings.banner || '',
+            about: settings.about || 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+            whatsapp_number: settings.whatsapp_number || ''
+          });
+        }
+      } catch (error) {
+        console.error('About: Error in fetchStoreSettings:', error);
+      }
+    };
+    
+    fetchStoreSettings();
+  }, []);
+
+  const generateWhatsAppLink = () => {
+    const whatsappNumber = storeSettings.whatsapp_number || '5511999999999';
+    const message = `Olá! Gostaria de saber mais sobre ${storeSettings.name}.`;
+    const encodedMessage = encodeURIComponent(message);
+    return `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -36,7 +95,7 @@ const About = () => {
                 </h2>
                 <div className="vintage-divider w-24 my-4"></div>
                 <p className="mb-4 text-vintage-dark/80">
-                  A Minha Lojinha nasceu do amor pela beleza e pela estética provençal francesa. 
+                  A {storeSettings.name} nasceu do amor pela beleza e pela estética provençal francesa. 
                   Nossa fundadora sempre foi apaixonada por produtos de beleza e acessórios 
                   com design elegante e refinado.
                 </p>
@@ -54,7 +113,7 @@ const About = () => {
               <div className="order-1 md:order-2">
                 <div className="aspect-square rounded-md overflow-hidden shadow-lg border border-vintage-beige/30">
                   <img 
-                    src="/placeholder.svg" 
+                    src={storeSettings.banner || "/placeholder.svg"} 
                     alt="Nossa história" 
                     className="w-full h-full object-cover"
                   />
@@ -77,14 +136,9 @@ const About = () => {
                 Entre em contato conosco através de nossas redes sociais ou WhatsApp.
               </p>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Instagram */}
-                <a 
-                  href={storeSettings.contact.instagram} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="vintage-card p-6 hover:border-primary/30 transition-colors flex flex-col items-center"
-                >
+                <div className="vintage-card p-6 hover:border-primary/30 transition-colors flex flex-col items-center">
                   <div className="w-12 h-12 rounded-full bg-vintage-pink/20 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-vintage-brown">
                       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -93,12 +147,20 @@ const About = () => {
                     </svg>
                   </div>
                   <h3 className="font-playfair text-lg mb-2 text-vintage-brown">Instagram</h3>
-                  <p className="text-sm text-vintage-dark/70">Siga-nos para novidades e dicas</p>
-                </a>
+                  <p className="text-sm text-vintage-dark/70 mb-4">Siga-nos para novidades e dicas</p>
+                  <input
+                    type="text"
+                    placeholder="Cole o link do seu Instagram aqui"
+                    className="vintage-input w-full text-sm"
+                  />
+                  <p className="text-xs text-vintage-dark/60 mt-2">
+                    Configure o link do Instagram nas configurações da loja
+                  </p>
+                </div>
                 
                 {/* WhatsApp */}
                 <a 
-                  href={storeSettings.contact.whatsapp} 
+                  href={generateWhatsAppLink()} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="vintage-card p-6 hover:border-primary/30 transition-colors flex flex-col items-center"
@@ -110,21 +172,11 @@ const About = () => {
                   </div>
                   <h3 className="font-playfair text-lg mb-2 text-vintage-brown">WhatsApp</h3>
                   <p className="text-sm text-vintage-dark/70">Atendimento direto e rápido</p>
-                </a>
-                
-                {/* Email */}
-                <a 
-                  href={`mailto:${storeSettings.contact.email}`} 
-                  className="vintage-card p-6 hover:border-primary/30 transition-colors flex flex-col items-center"
-                >
-                  <div className="w-12 h-12 rounded-full bg-vintage-pink/20 flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-vintage-brown">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                      <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                  </div>
-                  <h3 className="font-playfair text-lg mb-2 text-vintage-brown">Email</h3>
-                  <p className="text-sm text-vintage-dark/70">{storeSettings.contact.email}</p>
+                  {storeSettings.whatsapp_number && (
+                    <p className="text-xs text-vintage-dark/60 mt-2">
+                      {storeSettings.whatsapp_number}
+                    </p>
+                  )}
                 </a>
               </div>
             </div>
