@@ -485,7 +485,12 @@ const Admin = () => {
   const handleSaveSettings = async () => {
     try {
       setSaving(true);
-      console.log('Attempting to save settings...');
+      console.log('Attempting to save settings...', storeData);
+      
+      // Validate required fields
+      if (!storeData.name || storeData.name.trim() === '') {
+        throw new Error('Nome da loja é obrigatório');
+      }
       
       // First try to get existing settings
       const { data: existingData, error: fetchError } = await supabase
@@ -495,29 +500,33 @@ const Admin = () => {
       
       if (fetchError) {
         console.error('Error fetching existing data:', fetchError);
-        throw fetchError;
+        throw new Error(`Erro ao buscar configurações: ${fetchError.message}`);
       }
       
       console.log('Existing data check:', existingData);
+      
+      const settingsPayload = {
+        name: storeData.name.trim(),
+        logo: storeData.logo || null,
+        banner: storeData.banner || null,
+        about: storeData.about || null,
+        whatsapp_number: storeData.whatsapp_number || null,
+        updated_at: new Date().toISOString(),
+      };
+      
+      console.log('Settings payload:', settingsPayload);
       
       if (existingData) {
         // Update existing record
         console.log('Updating existing record with ID:', existingData.id);
         const { error } = await supabase
           .from('store_settings')
-          .update({
-            name: storeData.name,
-            logo: storeData.logo,
-            banner: storeData.banner,
-            about: storeData.about,
-            whatsapp_number: storeData.whatsapp_number,
-            updated_at: new Date().toISOString(),
-          })
+          .update(settingsPayload)
           .eq('id', existingData.id);
         
         if (error) {
           console.error('Error updating settings:', error);
-          throw error;
+          throw new Error(`Erro ao atualizar: ${error.message}`);
         }
         console.log('Settings updated successfully');
       } else {
@@ -526,29 +535,27 @@ const Admin = () => {
         const { error } = await supabase
           .from('store_settings')
           .insert({
-            name: storeData.name,
-            logo: storeData.logo,
-            banner: storeData.banner,
-            about: storeData.about,
-            whatsapp_number: storeData.whatsapp_number,
+            ...settingsPayload,
+            created_at: new Date().toISOString(),
           });
         
         if (error) {
           console.error('Error inserting settings:', error);
-          throw error;
+          throw new Error(`Erro ao criar: ${error.message}`);
         }
         console.log('Settings inserted successfully');
       }
       
       toast({
         title: "Configurações salvas",
-        description: "As configurações da loja foram atualizadas",
+        description: "As configurações da loja foram atualizadas com sucesso",
       });
     } catch (error) {
       console.error('Error saving settings:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
       toast({
         title: "Erro ao salvar configurações",
-        description: `Erro de conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
