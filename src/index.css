@@ -379,15 +379,6 @@
     overflow: hidden;
     /* Sem transform, transition, hover ou before/after */
   }
-  
-  .vintage-card-sm {
-    min-width: 140px !important;
-    max-width: 178px !important;
-    width: 100% !important;
-    padding: 0 !important;
-    border-radius: 0.7rem !important;
-    font-size: 12px !important;
-  }
 }
 
 /* Enhanced animations and keyframes */
