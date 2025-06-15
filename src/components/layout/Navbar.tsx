@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User } from 'lucide-react';
@@ -133,7 +132,7 @@ const Navbar = () => {
           </Link>
         </div>
         
-        {/* Mobile navigation - Full screen overlay with complete white background */}
+        {/* Mobile navigation - Optimized compact menu */}
         {isOpen && (
           <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col animate-fade-in">
             <div className="p-4 flex justify-end bg-white">
@@ -145,10 +144,10 @@ const Navbar = () => {
                 <X size={24} className="text-vintage-brown" />
               </button>
             </div>
-            <div className="flex flex-col items-center justify-center flex-1 space-y-8 text-2xl bg-white px-8">
+            <div className="flex flex-col items-center justify-center flex-1 space-y-4 text-xl bg-white px-6">
               <Link 
                 to="/" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-3 text-center rounded-lg border border-vintage-beige/30 hover:border-primary/50" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.1s' }}
               >
@@ -156,7 +155,7 @@ const Navbar = () => {
               </Link>
               <Link 
                 to="/products" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-3 text-center rounded-lg border border-vintage-beige/30 hover:border-primary/50" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.2s' }}
               >
@@ -164,7 +163,7 @@ const Navbar = () => {
               </Link>
               <Link 
                 to="/about" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-3 text-center rounded-lg border border-vintage-beige/30 hover:border-primary/50" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.3s' }}
               >
@@ -172,7 +171,7 @@ const Navbar = () => {
               </Link>
               <Link 
                 to="/admin" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-3 text-center rounded-lg border border-vintage-beige/30 hover:border-primary/50" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.4s' }}
               >
