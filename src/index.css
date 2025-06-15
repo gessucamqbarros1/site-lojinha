@@ -379,6 +379,19 @@
     overflow: hidden;
     /* Sem transform, transition, hover ou before/after */
   }
+  
+  /* NEW: Glass morphism for premium banner */
+  .glass-premium-banner {
+    background: rgba(250,249,246,0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    box-shadow: 0 8px 36px rgba(0,0,0,0.17), 0 1.5px 2.5px rgba(139,111,97,0.12);
+    transition: background 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .glass-premium-banner:hover {
+    background: rgba(250,249,246,0.27);
+  }
 }
 
 /* Enhanced animations and keyframes */
