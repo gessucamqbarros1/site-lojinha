@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -8,6 +7,10 @@ import ProductImageGallery from '@/components/ui/ProductImageGallery';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import SEOHead from "@/components/SEO/SEOHead";
+import { ProductJsonLd, BreadcrumbsJsonLd } from "@/components/SEO/StructuredData";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import { slugify } from "@/utils/slugify";
 
 const Product = () => {
   const { id } = useParams<{ id: string }>();
@@ -150,12 +153,45 @@ const Product = () => {
   const productImages = product.images && product.images.length > 0 ? product.images : [product.image];
   const isOnSale = product.discount_percentage && product.discount_percentage > 0;
   
+  // Breadcrumbs for SEO
+  const crumbs = [
+    { name: "Início", url: "/" },
+    { name: "Produtos", url: "/products" },
+    product
+      ? { name: product.name, url: `/product/${product.id}` }
+      : { name: "Detalhes", url: "#" },
+  ];
+
+  const title = product ? `${product.name} - ${product.category} | Minha Lojinha` : "Produto | Minha Lojinha";
+  const description = product ? product.description : "Detalhes do produto";
+  const image = product?.image || "/placeholder.svg";
+  const canonicalUrl = product ? window.location.origin + `/product/${product.id}` : window.location.href;
+
+  // Dados estruturados
+  const productStructured = product
+    ? {
+        name: product.name,
+        description: product.description,
+        image: product.images?.length ? product.images : [product.image],
+        price: product.price,
+        original_price: product.original_price,
+        currency: "BRL",
+        url: canonicalUrl,
+        category: product.category,
+      }
+    : undefined;
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEOHead title={title} description={description} image={image} url={canonicalUrl} />
+      {productStructured && <ProductJsonLd product={productStructured} />}
+      <BreadcrumbsJsonLd items={crumbs} />
       <Navbar />
       
       <main className="flex-grow vintage-section">
         <div className="vintage-container">
+          <Breadcrumbs crumbs={crumbs} />
+
           <Link to="/products" className="inline-flex items-center text-vintage-brown hover:text-primary mb-6 transition-colors">
             <ArrowLeft size={18} className="mr-1" />
             Voltar para produtos

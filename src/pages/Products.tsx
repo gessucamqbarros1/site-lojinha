@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -9,6 +8,7 @@ import Newsletter from '@/components/ui/Newsletter';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/components/ui/ProductCard';
+import SEOHead from "@/components/SEO/SEOHead";
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -19,6 +19,10 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<{ minPrice?: number; maxPrice?: number; category?: string }>({});
   const { toast } = useToast();
+  const title = "Nossos Produtos | Minha Lojinha";
+  const description = "Conheça nossos produtos de beleza e acessórios estilo provençal francês. Produtos exclusivos, promoções e novidades da sua lojinha favorita!";
+  const url = typeof window !== "undefined" ? window.location.origin + "/products" : "";
+  const image = "/opengraph-image-p98pqg.png";
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -134,6 +138,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEOHead title={title} description={description} url={url} image={image} />
       <Navbar />
       
       {/* Hero Section with Search */}
