@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/components/ui/ProductCard';
 import SEOHead from "@/components/SEO/SEOHead";
+import CategoryFilter from "@/components/ui/CategoryFilter";
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -165,22 +166,12 @@ const Products = () => {
       {/* Category Filters */}
       <section className="vintage-section py-4">
         <div className="vintage-container">
-          <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4">
-            {categories.map((category, index) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-3 rounded-full text-sm md:text-base transition-all duration-300 transform hover:scale-105 animate-fade-up ${
-                  selectedCategory === category
-                    ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg'
-                    : 'bg-white/80 backdrop-blur-sm border border-vintage-beige/50 text-vintage-brown hover:bg-vintage-beige/30 hover:shadow-md'
-                }`}
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelect={setSelectedCategory}
+            products={products}
+          />
         </div>
       </section>
       

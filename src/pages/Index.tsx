@@ -5,6 +5,7 @@ import ProductCard from '@/components/ui/ProductCard';
 import { Product } from '@/components/ui/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import CategoryFilter from "@/components/ui/CategoryFilter";
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -105,8 +106,9 @@ const Index = () => {
     fetchData();
   }, [toast]);
 
-  const filteredProducts = selectedCategory === "Todos" 
-    ? products 
+  // Mover lógica de filtragem para cá para passar para CategoryFilter
+  const filteredProducts = selectedCategory === "Todos"
+    ? products
     : products.filter(product => product.category === selectedCategory);
 
   return (
@@ -145,21 +147,12 @@ const Index = () => {
       {/* Category Filters */}
       <section className="vintage-section pt-8 pb-4">
         <div className="vintage-container">
-          <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm md:text-base transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-primary text-white'
-                    : 'bg-vintage-beige/30 text-vintage-brown hover:bg-vintage-beige/50'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelect={setSelectedCategory}
+            products={products}
+          />
         </div>
       </section>
       
