@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Product } from '@/components/ui/ProductCard';
 import { useToast } from '@/hooks/use-toast';

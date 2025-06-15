@@ -8,29 +8,41 @@ import ProductsTab from '@/components/admin/ProductsTab';
 import SettingsTab from '@/components/admin/SettingsTab';
 import BackupTab from '@/components/admin/BackupTab';
 import { useAdminData } from '@/hooks/useAdminData';
+import { useAuth } from '@/hooks/useAuth';
 
 const Admin = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('products');
-  
+  const { user, loading, signOut } = useAuth();
   const adminData = useAdminData();
 
-  // Fetch data when logged in
+  // Fetch data when user is authenticated
   useEffect(() => {
-    if (isLoggedIn) {
+    if (user) {
       adminData.fetchProducts();
       adminData.fetchStoreSettings();
     }
-  }, [isLoggedIn]);
+  }, [user]);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  const handleLogout = () => {
-    setIsLoggedIn(false);
+  const handleLogout = async () => {
+    await signOut();
     setActiveTab('products');
   };
+
+  // Show loading while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-vintage-brown mx-auto mb-4"></div>
+            <p className="text-vintage-dark">Carregando...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   const renderAdminPanel = () => (
     <div className="vintage-container py-8">
@@ -90,7 +102,7 @@ const Admin = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
-        {isLoggedIn ? renderAdminPanel() : <AdminLogin onLogin={handleLogin} />}
+        {user ? renderAdminPanel() : <AdminLogin />}
       </main>
       <Footer />
     </div>

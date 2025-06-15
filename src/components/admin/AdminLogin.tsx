@@ -1,31 +1,24 @@
 
 import React, { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
-interface AdminLoginProps {
-  onLogin: () => void;
-}
-
-const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
+const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { toast } = useToast();
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const { signIn, signUp, loading } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (email === 'admin@example.com' && password === 'password') {
-      onLogin();
-      toast({
-        title: "Login realizado com sucesso",
-        description: "Bem-vindo ao painel administrativo",
-      });
+    if (isSignUp) {
+      if (password !== confirmPassword) {
+        return;
+      }
+      await signUp(email, password);
     } else {
-      toast({
-        title: "Erro de login",
-        description: "Email ou senha inválidos",
-        variant: "destructive",
-      });
+      await signIn(email, password);
     }
   };
 
@@ -33,9 +26,10 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     <div className="vintage-container py-12">
       <div className="max-w-md mx-auto vintage-card p-8">
         <h1 className="text-2xl font-playfair text-vintage-brown mb-6 text-center">
-          Acesso Administrativo
+          {isSignUp ? 'Criar Conta' : 'Acesso Administrativo'}
         </h1>
-        <form onSubmit={handleLogin}>
+        
+        <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-vintage-dark mb-1">
               Email
@@ -46,12 +40,12 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="vintage-input w-full"
-              placeholder="admin@example.com"
+              placeholder="seu@email.com"
               required
             />
           </div>
           
-          <div className="mb-6">
+          <div className="mb-4">
             <label htmlFor="password" className="block text-sm font-medium text-vintage-dark mb-1">
               Senha
             </label>
@@ -64,15 +58,48 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
               placeholder="Digite sua senha"
               required
             />
-            <p className="text-xs text-vintage-dark/60 mt-1">
-              (Use o email: admin@example.com e senha: password)
-            </p>
           </div>
+
+          {isSignUp && (
+            <div className="mb-4">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-vintage-dark mb-1">
+                Confirmar Senha
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="vintage-input w-full"
+                placeholder="Confirme sua senha"
+                required
+              />
+              {password !== confirmPassword && confirmPassword && (
+                <p className="text-xs text-red-600 mt-1">
+                  As senhas não coincidem
+                </p>
+              )}
+            </div>
+          )}
           
-          <button type="submit" className="vintage-button w-full py-2">
-            Entrar
+          <button 
+            type="submit" 
+            className="vintage-button w-full py-2 mb-4"
+            disabled={loading || (isSignUp && password !== confirmPassword)}
+          >
+            {loading ? 'Carregando...' : (isSignUp ? 'Criar Conta' : 'Entrar')}
           </button>
         </form>
+
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={() => setIsSignUp(!isSignUp)}
+            className="text-sm text-vintage-brown hover:underline"
+          >
+            {isSignUp ? 'Já tem uma conta? Faça login' : 'Não tem conta? Cadastre-se'}
+          </button>
+        </div>
       </div>
     </div>
   );
