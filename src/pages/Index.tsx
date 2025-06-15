@@ -77,17 +77,21 @@ const Index = () => {
         
         if (settingsError) {
           console.error('Index: Error fetching store settings:', settingsError);
-          // Don't throw error for store settings, just log it
         } else if (settingsData && settingsData.length > 0) {
           const settings = settingsData[0];
-          console.log('Index: Store settings loaded:', settings);
-          
+          let bannerUrl = settings.banner || '/placeholder.svg';
+          // Forçar cache-busting na imagem se vier url do supabase
+          if (
+            typeof bannerUrl === 'string' 
+            && bannerUrl.startsWith('https://tvxsvgtqplxypukvjoqf.supabase.co/')
+          ) {
+            bannerUrl = bannerUrl + `?t=${Date.now()}`;
+          }
           setStoreSettings({
             name: settings.name || 'Minha Lojinha',
-            banner: settings.banner || '/placeholder.svg'
+            banner: bannerUrl
           });
-          
-          console.log('Index: Banner URL set to:', settings.banner);
+          console.log('Index: Banner URL set to:', bannerUrl);
         } else {
           console.log('Index: No store settings found, using defaults');
         }
@@ -115,7 +119,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Hero Banner Section (ALTURA MAIS REDUZIDA, mas não mínima) */}
+      {/* Hero Banner Section */}
       <section 
         className="relative bg-center bg-cover h-[22vh] sm:h-[26vh] md:h-[30vh] lg:h-[34vh]" 
         style={{ 
@@ -135,13 +139,19 @@ const Index = () => {
             </p>
           </div>
         </div>
-        
-        {/* Debug info - remove this after testing */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
-            Banner URL: {storeSettings.banner}
-          </div>
-        )}
+        {/* Debug info - sempre mostra a URL do banner para teste */}
+        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
+          Banner URL: {storeSettings.banner}
+          <br />
+          <a
+            href={storeSettings.banner}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            Abrir imagem
+          </a>
+        </div>
       </section>
       
       {/* Category Filters */}

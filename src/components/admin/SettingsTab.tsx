@@ -96,9 +96,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         description: "As configurações da loja foram atualizadas com sucesso. A página será atualizada automaticamente.",
       });
       
-      // Force a page refresh after a short delay to ensure changes are visible
+      // Força recarregar a página com cache bust nos banners/logo
       setTimeout(() => {
-        window.location.reload();
+        window.location.reload(true);
       }, 1500);
       
     } catch (error) {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User } from 'lucide-react';
@@ -24,33 +23,38 @@ const Navbar = () => {
     const fetchStoreSettings = async () => {
       try {
         console.log('Navbar: Fetching store settings...');
-        
         const { data, error } = await supabase
           .from('store_settings')
-          .select('name, logo')
+          .select('name, logo, banner')
           .order('created_at', { ascending: false })
           .limit(1);
-          
+
         if (error) {
           console.error('Navbar: Error fetching store settings:', error);
           return;
         }
-        
-        console.log('Navbar: Store settings fetched:', data);
-        
         if (data && data.length > 0) {
           const settings = data[0];
           console.log('Navbar: Setting store name to:', settings.name);
           console.log('Navbar: Setting logo to:', settings.logo);
-          
-          if (settings.name) setStoreName(settings.name);
-          if (settings.logo) setLogo(settings.logo);
+          // Sempre aplica cache busting na logo (evita logo antiga aparecer após atualização)
+          let finalLogo = settings.logo
+            ? (settings.logo.startsWith('https://tvxsvgtqplxypukvjoqf.supabase.co/') 
+                ? settings.logo + `?t=${Date.now()}`
+                : settings.logo)
+            : '/placeholder.svg';
+
+          setStoreName(settings.name || "Minha Lojinha");
+          setLogo(finalLogo);
+          // Extra: log do banner pelo menos no console se admin estiver debugando
+          if (settings.banner) {
+            console.log('Navbar: Banner atual configurado:', settings.banner);
+          }
         }
       } catch (error) {
         console.error('Navbar: Error in fetchStoreSettings:', error);
       }
     };
-    
     fetchStoreSettings();
     
     const subscription = supabase
