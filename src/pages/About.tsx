@@ -20,7 +20,7 @@ const About = () => {
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
     name: 'Minha Lojinha',
     logo: '/placeholder.svg',
-    banner: '',
+    banner: '/placeholder.svg',
     about: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
     whatsapp_number: '',
     instagram_link: ''
@@ -46,10 +46,12 @@ const About = () => {
         
         if (data && data.length > 0) {
           const settings = data[0];
+          console.log('About: Banner URL:', settings.banner);
+          
           setStoreSettings({
             name: settings.name || 'Minha Lojinha',
             logo: settings.logo || '/placeholder.svg',
-            banner: settings.banner || '',
+            banner: settings.banner || '/placeholder.svg',
             about: settings.about || 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
             whatsapp_number: settings.whatsapp_number || '',
             instagram_link: settings.instagram_link || ''

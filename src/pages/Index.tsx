@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -21,25 +22,43 @@ const Index = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        console.log('Index: Fetching data...');
+        
         // Fetch products
         const { data: productsData, error: productsError } = await supabase
           .from('products')
-          .select('*');
+          .select('*')
+          .order('created_at', { ascending: false });
         
         if (productsError) {
+          console.error('Index: Error fetching products:', productsError);
           throw productsError;
         }
         
         if (productsData) {
-          const formattedProducts = productsData.map(product => ({
-            id: product.id.toString(), // Convert ID to string
-            name: product.name,
-            description: product.description,
-            price: parseFloat(product.price.toString()),
-            image: product.image || '/placeholder.svg',
-            category: product.category,
-            purchaseLink: product.purchase_link
-          }));
+          const formattedProducts = productsData.map(product => {
+            // Handle images array properly
+            let images: string[] = [];
+            if (Array.isArray(product.images)) {
+              images = product.images.filter((img): img is string => typeof img === 'string');
+            }
+            
+            // If no images in array but has main image, add it to array
+            if (images.length === 0 && product.image) {
+              images = [product.image];
+            }
+            
+            return {
+              id: product.id.toString(),
+              name: product.name,
+              description: product.description,
+              price: parseFloat(product.price.toString()),
+              image: images.length > 0 ? images[0] : '/placeholder.svg',
+              images: images,
+              category: product.category,
+              purchaseLink: product.purchase_link
+            };
+          });
           
           setProducts(formattedProducts);
           
@@ -48,24 +67,32 @@ const Index = () => {
           setCategories(uniqueCategories);
         }
 
-        // Fetch store settings
+        // Fetch store settings with better error handling
+        console.log('Index: Fetching store settings...');
         const { data: settingsData, error: settingsError } = await supabase
           .from('store_settings')
           .select('*')
-          .single();
+          .order('created_at', { ascending: false })
+          .limit(1);
         
-        if (settingsError && settingsError.code !== 'PGRST116') {
-          throw settingsError;
-        }
-        
-        if (settingsData) {
+        if (settingsError) {
+          console.error('Index: Error fetching store settings:', settingsError);
+          // Don't throw error for store settings, just log it
+        } else if (settingsData && settingsData.length > 0) {
+          const settings = settingsData[0];
+          console.log('Index: Store settings loaded:', settings);
+          
           setStoreSettings({
-            name: settingsData.name,
-            banner: settingsData.banner || '/placeholder.svg'
+            name: settings.name || 'Minha Lojinha',
+            banner: settings.banner || '/placeholder.svg'
           });
+          
+          console.log('Index: Banner URL set to:', settings.banner);
+        } else {
+          console.log('Index: No store settings found, using defaults');
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Index: Error fetching data:', error);
         toast({
           title: "Erro ao carregar dados",
           description: "Não foi possível carregar os dados. Tente novamente.",
@@ -107,6 +134,13 @@ const Index = () => {
             </p>
           </div>
         </div>
+        
+        {/* Debug info - remove this after testing */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
+            Banner URL: {storeSettings.banner}
+          </div>
+        )}
       </section>
       
       {/* Category Filters */}
