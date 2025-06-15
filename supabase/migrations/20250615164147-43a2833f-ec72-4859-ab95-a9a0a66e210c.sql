@@ -1,0 +1,4 @@
+
+ALTER TABLE store_settings
+ADD COLUMN IF NOT EXISTS story_text TEXT,
+ADD COLUMN IF NOT EXISTS story_image TEXT;

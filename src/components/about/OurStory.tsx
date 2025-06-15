@@ -4,9 +4,10 @@ import React from 'react';
 interface OurStoryProps {
   storeName: string;
   banner: string;
+  storyText?: string;
 }
 
-const OurStory: React.FC<OurStoryProps> = ({ storeName, banner }) => {
+const OurStory: React.FC<OurStoryProps> = ({ storeName, banner, storyText }) => {
   return (
     <section className="vintage-section">
       <div className="vintage-container">
@@ -16,21 +17,27 @@ const OurStory: React.FC<OurStoryProps> = ({ storeName, banner }) => {
               Nossa História
             </h2>
             <div className="vintage-divider w-24 my-4"></div>
-            <p className="mb-4 text-vintage-dark/80">
-              A {storeName} nasceu do amor pela beleza e pela estética provençal francesa. 
-              Nossa fundadora sempre foi apaixonada por produtos de beleza e acessórios 
-              com design elegante e refinado.
-            </p>
-            <p className="mb-4 text-vintage-dark/80">
-              Após anos trabalhando no mercado de cosméticos, ela decidiu criar 
-              um espaço onde pudesse compartilhar sua curadoria de produtos especiais, 
-              selecionados com carinho para clientes que valorizam qualidade e design.
-            </p>
-            <p className="text-vintage-dark/80">
-              Hoje, nossa missão é oferecer uma experiência de compra única, 
-              com produtos que combinam qualidade, estética e funcionalidade, 
-              em um ambiente virtual que reflete a elegância e o charme do estilo francês.
-            </p>
+            {storyText ? (
+              <div className="prose prose-vintage" dangerouslySetInnerHTML={{ __html: storyText }} />
+            ) : (
+              <>
+                <p className="mb-4 text-vintage-dark/80">
+                  A {storeName} nasceu do amor pela beleza e pela estética provençal francesa.
+                  Nossa fundadora sempre foi apaixonada por produtos de beleza e acessórios 
+                  com design elegante e refinado.
+                </p>
+                <p className="mb-4 text-vintage-dark/80">
+                  Após anos trabalhando no mercado de cosméticos, ela decidiu criar 
+                  um espaço onde pudesse compartilhar sua curadoria de produtos especiais, 
+                  selecionados com carinho para clientes que valorizam qualidade e design.
+                </p>
+                <p className="text-vintage-dark/80">
+                  Hoje, nossa missão é oferecer uma experiência de compra única, 
+                  com produtos que combinam qualidade, estética e funcionalidade, 
+                  em um ambiente virtual que reflete a elegância e o charme do estilo francês.
+                </p>
+              </>
+            )}
           </div>
           <div className="order-1 md:order-2">
             <div className="aspect-square rounded-md overflow-hidden shadow-lg border border-vintage-beige/30">

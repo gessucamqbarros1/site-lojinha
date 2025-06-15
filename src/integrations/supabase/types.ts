@@ -289,6 +289,8 @@ export type Database = {
           instagram_link: string | null
           logo: string | null
           name: string
+          story_image: string | null
+          story_text: string | null
           updated_at: string
           whatsapp_number: string | null
         }
@@ -317,6 +319,8 @@ export type Database = {
           instagram_link?: string | null
           logo?: string | null
           name?: string
+          story_image?: string | null
+          story_text?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -345,6 +349,8 @@ export type Database = {
           instagram_link?: string | null
           logo?: string | null
           name?: string
+          story_image?: string | null
+          story_text?: string | null
           updated_at?: string
           whatsapp_number?: string | null
         }

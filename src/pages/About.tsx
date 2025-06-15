@@ -15,6 +15,8 @@ interface StoreSettings {
   about_text?: string;
   whatsapp_number: string;
   instagram_link: string;
+  story_text?: string;
+  story_image?: string;
 }
 
 const About = () => {
@@ -25,7 +27,9 @@ const About = () => {
     about_headline: 'Sobre Nossa Loja',
     about_text: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
     whatsapp_number: '',
-    instagram_link: ''
+    instagram_link: '',
+    story_text: '', // novo
+    story_image: '', // novo
   });
 
   useEffect(() => {
@@ -52,14 +56,15 @@ const About = () => {
             about_headline: settings.about_headline || 'Sobre Nossa Loja',
             about_text: settings.about_text || 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
             whatsapp_number: settings.whatsapp_number || '',
-            instagram_link: settings.instagram_link || ''
+            instagram_link: settings.instagram_link || '',
+            story_text: settings.story_text || '',
+            story_image: settings.story_image || '',
           });
         }
       } catch (error) {
         console.error('About: Error in fetchStoreSettings:', error);
       }
     };
-
     fetchStoreSettings();
   }, []);
 
@@ -73,7 +78,8 @@ const About = () => {
         />
         <OurStory 
           storeName={storeSettings.name}
-          banner={storeSettings.banner}
+          banner={storeSettings.story_image || storeSettings.banner}
+          storyText={storeSettings.story_text}
         />
         <ContactSection 
           storeName={storeSettings.name}

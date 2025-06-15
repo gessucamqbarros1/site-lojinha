@@ -56,6 +56,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         about: storeData.about || null,
         whatsapp_number: storeData.whatsapp_number || null,
         instagram_link: storeData.instagram_link || null,
+        story_text: storeData.story_text || null,
+        story_image: storeData.story_image || null,
         updated_at: new Date().toISOString(),
       };
       
@@ -110,6 +112,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     } finally {
       setSaving(false);
     }
+  };
+
+  // Função simples para upload da imagem da "Nossa História" aproveitando a lógica do banner/logo ou um simples input text (url)
+  const handleStoryImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStoreData({ ...storeData, story_image: e.target.value });
   };
 
   return (
@@ -189,6 +196,40 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           <p className="text-xs text-vintage-dark/60 mt-1">
             Você pode usar HTML básico para formatação
           </p>
+        </div>
+        <div>
+          <h3 className="font-playfair text-base md:text-lg text-vintage-brown mb-3 mt-6">Seção "Nossa História"</h3>
+          <label htmlFor="story_text" className="block text-sm font-medium text-vintage-dark mb-1">
+            Texto da História
+          </label>
+          <textarea
+            id="story_text"
+            rows={4}
+            value={storeData.story_text || ''}
+            onChange={e => setStoreData({ ...storeData, story_text: e.target.value })}
+            className="vintage-input w-full text-sm md:text-base resize-none"
+            placeholder="Conte detalhes sobre a história da sua loja..."
+          />
+          <p className="text-xs text-vintage-dark/60 mt-1">
+            HTML básico permitido para formatação.
+          </p>
+          <label htmlFor="story_image" className="block text-sm font-medium text-vintage-dark mt-4 mb-1">
+            Imagem da História (url)
+          </label>
+          <input
+            id="story_image"
+            type="text"
+            value={storeData.story_image || ''}
+            onChange={handleStoryImageChange}
+            className="vintage-input w-full text-sm md:text-base"
+            placeholder="URL da imagem para ilustrar a história"
+          />
+          <p className="text-xs text-vintage-dark/60 mt-1">
+            Informe a URL da imagem (JPG, PNG, etc).
+          </p>
+          {storeData.story_image && (
+            <img className="rounded mt-2 max-h-32" src={storeData.story_image} alt="Preview História" />
+          )}
         </div>
         <div className="flex justify-end mt-6">
           <button
