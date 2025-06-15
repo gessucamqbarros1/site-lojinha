@@ -97,17 +97,23 @@
     @apply border-border;
   }
   
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     background-color: var(--theme-background) !important;
     color: var(--theme-foreground) !important;
     font-family: var(--theme-font-body), sans-serif !important;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow-x: hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--theme-font-heading), serif !important;
     font-weight: 500;
     color: var(--theme-foreground) !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   h1 {
@@ -125,12 +131,33 @@
   p {
     @apply leading-relaxed;
     color: var(--theme-foreground) !important;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  /* Premium scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--theme-background);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--theme-primary);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-accent);
   }
 }
 
 @layer components {
   .vintage-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   .vintage-card {
@@ -138,11 +165,30 @@
     border: 1px solid var(--theme-border) !important;
     border-radius: var(--theme-border-radius) !important;
     box-shadow: var(--theme-card-shadow) !important;
-    transition: box-shadow 300ms, background-color 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateY(0px);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .vintage-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   .vintage-card:hover {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 20px rgba(139, 111, 97, 0.1) !important;
+  }
+  
+  .vintage-card:hover::before {
+    left: 100%;
   }
   
   .vintage-input {
@@ -151,70 +197,270 @@
     background-color: var(--theme-card) !important;
     color: var(--theme-foreground) !important;
     @apply px-4 py-2 text-sm;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
   }
   
   .vintage-input:focus {
     border-color: var(--theme-primary) !important;
     outline: none;
-    box-shadow: 0 0 0 1px var(--theme-primary) !important;
+    box-shadow: 0 0 0 3px rgba(139, 111, 97, 0.1), 0 0 20px rgba(139, 111, 97, 0.05) !important;
+    transform: translateY(-2px);
   }
   
   .vintage-button {
-    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
-    background-color: var(--theme-primary) !important;
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-medium shadow transition-all focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent)) !important;
     color: var(--theme-background) !important;
     border-radius: var(--theme-border-radius) !important;
+    position: relative;
+    overflow: hidden;
+    transform: translateY(0px);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .vintage-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
   }
   
   .vintage-button:hover {
-    opacity: 0.9;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(139, 111, 97, 0.4);
+  }
+  
+  .vintage-button:hover::before {
+    left: 100%;
+  }
+  
+  .vintage-button:active {
+    transform: translateY(-1px);
   }
   
   .vintage-button-secondary {
-    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
-    background-color: var(--theme-secondary) !important;
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-medium shadow transition-all focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
+    background: linear-gradient(135deg, var(--theme-secondary), var(--theme-accent)) !important;
     color: var(--theme-foreground) !important;
     border-radius: var(--theme-border-radius) !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateY(0px);
   }
   
   .vintage-button-secondary:hover {
-    opacity: 0.9;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(220, 200, 182, 0.4);
   }
   
   .vintage-button-outline {
-    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
     background-color: transparent !important;
-    border: 1px solid var(--theme-border) !important;
+    border: 2px solid var(--theme-border) !important;
     color: var(--theme-primary) !important;
     border-radius: var(--theme-border-radius) !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .vintage-button-outline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background: var(--theme-primary);
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: -1;
   }
   
   .vintage-button-outline:hover {
-    background-color: var(--theme-muted) !important;
+    color: var(--theme-background) !important;
+    border-color: var(--theme-primary) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 111, 97, 0.3);
+  }
+  
+  .vintage-button-outline:hover::before {
+    width: 100%;
   }
   
   .vintage-divider {
-    height: 1px;
+    height: 2px;
     width: 100%;
     background: linear-gradient(to right, transparent, var(--theme-border), transparent);
-    margin: 1.5rem 0;
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .vintage-divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--theme-primary), transparent);
+    animation: shimmer 3s infinite;
   }
   
   .vintage-section {
-    @apply py-12 md:py-16;
+    @apply py-16 md:py-20;
     background-color: var(--theme-background) !important;
+    transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   /* Navigation and layout components */
   .navbar {
-    background-color: var(--theme-card) !important;
+    background: linear-gradient(135deg, var(--theme-card), rgba(255,255,255,0.9)) !important;
     border-bottom: 1px solid var(--theme-border) !important;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
   
   .footer {
-    background-color: var(--theme-card) !important;
+    background: linear-gradient(135deg, var(--theme-card), rgba(255,255,255,0.95)) !important;
     border-top: 1px solid var(--theme-border) !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  /* Premium link hover effects */
+  .premium-link {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .premium-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--theme-primary), var(--theme-accent));
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .premium-link:hover::after {
+    width: 100%;
+  }
+  
+  .premium-link:hover {
+    transform: translateY(-1px);
+    color: var(--theme-primary) !important;
+  }
+}
+
+/* Premium animations and keyframes */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes accordion-down {
+  from: { 
+    height: 0;
+    opacity: 0;
+  }
+  to: { 
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from: { 
+    height: var(--radix-accordion-content-height);
+    opacity: 1;
+  }
+  to: { 
+    height: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fade-up {
+  0% { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
   }
 }
 
@@ -275,5 +521,71 @@
   
   .border-secondary {
     border-color: var(--theme-secondary) !important;
+  }
+  
+  /* Premium utility classes */
+  .animate-fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .animate-fade-up {
+    animation: fade-up 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .animate-slide-in-left {
+    animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
+  }
+  
+  .animate-accordion-down {
+    animation: accordion-down 0.3s ease-out;
+  }
+  
+  .animate-accordion-up {
+    animation: accordion-up 0.3s ease-out;
+  }
+  
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  }
+  
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Enhanced mobile animations */
+@media (max-width: 768px) {
+  .vintage-card:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+  
+  .vintage-button:hover {
+    transform: translateY(-2px);
   }
 }
