@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User } from 'lucide-react';
@@ -144,7 +145,7 @@ const Navbar = () => {
                 <X size={20} className="text-vintage-brown" />
               </button>
             </div>
-            <div className="flex flex-col items-center justify-center flex-1 space-y-2 text-lg bg-white px-4">
+            <div className="flex flex-col items-center justify-center flex-1 space-y-2 text-lg bg-white px-8 max-w-xs mx-auto w-full">
               <Link 
                 to="/" 
                 className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-2 text-center rounded-lg border border-vintage-beige/30 hover:border-primary/50" 
