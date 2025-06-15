@@ -57,42 +57,36 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            asChild
             aria-disabled={currentPage === 1}
             tabIndex={currentPage === 1 ? -1 : 0}
             onClick={() => onChange(clamp(currentPage - 1, 1, totalPages))}
           />
         </PaginationItem>
 
-        {showNumbers && pages.map((page, i) => (
-          <React.Fragment key={page}>
-            {i > 0 && page - pages[i - 1] > 1 && (
+        {showNumbers &&
+          pages.map((page, i) => (
+            <React.Fragment key={page}>
+              {i > 0 && page - pages[i - 1] > 1 && (
+                <PaginationItem>
+                  <span className="px-2 text-gray-400">...</span>
+                </PaginationItem>
+              )}
               <PaginationItem>
-                <span className="px-2 text-gray-400">...</span>
-              </PaginationItem>
-            )}
-            <PaginationItem>
-              <PaginationLink
-                isActive={currentPage === page}
-                aria-label={`Página ${page}`}
-                onClick={() => onChange(page)}
-                tabIndex={currentPage === page ? -1 : 0}
-                asChild
-              >
-                <button
-                  type="button"
-                  className={currentPage === page ? "font-bold" : ""}
+                <PaginationLink
+                  isActive={currentPage === page}
+                  aria-label={`Página ${page}`}
+                  onClick={() => onChange(page)}
+                  tabIndex={currentPage === page ? -1 : 0}
+                  // Removido asChild
                 >
                   {page}
-                </button>
-              </PaginationLink>
-            </PaginationItem>
-          </React.Fragment>
-        ))}
+                </PaginationLink>
+              </PaginationItem>
+            </React.Fragment>
+          ))}
 
         <PaginationItem>
           <PaginationNext
-            asChild
             aria-disabled={currentPage === totalPages}
             tabIndex={currentPage === totalPages ? -1 : 0}
             onClick={() => onChange(clamp(currentPage + 1, 1, totalPages))}
@@ -104,4 +98,3 @@ const ProductPagination: React.FC<ProductPaginationProps> = ({
 };
 
 export default ProductPagination;
-
