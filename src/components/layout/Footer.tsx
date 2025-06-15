@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,6 +6,7 @@ interface StoreSettings {
   name: string;
   whatsapp_number: string;
   instagram_link: string;
+  about_text?: string;
 }
 
 const Footer = () => {
@@ -14,38 +14,37 @@ const Footer = () => {
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
     name: 'Minha Lojinha',
     whatsapp_number: '',
-    instagram_link: ''
+    instagram_link: '',
+    about_text: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.'
   });
 
   useEffect(() => {
     const fetchStoreSettings = async () => {
       try {
-        console.log('Footer: Fetching store settings...');
-        
         const { data, error } = await supabase
           .from('store_settings')
-          .select('name, whatsapp_number, instagram_link')
+          .select('name, whatsapp_number, instagram_link, about_text')
           .order('created_at', { ascending: false })
           .limit(1);
-          
+
         if (error) {
           console.error('Footer: Error fetching store settings:', error);
           return;
         }
-        
+
         if (data && data.length > 0) {
           const settings = data[0];
           setStoreSettings({
             name: settings.name || 'Minha Lojinha',
             whatsapp_number: settings.whatsapp_number || '',
-            instagram_link: settings.instagram_link || ''
+            instagram_link: settings.instagram_link || '',
+            about_text: settings.about_text || 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.'
           });
         }
       } catch (error) {
         console.error('Footer: Error in fetchStoreSettings:', error);
       }
     };
-    
     fetchStoreSettings();
   }, []);
 
@@ -64,8 +63,7 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-playfair font-medium mb-4 text-vintage-brown">{storeSettings.name}</h3>
             <p className="text-sm text-vintage-dark/80 mb-4">
-              Uma boutique online que oferece produtos de beleza e acessórios selecionados 
-              com cuidado, para uma experiência de compra exclusiva e elegante.
+              {storeSettings.about_text}
             </p>
           </div>
           

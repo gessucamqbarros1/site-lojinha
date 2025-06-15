@@ -11,7 +11,8 @@ interface StoreSettings {
   name: string;
   logo: string;
   banner: string;
-  about: string;
+  about_headline?: string;
+  about_text?: string;
   whatsapp_number: string;
   instagram_link: string;
 }
@@ -21,7 +22,8 @@ const About = () => {
     name: 'Minha Lojinha',
     logo: '/placeholder.svg',
     banner: '/placeholder.svg',
-    about: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+    about_headline: 'Sobre Nossa Loja',
+    about_text: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
     whatsapp_number: '',
     instagram_link: ''
   });
@@ -30,29 +32,25 @@ const About = () => {
     const fetchStoreSettings = async () => {
       try {
         console.log('About: Fetching store settings...');
-        
         const { data, error } = await supabase
           .from('store_settings')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(1);
-          
+
         if (error) {
           console.error('About: Error fetching store settings:', error);
           return;
         }
-        
-        console.log('About: Store settings fetched:', data);
-        
+
         if (data && data.length > 0) {
           const settings = data[0];
-          console.log('About: Banner URL:', settings.banner);
-          
           setStoreSettings({
             name: settings.name || 'Minha Lojinha',
             logo: settings.logo || '/placeholder.svg',
             banner: settings.banner || '/placeholder.svg',
-            about: settings.about || 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+            about_headline: settings.about_headline || 'Sobre Nossa Loja',
+            about_text: settings.about_text || 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
             whatsapp_number: settings.whatsapp_number || '',
             instagram_link: settings.instagram_link || ''
           });
@@ -61,32 +59,28 @@ const About = () => {
         console.error('About: Error in fetchStoreSettings:', error);
       }
     };
-    
+
     fetchStoreSettings();
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
       <main className="flex-grow">
         <AboutHero 
-          storeName={storeSettings.name}
-          about={storeSettings.about}
+          headline={storeSettings.about_headline || 'Sobre Nossa Loja'}
+          about={storeSettings.about_text || ''}
         />
-        
         <OurStory 
           storeName={storeSettings.name}
           banner={storeSettings.banner}
         />
-        
         <ContactSection 
           storeName={storeSettings.name}
           instagramLink={storeSettings.instagram_link}
           whatsappNumber={storeSettings.whatsapp_number}
         />
       </main>
-      
       <Footer />
     </div>
   );
