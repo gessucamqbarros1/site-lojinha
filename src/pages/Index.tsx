@@ -6,23 +6,25 @@ import { Product } from '@/components/ui/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+const DEFAULT_STORE_SETTINGS = {
+  name: 'Minha Lojinha',
+  banner: '/placeholder.svg',
+  hero_headline: 'Gessica Cosméticos e Acessórios',
+  hero_headline_color: '#44342f',
+  hero_headline_font: "'Playfair Display', serif",
+  hero_headline_size: '2.5rem',
+  hero_headline_weight: '500',
+  hero_subheadline: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+  hero_subheadline_color: '#44342f',
+  hero_subheadline_font: 'inherit',
+  hero_subheadline_size: '1.2rem',
+};
+
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(['Todos']);
-  const [storeSettings, setStoreSettings] = useState({
-    name: 'Minha Lojinha',
-    banner: '/placeholder.svg',
-    hero_headline: 'Minha Lojinha',
-    hero_headline_color: '#000',
-    hero_headline_font: 'Playfair Display',
-    hero_headline_size: '48px',
-    hero_headline_weight: '500',
-    hero_subheadline: 'Produtos de beleza e acessórios com estilo único e elegante',
-    hero_subheadline_color: '#000',
-    hero_subheadline_font: 'Playfair Display',
-    hero_subheadline_size: '16px',
-  });
+  const [storeSettings, setStoreSettings] = useState({ ...DEFAULT_STORE_SETTINGS, logo: '/placeholder.svg' });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -30,32 +32,23 @@ const Index = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        console.log('Index: Fetching data...');
-        
         // Fetch products
         const { data: productsData, error: productsError } = await supabase
           .from('products')
           .select('*')
           .order('created_at', { ascending: false });
-        
-        if (productsError) {
-          console.error('Index: Error fetching products:', productsError);
-          throw productsError;
-        }
-        
+
+        if (productsError) throw productsError;
+
         if (productsData) {
           const formattedProducts = productsData.map(product => {
-            // Handle images array properly
             let images: string[] = [];
             if (Array.isArray(product.images)) {
               images = product.images.filter((img): img is string => typeof img === 'string');
             }
-            
-            // If no images in array but has main image, add it to array
             if (images.length === 0 && product.image) {
               images = [product.image];
             }
-            
             return {
               id: product.id.toString(),
               name: product.name,
@@ -67,49 +60,37 @@ const Index = () => {
               purchaseLink: product.purchase_link
             };
           });
-          
+
           setProducts(formattedProducts);
-          
-          // Extract unique categories from products
           const uniqueCategories = ['Todos', ...new Set(formattedProducts.map(p => p.category))];
           setCategories(uniqueCategories);
         }
 
-        // Fetch store settings with better error handling
-        console.log('Index: Fetching store settings...');
+        // Fetch store settings
         const { data: settingsData, error: settingsError } = await supabase
           .from('store_settings')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(1);
-        
-        if (settingsError) {
-          console.error('Index: Error fetching store settings:', settingsError);
-          // Don't throw error for store settings, just log it
-        } else if (settingsData && settingsData.length > 0) {
-          const settings = settingsData[0];
-          console.log('Index: Store settings loaded:', settings);
-          
+
+        if (!settingsError && settingsData && settingsData.length > 0) {
+          const s = settingsData[0];
           setStoreSettings({
-            name: settings.name || 'Minha Lojinha',
-            banner: settings.banner || '/placeholder.svg',
-            hero_headline: settings.hero_headline || 'Minha Lojinha',
-            hero_headline_color: settings.hero_headline_color || '#000',
-            hero_headline_font: settings.hero_headline_font || 'Playfair Display',
-            hero_headline_size: settings.hero_headline_size || '48px',
-            hero_headline_weight: settings.hero_headline_weight || '500',
-            hero_subheadline: settings.hero_subheadline || "Produtos de beleza e acessórios com estilo único e elegante",
-            hero_subheadline_color: settings.hero_subheadline_color || '#000',
-            hero_subheadline_font: settings.hero_subheadline_font || 'Playfair Display',
-            hero_subheadline_size: settings.hero_subheadline_size || '16px',
+            name: s.name || DEFAULT_STORE_SETTINGS.name,
+            banner: s.banner || DEFAULT_STORE_SETTINGS.banner,
+            hero_headline: s.hero_headline || DEFAULT_STORE_SETTINGS.hero_headline,
+            hero_headline_color: s.hero_headline_color || DEFAULT_STORE_SETTINGS.hero_headline_color,
+            hero_headline_font: s.hero_headline_font || DEFAULT_STORE_SETTINGS.hero_headline_font,
+            hero_headline_size: s.hero_headline_size || DEFAULT_STORE_SETTINGS.hero_headline_size,
+            hero_headline_weight: s.hero_headline_weight || DEFAULT_STORE_SETTINGS.hero_headline_weight,
+            hero_subheadline: s.hero_subheadline || DEFAULT_STORE_SETTINGS.hero_subheadline,
+            hero_subheadline_color: s.hero_subheadline_color || DEFAULT_STORE_SETTINGS.hero_subheadline_color,
+            hero_subheadline_font: s.hero_subheadline_font || DEFAULT_STORE_SETTINGS.hero_subheadline_font,
+            hero_subheadline_size: s.hero_subheadline_size || DEFAULT_STORE_SETTINGS.hero_subheadline_size,
+            logo: s.logo || '/placeholder.svg'
           });
-          
-          console.log('Index: Banner URL set to:', settings.banner);
-        } else {
-          console.log('Index: No store settings found, using defaults');
         }
       } catch (error) {
-        console.error('Index: Error fetching data:', error);
         toast({
           title: "Erro ao carregar dados",
           description: "Não foi possível carregar os dados. Tente novamente.",
@@ -119,20 +100,20 @@ const Index = () => {
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, [toast]);
 
-  const filteredProducts = selectedCategory === "Todos" 
-    ? products 
+  const filteredProducts = selectedCategory === "Todos"
+    ? products
     : products.filter(product => product.category === selectedCategory);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
-      {/* Hero Banner Section: agora estilos e textos são customizáveis */}
-      <section 
+
+      {/* Hero Banner Section */}
+      <section
         className="relative bg-center bg-cover h-[18vh] sm:h-[22vh] md:h-[26vh] transition-all duration-300"
         style={{
           backgroundImage: `url(${storeSettings.banner})`,
@@ -148,7 +129,7 @@ const Index = () => {
               color: storeSettings.hero_headline_color,
               fontFamily: storeSettings.hero_headline_font,
               fontSize: storeSettings.hero_headline_size,
-              fontWeight: 500,
+              fontWeight: storeSettings.hero_headline_weight,
             }}
           >
             {storeSettings.hero_headline || storeSettings.name}
@@ -161,17 +142,16 @@ const Index = () => {
               fontSize: storeSettings.hero_subheadline_size,
             }}
           >
-            {storeSettings.hero_subheadline || "Produtos de beleza e acessórios com estilo único e elegante"}
+            {storeSettings.hero_subheadline}
           </p>
         </div>
-        {/* Debug info - remove this after testing */}
         {process.env.NODE_ENV === 'development' && (
           <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
             Banner URL: {storeSettings.banner}
           </div>
         )}
       </section>
-      
+
       {/* Category Filters */}
       <section className="vintage-section pt-8 pb-4">
         <div className="vintage-container">
@@ -192,7 +172,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
+
       {/* Products Grid */}
       <section className="vintage-section py-8 flex-grow">
         <div className="vintage-container">
@@ -229,7 +209,7 @@ const Index = () => {
           )}
         </div>
       </section>
-      
+
       {/* Features Section */}
       <section className="vintage-section bg-vintage-beige/20 py-12">
         <div className="vintage-container">
@@ -273,7 +253,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );
