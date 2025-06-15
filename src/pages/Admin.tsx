@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
@@ -125,9 +126,9 @@ const Admin = () => {
       {/* Mobile menu button */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="fixed top-4 left-4 z-[70] md:hidden bg-white p-3 rounded-lg shadow-2xl border-4 border-gray-800 transition-all duration-200 hover:bg-gray-50"
+        className="fixed top-4 left-4 z-[70] md:hidden bg-white p-2 rounded-lg shadow-lg transition-all duration-200 hover:bg-gray-50"
       >
-        <Menu size={20} className="text-vintage-brown" />
+        <Menu size={18} className="text-vintage-brown" />
       </button>
 
       <AdminSidebar 
