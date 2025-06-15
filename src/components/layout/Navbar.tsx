@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, Home, Package, Info } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const Navbar = () => {
@@ -132,56 +133,77 @@ const Navbar = () => {
           </Link>
         </div>
         
-        {/* Mobile navigation - Enhanced full screen overlay */}
+        {/* Mobile navigation - Enhanced sidebar menu */}
         {isOpen && (
-          <div className="md:hidden fixed inset-0 bg-white/95 backdrop-blur-lg z-50 flex flex-col animate-fade-in">
-            <div className="p-4 flex justify-end">
-              <button 
-                onClick={toggleMenu} 
-                aria-label="Close menu"
-                className="hover:scale-110 transition-transform duration-300 p-2 rounded-full hover:bg-vintage-beige/20"
-              >
-                <X size={24} className="text-vintage-brown" />
-              </button>
-            </div>
-            <div className="flex flex-col items-center justify-center flex-1 space-y-8 text-2xl">
-              <Link 
-                to="/" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
-                onClick={toggleMenu}
-                style={{ animationDelay: '0.1s' }}
-              >
-                Início
-              </Link>
-              <Link 
-                to="/products" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
-                onClick={toggleMenu}
-                style={{ animationDelay: '0.2s' }}
-              >
-                Produtos
-              </Link>
-              <Link 
-                to="/about" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
-                onClick={toggleMenu}
-                style={{ animationDelay: '0.3s' }}
-              >
-                Sobre
-              </Link>
-              <Link 
-                to="/admin" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
-                onClick={toggleMenu}
-                style={{ animationDelay: '0.4s' }}
-              >
-                Admin
-              </Link>
-            </div>
+          <>
+            {/* Dark backdrop */}
+            <div 
+              className="md:hidden fixed inset-0 bg-black/50 z-40 animate-fade-in"
+              onClick={toggleMenu}
+            ></div>
             
-            {/* Decorative elements */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-vintage-beige/10 to-vintage-pink/10 rounded-full blur-3xl opacity-30 animate-pulse-soft"></div>
-          </div>
+            {/* Sidebar menu */}
+            <div className="md:hidden fixed top-0 right-0 h-full w-80 bg-white z-50 shadow-2xl animate-slide-in-right">
+              {/* Header with close button */}
+              <div className="p-6 flex justify-between items-center border-b border-gray-100">
+                <h2 className="text-lg font-playfair font-medium text-vintage-brown">Menu</h2>
+                <button 
+                  onClick={toggleMenu} 
+                  aria-label="Close menu"
+                  className="hover:scale-110 transition-transform duration-300 p-2 rounded-full hover:bg-vintage-beige/20"
+                >
+                  <X size={24} className="text-vintage-brown" />
+                </button>
+              </div>
+              
+              {/* Menu items */}
+              <div className="p-6 space-y-4">
+                <Link 
+                  to="/" 
+                  className="flex items-center p-4 bg-vintage-beige/20 rounded-xl text-vintage-brown hover:bg-vintage-beige/40 hover:text-primary transition-all duration-300 hover:scale-105 hover:shadow-md group" 
+                  onClick={toggleMenu}
+                >
+                  <Home size={20} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="font-medium">Início</span>
+                </Link>
+                
+                <Link 
+                  to="/products" 
+                  className="flex items-center p-4 bg-vintage-beige/20 rounded-xl text-vintage-brown hover:bg-vintage-beige/40 hover:text-primary transition-all duration-300 hover:scale-105 hover:shadow-md group" 
+                  onClick={toggleMenu}
+                >
+                  <Package size={20} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="font-medium">Produtos</span>
+                </Link>
+                
+                <Link 
+                  to="/about" 
+                  className="flex items-center p-4 bg-vintage-beige/20 rounded-xl text-vintage-brown hover:bg-vintage-beige/40 hover:text-primary transition-all duration-300 hover:scale-105 hover:shadow-md group" 
+                  onClick={toggleMenu}
+                >
+                  <Info size={20} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="font-medium">Sobre</span>
+                </Link>
+                
+                <Link 
+                  to="/admin" 
+                  className="flex items-center p-4 bg-vintage-beige/20 rounded-xl text-vintage-brown hover:bg-vintage-beige/40 hover:text-primary transition-all duration-300 hover:scale-105 hover:shadow-md group" 
+                  onClick={toggleMenu}
+                >
+                  <User size={20} className="mr-3 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="font-medium">Admin</span>
+                </Link>
+              </div>
+              
+              {/* Decorative bottom section */}
+              <div className="absolute bottom-0 left-0 right-0 p-6">
+                <div className="w-full h-px bg-gradient-to-r from-transparent via-vintage-beige to-transparent"></div>
+                <div className="mt-4 text-center">
+                  <p className="text-sm text-vintage-brown/60 font-playfair italic">{storeName}</p>
+                </div>
+              </div>
+            </div>
+          </>
         )}
       </nav>
     </header>
