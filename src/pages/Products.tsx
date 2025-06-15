@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/components/ui/ProductCard';
 import SEOHead from "@/components/SEO/SEOHead";
 import CategoryFilter from "@/components/ui/CategoryFilter";
+import ProductPagination from "@/components/ui/ProductPagination";
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -19,6 +20,8 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<{ minPrice?: number; maxPrice?: number; category?: string }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const PRODUCTS_PER_PAGE = 8;
   const { toast } = useToast();
   const title = "Nossos Produtos | Minha Lojinha";
   const description = "Conheça nossos produtos de beleza e acessórios estilo provençal francês. Produtos exclusivos, promoções e novidades da sua lojinha favorita!";
@@ -137,6 +140,16 @@ const Products = () => {
     }
   };
 
+  // Cálculo de paginação
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const startIdx = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  const currentProducts = filteredProducts.slice(startIdx, startIdx + PRODUCTS_PER_PAGE);
+
+  useEffect(() => {
+    // Resetar para a primeira página se filtro muda
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery, filters]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEOHead title={title} description={description} url={url} image={image} />
@@ -190,6 +203,12 @@ const Products = () => {
             </p>
           )}
           
+          <div className="mb-3 text-center text-xs text-vintage-dark/60">
+            {filteredProducts.length === 0
+              ? "Nenhum produto encontrado"
+              : `Mostrando ${startIdx + 1}–${Math.min(startIdx + currentProducts.length, filteredProducts.length)} de ${filteredProducts.length} produto(s)`}
+          </div>
+          
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {[...Array(8)].map((_, index) => (
@@ -205,17 +224,24 @@ const Products = () => {
                   <p className="text-vintage-dark/70">Tente ajustar os filtros ou buscar por outros termos.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {filteredProducts.map((product, index) => (
-                    <div
-                      key={product.id}
-                      className="animate-fade-up"
-                      style={{ animationDelay: `${index * 0.1}s` }}
-                    >
-                      <ProductCard product={product} />
-                    </div>
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {currentProducts.map((product, index) => (
+                      <div
+                        key={product.id}
+                        className="animate-fade-up"
+                        style={{ animationDelay: `${(index % 4) * 0.1}s` }}
+                      >
+                        <ProductCard product={product} />
+                      </div>
+                    ))}
+                  </div>
+                  <ProductPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onChange={setCurrentPage}
+                  />
+                </>
               )}
             </>
           )}
