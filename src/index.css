@@ -45,6 +45,20 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Theme variables */
+    --theme-primary: #8B6F61;
+    --theme-secondary: #DCC8B6;
+    --theme-accent: #DCC8B6;
+    --theme-background: #FAF9F6;
+    --theme-foreground: #4A3D35;
+    --theme-muted: #F5F5F5;
+    --theme-card: #FFFFFF;
+    --theme-border: #DCC8B6;
+    --theme-font-heading: 'Playfair Display';
+    --theme-font-body: 'Inter';
+    --theme-border-radius: 0.5rem;
+    --theme-card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   }
 
   .dark {
@@ -84,11 +98,14 @@
   }
   
   body {
-    @apply bg-vintage-cream text-vintage-dark font-inter;
+    background-color: var(--theme-background);
+    color: var(--theme-foreground);
+    font-family: var(--theme-font-body), sans-serif;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-playfair font-medium;
+    font-family: var(--theme-font-heading), serif;
+    font-weight: 500;
   }
   
   h1 {
@@ -114,30 +131,107 @@
   }
   
   .vintage-card {
-    @apply bg-white border border-vintage-beige/30 rounded-md shadow-sm hover:shadow-md transition-shadow duration-300;
+    background-color: var(--theme-card);
+    border: 1px solid var(--theme-border);
+    border-radius: var(--theme-border-radius);
+    box-shadow: var(--theme-card-shadow);
+    transition: box-shadow 300ms;
+  }
+  
+  .vintage-card:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   }
   
   .vintage-input {
-    @apply rounded-md border border-vintage-beige bg-white px-4 py-2 text-sm focus:border-vintage-beige focus:ring-1 focus:ring-vintage-beige;
+    border-radius: var(--theme-border-radius);
+    border: 1px solid var(--theme-border);
+    background-color: var(--theme-card);
+    @apply px-4 py-2 text-sm;
+  }
+  
+  .vintage-input:focus {
+    border-color: var(--theme-primary);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--theme-primary);
   }
   
   .vintage-button {
-    @apply inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
+    background-color: var(--theme-primary);
+    color: var(--theme-background);
+    border-radius: var(--theme-border-radius);
+  }
+  
+  .vintage-button:hover {
+    opacity: 0.9;
   }
   
   .vintage-button-secondary {
-    @apply inline-flex items-center justify-center rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
+    background-color: var(--theme-secondary);
+    color: var(--theme-foreground);
+    border-radius: var(--theme-border-radius);
+  }
+  
+  .vintage-button-secondary:hover {
+    opacity: 0.9;
   }
   
   .vintage-button-outline {
-    @apply inline-flex items-center justify-center rounded-md border border-vintage-beige bg-transparent text-vintage-brown hover:bg-vintage-beige/10 px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
+    background-color: transparent;
+    border: 1px solid var(--theme-border);
+    color: var(--theme-primary);
+    border-radius: var(--theme-border-radius);
+  }
+  
+  .vintage-button-outline:hover {
+    background-color: var(--theme-muted);
   }
   
   .vintage-divider {
-    @apply h-px w-full bg-gradient-to-r from-transparent via-vintage-beige to-transparent my-6;
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(to right, transparent, var(--theme-border), transparent);
+    margin: 1.5rem 0;
   }
   
   .vintage-section {
     @apply py-12 md:py-16;
+  }
+}
+
+/* Theme-specific color utilities */
+@layer utilities {
+  .text-theme-primary {
+    color: var(--theme-primary);
+  }
+  
+  .text-theme-secondary {
+    color: var(--theme-secondary);
+  }
+  
+  .text-theme-foreground {
+    color: var(--theme-foreground);
+  }
+  
+  .bg-theme-primary {
+    background-color: var(--theme-primary);
+  }
+  
+  .bg-theme-secondary {
+    background-color: var(--theme-secondary);
+  }
+  
+  .bg-theme-background {
+    background-color: var(--theme-background);
+  }
+  
+  .bg-theme-card {
+    background-color: var(--theme-card);
+  }
+  
+  .border-theme-border {
+    border-color: var(--theme-border);
   }
 }

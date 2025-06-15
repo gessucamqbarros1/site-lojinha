@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from './PhoneInput';
 import LogoUpload from './LogoUpload';
 import BannerUpload from './BannerUpload';
+import ThemeSelector from './ThemeSelector';
 
 interface SettingsTabProps {
   storeData: any;
@@ -118,7 +118,13 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         Configurações da Loja
       </h2>
       
-      <div className="space-y-6">
+      <div className="space-y-8">
+        {/* Theme Selection */}
+        <div>
+          <ThemeSelector />
+          <div className="vintage-divider"></div>
+        </div>
+
         <div>
           <label htmlFor="storeName" className="block text-sm font-medium text-vintage-dark mb-1">
             Nome da Loja
