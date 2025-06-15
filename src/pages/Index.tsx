@@ -113,9 +113,9 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Hero Banner Section (ALTURA INTERMEDIÁRIA) */}
+      {/* Hero Banner Section (ALTURA MAIS REDUZIDA, mas não mínima) */}
       <section 
-        className="relative bg-center bg-cover h-[26vh] sm:h-[32vh] md:h-[38vh] lg:h-[44vh]" 
+        className="relative bg-center bg-cover h-[22vh] sm:h-[26vh] md:h-[30vh] lg:h-[34vh]" 
         style={{ 
           backgroundImage: `url(${storeSettings.banner})`,
           backgroundPosition: 'center',
@@ -125,10 +125,10 @@ const Index = () => {
         <div className="absolute inset-0 bg-vintage-brown/30"></div>
         <div className="relative z-10 vintage-container h-full flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-white text-2xl md:text-4xl lg:text-5xl font-playfair font-medium drop-shadow-lg mb-3 md:mb-4">
+            <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-playfair font-medium drop-shadow-lg mb-2 md:mb-3">
               {storeSettings.name}
             </h1>
-            <p className="text-white text-base md:text-xl max-w-lg mx-auto drop-shadow-md">
+            <p className="text-white text-base md:text-lg max-w-md mx-auto drop-shadow-md">
               Produtos de beleza e acessórios com estilo único e elegante
             </p>
           </div>
