@@ -70,11 +70,11 @@ const Navbar = () => {
   };
 
   return (
-    <header className="navbar">
+    <header className="bg-white border-b border-vintage-beige/30">
       <nav className="vintage-container py-4 flex items-center justify-between">
         {/* Mobile menu button */}
         <button 
-          className="md:hidden flex items-center text-theme-foreground"
+          className="md:hidden flex items-center text-vintage-brown"
           onClick={toggleMenu}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
@@ -93,7 +93,7 @@ const Navbar = () => {
                 e.currentTarget.src = '/placeholder.svg';
               }}
             />
-            <h1 className="text-xl md:text-2xl text-theme-foreground">
+            <h1 className="text-xl md:text-2xl font-playfair font-medium text-vintage-brown">
               {storeName}
             </h1>
           </Link>
@@ -101,53 +101,53 @@ const Navbar = () => {
         
         {/* Desktop navigation links */}
         <div className="hidden md:flex items-center space-x-8">
-          <Link to="/" className="text-theme-foreground hover:text-theme-primary transition-colors font-medium">
+          <Link to="/" className="text-vintage-brown hover:text-primary transition-colors font-medium">
             Início
           </Link>
-          <Link to="/products" className="text-theme-foreground hover:text-theme-primary transition-colors font-medium">
+          <Link to="/products" className="text-vintage-brown hover:text-primary transition-colors font-medium">
             Produtos
           </Link>
-          <Link to="/about" className="text-theme-foreground hover:text-theme-primary transition-colors font-medium">
+          <Link to="/about" className="text-vintage-brown hover:text-primary transition-colors font-medium">
             Sobre
           </Link>
-          <Link to="/admin" className="text-theme-foreground hover:text-theme-primary transition-colors">
+          <Link to="/admin" className="text-vintage-brown hover:text-primary transition-colors">
             <User size={20} />
           </Link>
         </div>
         
         {/* Mobile navigation - Full screen overlay */}
         {isOpen && (
-          <div className="md:hidden fixed inset-0 bg-theme-card z-50 flex flex-col animate-fade-in">
+          <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col animate-fade-in">
             <div className="p-4 flex justify-end">
               <button onClick={toggleMenu} aria-label="Close menu">
-                <X size={24} className="text-theme-foreground" />
+                <X size={24} className="text-vintage-brown" />
               </button>
             </div>
             <div className="flex flex-col items-center justify-center flex-1 space-y-8 text-2xl">
               <Link 
                 to="/" 
-                className="text-theme-foreground hover:text-theme-primary transition-colors" 
+                className="text-vintage-brown hover:text-primary transition-colors" 
                 onClick={toggleMenu}
               >
                 Início
               </Link>
               <Link 
                 to="/products" 
-                className="text-theme-foreground hover:text-theme-primary transition-colors" 
+                className="text-vintage-brown hover:text-primary transition-colors" 
                 onClick={toggleMenu}
               >
                 Produtos
               </Link>
               <Link 
                 to="/about" 
-                className="text-theme-foreground hover:text-theme-primary transition-colors" 
+                className="text-vintage-brown hover:text-primary transition-colors" 
                 onClick={toggleMenu}
               >
                 Sobre
               </Link>
               <Link 
                 to="/admin" 
-                className="text-theme-foreground hover:text-theme-primary transition-colors" 
+                className="text-vintage-brown hover:text-primary transition-colors" 
                 onClick={toggleMenu}
               >
                 Admin

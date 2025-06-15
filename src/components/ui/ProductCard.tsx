@@ -34,20 +34,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         {/* Product info */}
         <div className="p-4 flex flex-col flex-grow">
-          <h3 className="text-lg text-theme-foreground mb-1 line-clamp-1">
+          <h3 className="font-playfair text-lg text-vintage-dark mb-1 line-clamp-1">
             {product.name}
           </h3>
-          <p className="text-sm text-theme-foreground opacity-70 mb-2 line-clamp-2 flex-grow">
+          <p className="text-sm text-vintage-dark/70 mb-2 line-clamp-2 flex-grow">
             {product.description}
           </p>
           <div className="flex items-center justify-between">
-            <span className="text-theme-primary font-medium">
+            <span className="text-primary font-medium">
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'
               }).format(product.price)}
             </span>
-            <span className="text-xs px-2 py-1 bg-theme-secondary opacity-30 rounded-full text-theme-foreground">
+            <span className="text-xs px-2 py-1 bg-vintage-beige/30 rounded-full text-vintage-brown">
               {product.category}
             </span>
           </div>
