@@ -133,10 +133,10 @@ const Navbar = () => {
           </Link>
         </div>
         
-        {/* Mobile navigation - Enhanced full screen overlay with white background */}
+        {/* Mobile navigation - Full screen overlay with complete white background */}
         {isOpen && (
           <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col animate-fade-in">
-            <div className="p-4 flex justify-end">
+            <div className="p-4 flex justify-end bg-white">
               <button 
                 onClick={toggleMenu} 
                 aria-label="Close menu"
@@ -145,10 +145,10 @@ const Navbar = () => {
                 <X size={24} className="text-vintage-brown" />
               </button>
             </div>
-            <div className="flex flex-col items-center justify-center flex-1 space-y-8 text-2xl">
+            <div className="flex flex-col items-center justify-center flex-1 space-y-8 text-2xl bg-white px-8">
               <Link 
                 to="/" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.1s' }}
               >
@@ -156,7 +156,7 @@ const Navbar = () => {
               </Link>
               <Link 
                 to="/products" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.2s' }}
               >
@@ -164,7 +164,7 @@ const Navbar = () => {
               </Link>
               <Link 
                 to="/about" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.3s' }}
               >
@@ -172,7 +172,7 @@ const Navbar = () => {
               </Link>
               <Link 
                 to="/admin" 
-                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left" 
+                className="premium-link text-vintage-brown hover:text-primary transition-all duration-300 animate-slide-in-left bg-white w-full py-4 text-center rounded-lg" 
                 onClick={toggleMenu}
                 style={{ animationDelay: '0.4s' }}
               >
@@ -180,7 +180,7 @@ const Navbar = () => {
               </Link>
             </div>
             
-            {/* Decorative elements */}
+            {/* Decorative elements with white background */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-vintage-beige/10 to-vintage-pink/10 rounded-full blur-3xl opacity-30 animate-pulse-soft"></div>
           </div>
         )}
