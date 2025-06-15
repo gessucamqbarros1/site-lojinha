@@ -48,7 +48,7 @@ const Products = () => {
             // Ensure main image is the first one in the array
             const mainImage = images.length > 0 ? images[0] : (product.image || '/placeholder.svg');
             
-            // Add random badges for demonstration
+            // Add random badges for demonstration - mas não se já estiver em oferta
             const badges: ('new' | 'popular' | 'sale')[] = ['new', 'popular', 'sale'];
             const randomBadge = Math.random() > 0.7 ? badges[index % 3] : undefined;
             
@@ -57,6 +57,8 @@ const Products = () => {
               name: product.name,
               description: product.description,
               price: parseFloat(product.price.toString()),
+              original_price: product.original_price ? parseFloat(product.original_price.toString()) : undefined,
+              discount_percentage: product.discount_percentage ? parseFloat(product.discount_percentage.toString()) : undefined,
               image: mainImage,
               images: images,
               category: product.category,

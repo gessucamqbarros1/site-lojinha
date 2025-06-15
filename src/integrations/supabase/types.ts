@@ -188,10 +188,12 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          discount_percentage: number | null
           id: string
           image: string | null
           images: Json | null
           name: string
+          original_price: number | null
           price: number
           purchase_link: string | null
           updated_at: string
@@ -200,10 +202,12 @@ export type Database = {
           category: string
           created_at?: string
           description?: string | null
+          discount_percentage?: number | null
           id?: string
           image?: string | null
           images?: Json | null
           name: string
+          original_price?: number | null
           price: number
           purchase_link?: string | null
           updated_at?: string
@@ -212,10 +216,12 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          discount_percentage?: number | null
           id?: string
           image?: string | null
           images?: Json | null
           name?: string
+          original_price?: number | null
           price?: number
           purchase_link?: string | null
           updated_at?: string

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -55,6 +56,8 @@ const Product = () => {
             name: data.name,
             description: data.description,
             price: parseFloat(data.price.toString()),
+            original_price: data.original_price ? parseFloat(data.original_price.toString()) : undefined,
+            discount_percentage: data.discount_percentage ? parseFloat(data.discount_percentage.toString()) : undefined,
             image: mainImage,
             images: imagesArray, // Now includes all images
             category: data.category,
@@ -85,6 +88,8 @@ const Product = () => {
                 name: item.name,
                 description: item.description,
                 price: parseFloat(item.price.toString()),
+                original_price: item.original_price ? parseFloat(item.original_price.toString()) : undefined,
+                discount_percentage: item.discount_percentage ? parseFloat(item.discount_percentage.toString()) : undefined,
                 image: item.image || '/placeholder.svg',
                 images: suggestedImagesArray,
                 category: item.category,
@@ -143,6 +148,7 @@ const Product = () => {
   }
   
   const productImages = product.images && product.images.length > 0 ? product.images : [product.image];
+  const isOnSale = product.discount_percentage && product.discount_percentage > 0;
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -164,21 +170,47 @@ const Product = () => {
             
             {/* Product Info */}
             <div className="flex flex-col">
-              <div className="mb-2">
+              <div className="mb-2 flex items-center gap-2">
                 <span className="text-xs px-2 py-1 bg-vintage-beige/30 rounded-full text-vintage-brown">
                   {product.category}
                 </span>
+                {isOnSale && (
+                  <span className="text-xs px-2 py-1 bg-red-500 text-white rounded-full font-medium">
+                    🔥 -{product.discount_percentage}% OFF
+                  </span>
+                )}
               </div>
               
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-playfair text-vintage-brown mb-4">
                 {product.name}
               </h1>
               
-              <div className="text-2xl text-black font-medium mb-6">
-                {new Intl.NumberFormat('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL'
-                }).format(product.price)}
+              <div className="mb-6">
+                {/* Preço atual */}
+                <div className="text-2xl text-black font-medium">
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  }).format(product.price)}
+                </div>
+                
+                {/* Preço original se estiver em oferta */}
+                {isOnSale && product.original_price && (
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-lg text-gray-500 line-through">
+                      {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      }).format(product.original_price)}
+                    </span>
+                    <span className="text-sm bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                      Você economiza: {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                      }).format(product.original_price - product.price)}
+                    </span>
+                  </div>
+                )}
               </div>
               
               <div className="vintage-divider my-4"></div>
@@ -198,11 +230,14 @@ const Product = () => {
                   rel="noopener noreferrer"
                   className="w-full vintage-button flex items-center justify-center py-3"
                 >
-                  Comprar
+                  {isOnSale ? '🔥 Comprar com Desconto' : 'Comprar'}
                 </a>
                 
                 <div className="mt-4 text-center text-sm text-vintage-dark/70">
                   <p>Ao clicar em comprar você será redirecionado para o WhatsApp.</p>
+                  {isOnSale && (
+                    <p className="text-red-600 font-medium">⏰ Oferta por tempo limitado!</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -216,30 +251,49 @@ const Product = () => {
               </h2>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {suggestedProducts.map(product => (
-                  <Link key={product.id} to={`/product/${product.id}`} className="block group">
-                    <div className="vintage-card overflow-hidden">
-                      <div className="aspect-square overflow-hidden bg-vintage-cream">
-                        <img 
-                          src={product.image || '/placeholder.svg'} 
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <h3 className="font-playfair text-lg text-vintage-dark mb-1 line-clamp-1">
-                          {product.name}
-                        </h3>
-                        <div className="text-black font-medium">
-                          {new Intl.NumberFormat('pt-BR', {
-                            style: 'currency',
-                            currency: 'BRL'
-                          }).format(product.price)}
+                {suggestedProducts.map(product => {
+                  const suggestedIsOnSale = product.discount_percentage && product.discount_percentage > 0;
+                  
+                  return (
+                    <Link key={product.id} to={`/product/${product.id}`} className="block group">
+                      <div className="vintage-card overflow-hidden relative">
+                        {suggestedIsOnSale && (
+                          <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            -{product.discount_percentage}%
+                          </div>
+                        )}
+                        <div className="aspect-square overflow-hidden bg-vintage-cream">
+                          <img 
+                            src={product.image || '/placeholder.svg'} 
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-playfair text-lg text-vintage-dark mb-1 line-clamp-1">
+                            {product.name}
+                          </h3>
+                          <div className="flex flex-col">
+                            <div className="text-black font-medium">
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                              }).format(product.price)}
+                            </div>
+                            {suggestedIsOnSale && product.original_price && (
+                              <span className="text-sm text-gray-500 line-through">
+                                {new Intl.NumberFormat('pt-BR', {
+                                  style: 'currency',
+                                  currency: 'BRL'
+                                }).format(product.original_price)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

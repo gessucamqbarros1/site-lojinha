@@ -11,6 +11,8 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  original_price?: number;
+  discount_percentage?: number;
   image: string;
   images?: string[];
   category: string;
@@ -34,11 +36,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     toggleFavorite(product.id);
   };
 
+  // Determinar se o produto está em oferta automaticamente
+  const isOnSale = product.discount_percentage && product.discount_percentage > 0;
+  const displayBadge = isOnSale ? 'sale' : product.badge;
+
   return (
     <Link to={`/product/${product.id}`} className="block group">
       <div className="vintage-card overflow-hidden flex flex-col h-full hover-lift animate-fade-up relative transform transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10">
-        {/* Badge */}
-        {product.badge && <ProductBadge type={product.badge} />}
+        {/* Badge - Automático para ofertas */}
+        {displayBadge && <ProductBadge type={displayBadge} />}
+        
+        {/* Mostrar percentual de desconto se estiver em oferta */}
+        {isOnSale && (
+          <div className="absolute top-2 right-12 z-20 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+            -{product.discount_percentage}%
+          </div>
+        )}
         
         {/* Favorite Button */}
         <button
@@ -76,12 +89,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.description}
           </p>
           <div className="flex items-center justify-between">
-            <span className="text-black font-semibold text-lg">
-              {new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-              }).format(product.price)}
-            </span>
+            <div className="flex flex-col">
+              {/* Preço atual */}
+              <span className="text-black font-semibold text-lg">
+                {new Intl.NumberFormat('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL'
+                }).format(product.price)}
+              </span>
+              
+              {/* Preço original riscado se estiver em oferta */}
+              {isOnSale && product.original_price && (
+                <span className="text-sm text-gray-500 line-through">
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  }).format(product.original_price)}
+                </span>
+              )}
+            </div>
+            
             <span className="text-xs px-3 py-1.5 bg-gradient-to-r from-vintage-beige/20 to-vintage-beige/30 backdrop-blur-sm rounded-full text-vintage-brown border border-vintage-beige/40 group-hover:scale-110 transition-transform duration-300">
               {product.category}
             </span>

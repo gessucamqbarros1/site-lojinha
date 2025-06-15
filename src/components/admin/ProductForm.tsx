@@ -46,6 +46,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
     return editingProduct.image ? [editingProduct.image] : [];
   };
 
+  // Verificar se o produto está em oferta
+  const isOnSale = editingProduct.discount_percentage && editingProduct.discount_percentage > 0;
+
   return (
     <div className="vintage-card p-6">
       <div className="flex items-center mb-6">
@@ -59,6 +62,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <h2 className="font-playfair text-xl text-vintage-brown ml-4">
           {isEditing ? "Editar Produto" : "Novo Produto"}
         </h2>
+        
+        {/* Indicador de oferta */}
+        {isOnSale && (
+          <div className="ml-4 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">
+            🔥 Em Oferta (-{editingProduct.discount_percentage}%)
+          </div>
+        )}
       </div>
       
       <div className="space-y-4">
@@ -99,7 +109,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label htmlFor="price" className="block text-sm font-medium text-vintage-dark mb-1">
-              Preço (R$)
+              Preço Atual (R$)
+              {isOnSale && (
+                <span className="text-red-600 text-xs ml-2">
+                  (Oferta ativa)
+                </span>
+              )}
             </label>
             <input
               id="price"
@@ -138,6 +153,39 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </select>
           </div>
         </div>
+
+        {/* Mostrar informações de preço original se existir */}
+        {editingProduct.original_price && editingProduct.original_price !== editingProduct.price && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <h4 className="text-sm font-medium text-amber-800 mb-2">Informações da Oferta</h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div>
+                <span className="text-amber-700">Preço Original:</span>
+                <div className="font-medium">
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  }).format(editingProduct.original_price)}
+                </div>
+              </div>
+              <div>
+                <span className="text-amber-700">Preço Atual:</span>
+                <div className="font-medium text-green-600">
+                  {new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                  }).format(editingProduct.price)}
+                </div>
+              </div>
+              <div>
+                <span className="text-amber-700">Desconto:</span>
+                <div className="font-medium text-red-600">
+                  -{editingProduct.discount_percentage}%
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         
         <MultiImageUpload
           images={getCurrentImages()}
