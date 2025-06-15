@@ -260,7 +260,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             onChange={values => handleStyleUpdate("about_headline", values)}
             label="Fonte, cor e tamanho"
           />
-          <label className="block font-medium mb-1 mt-4 text-vintage-dark">Texto 'Sobre a Loja'</label>
+          <label className="block font-medium mb-1 mt-4 text-vintage-dark">
+            Texto 'Sobre a Loja'
+          </label>
           <textarea
             rows={4}
             className="vintage-input w-full mb-2"
@@ -277,23 +279,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             onChange={values => handleStyleUpdate("about_text", values)}
             label="Fonte, cor e tamanho (descrição)"
           />
-          <div className="vintage-divider"></div>
-        </div>
-        <div>
-          <label htmlFor="about" className="block text-sm font-medium text-vintage-dark mb-1">
-            Texto Sobre a Loja
-          </label>
-          <textarea
-            id="about"
-            rows={4}
-            value={storeData.about}
-            onChange={(e) => setStoreData({...storeData, about: e.target.value})}
-            className="vintage-input w-full text-sm md:text-base resize-none"
-            placeholder="Conte um pouco sobre sua loja..."
-          />
           <p className="text-xs text-vintage-dark/60 mt-1">
             Você pode usar HTML básico para formatação
           </p>
+          <div className="vintage-divider"></div>
         </div>
         <div className="flex justify-end mt-6">
           <button
