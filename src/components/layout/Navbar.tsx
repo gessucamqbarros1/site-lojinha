@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User } from 'lucide-react';
@@ -132,9 +133,9 @@ const Navbar = () => {
           </Link>
         </div>
         
-        {/* Mobile navigation - Enhanced full screen overlay */}
+        {/* Mobile navigation - Enhanced full screen overlay with white background */}
         {isOpen && (
-          <div className="md:hidden fixed inset-0 bg-white/95 backdrop-blur-lg z-50 flex flex-col animate-fade-in">
+          <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col animate-fade-in">
             <div className="p-4 flex justify-end">
               <button 
                 onClick={toggleMenu} 
