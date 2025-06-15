@@ -432,11 +432,11 @@
 }
 
 @keyframes accordion-down {
-  from: { 
+  from { 
     height: 0;
     opacity: 0;
   }
-  to: { 
+  to { 
     height: var(--radix-accordion-content-height);
     opacity: 1;
   }
