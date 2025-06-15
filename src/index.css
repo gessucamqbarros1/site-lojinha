@@ -98,14 +98,16 @@
   }
   
   body {
-    background-color: var(--theme-background);
-    color: var(--theme-foreground);
-    font-family: var(--theme-font-body), sans-serif;
+    background-color: var(--theme-background) !important;
+    color: var(--theme-foreground) !important;
+    font-family: var(--theme-font-body), sans-serif !important;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--theme-font-heading), serif;
+    font-family: var(--theme-font-heading), serif !important;
     font-weight: 500;
+    color: var(--theme-foreground) !important;
   }
   
   h1 {
@@ -122,6 +124,7 @@
   
   p {
     @apply leading-relaxed;
+    color: var(--theme-foreground) !important;
   }
 }
 
@@ -131,35 +134,37 @@
   }
   
   .vintage-card {
-    background-color: var(--theme-card);
-    border: 1px solid var(--theme-border);
-    border-radius: var(--theme-border-radius);
-    box-shadow: var(--theme-card-shadow);
-    transition: box-shadow 300ms;
+    background-color: var(--theme-card) !important;
+    border: 1px solid var(--theme-border) !important;
+    border-radius: var(--theme-border-radius) !important;
+    box-shadow: var(--theme-card-shadow) !important;
+    transition: box-shadow 300ms, background-color 0.3s ease;
   }
   
   .vintage-card:hover {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
   }
   
   .vintage-input {
-    border-radius: var(--theme-border-radius);
-    border: 1px solid var(--theme-border);
-    background-color: var(--theme-card);
+    border-radius: var(--theme-border-radius) !important;
+    border: 1px solid var(--theme-border) !important;
+    background-color: var(--theme-card) !important;
+    color: var(--theme-foreground) !important;
     @apply px-4 py-2 text-sm;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
   }
   
   .vintage-input:focus {
-    border-color: var(--theme-primary);
+    border-color: var(--theme-primary) !important;
     outline: none;
-    box-shadow: 0 0 0 1px var(--theme-primary);
+    box-shadow: 0 0 0 1px var(--theme-primary) !important;
   }
   
   .vintage-button {
     @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
-    background-color: var(--theme-primary);
-    color: var(--theme-background);
-    border-radius: var(--theme-border-radius);
+    background-color: var(--theme-primary) !important;
+    color: var(--theme-background) !important;
+    border-radius: var(--theme-border-radius) !important;
   }
   
   .vintage-button:hover {
@@ -168,9 +173,9 @@
   
   .vintage-button-secondary {
     @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium shadow transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
-    background-color: var(--theme-secondary);
-    color: var(--theme-foreground);
-    border-radius: var(--theme-border-radius);
+    background-color: var(--theme-secondary) !important;
+    color: var(--theme-foreground) !important;
+    border-radius: var(--theme-border-radius) !important;
   }
   
   .vintage-button-secondary:hover {
@@ -179,14 +184,14 @@
   
   .vintage-button-outline {
     @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
-    background-color: transparent;
-    border: 1px solid var(--theme-border);
-    color: var(--theme-primary);
-    border-radius: var(--theme-border-radius);
+    background-color: transparent !important;
+    border: 1px solid var(--theme-border) !important;
+    color: var(--theme-primary) !important;
+    border-radius: var(--theme-border-radius) !important;
   }
   
   .vintage-button-outline:hover {
-    background-color: var(--theme-muted);
+    background-color: var(--theme-muted) !important;
   }
   
   .vintage-divider {
@@ -198,40 +203,77 @@
   
   .vintage-section {
     @apply py-12 md:py-16;
+    background-color: var(--theme-background) !important;
+  }
+  
+  /* Navigation and layout components */
+  .navbar {
+    background-color: var(--theme-card) !important;
+    border-bottom: 1px solid var(--theme-border) !important;
+  }
+  
+  .footer {
+    background-color: var(--theme-card) !important;
+    border-top: 1px solid var(--theme-border) !important;
   }
 }
 
 /* Theme-specific color utilities */
 @layer utilities {
   .text-theme-primary {
-    color: var(--theme-primary);
+    color: var(--theme-primary) !important;
   }
   
   .text-theme-secondary {
-    color: var(--theme-secondary);
+    color: var(--theme-secondary) !important;
   }
   
   .text-theme-foreground {
-    color: var(--theme-foreground);
+    color: var(--theme-foreground) !important;
   }
   
   .bg-theme-primary {
-    background-color: var(--theme-primary);
+    background-color: var(--theme-primary) !important;
   }
   
   .bg-theme-secondary {
-    background-color: var(--theme-secondary);
+    background-color: var(--theme-secondary) !important;
   }
   
   .bg-theme-background {
-    background-color: var(--theme-background);
+    background-color: var(--theme-background) !important;
   }
   
   .bg-theme-card {
-    background-color: var(--theme-card);
+    background-color: var(--theme-card) !important;
   }
   
   .border-theme-border {
-    border-color: var(--theme-border);
+    border-color: var(--theme-border) !important;
+  }
+  
+  /* Override Tailwind defaults with theme colors */
+  .bg-primary {
+    background-color: var(--theme-primary) !important;
+  }
+  
+  .bg-secondary {
+    background-color: var(--theme-secondary) !important;
+  }
+  
+  .text-primary {
+    color: var(--theme-primary) !important;
+  }
+  
+  .text-secondary {
+    color: var(--theme-secondary) !important;
+  }
+  
+  .border-primary {
+    border-color: var(--theme-primary) !important;
+  }
+  
+  .border-secondary {
+    border-color: var(--theme-secondary) !important;
   }
 }
