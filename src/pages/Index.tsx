@@ -18,13 +18,25 @@ const DEFAULT_STORE_SETTINGS = {
   hero_subheadline_color: '#44342f',
   hero_subheadline_font: 'inherit',
   hero_subheadline_size: '1.2rem',
+  logo: '/placeholder.svg',
+  about_headline: 'Sobre Nossa Loja',
+  about_headline_font: "'Playfair Display', serif",
+  about_headline_color: '#44342f',
+  about_headline_size: '2rem',
+  about_text: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+  about_text_font: 'inherit',
+  about_text_color: '#44342f',
+  about_text_size: '1.1rem',
+  about: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+  whatsapp_number: '',
+  instagram_link: '',
 };
 
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(['Todos']);
-  const [storeSettings, setStoreSettings] = useState({ ...DEFAULT_STORE_SETTINGS, logo: '/placeholder.svg' });
+  const [storeSettings, setStoreSettings] = useState({ ...DEFAULT_STORE_SETTINGS });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -67,28 +79,20 @@ const Index = () => {
         }
 
         // Fetch store settings
-        const { data: settingsData, error: settingsError } = await supabase
+        const { data: settingsData } = await supabase
           .from('store_settings')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(1);
 
-        if (!settingsError && settingsData && settingsData.length > 0) {
-          const s = settingsData[0];
+        if (settingsData && settingsData.length > 0) {
+          // Mistura com os defaults SEMPRE!
           setStoreSettings({
-            name: s.name || DEFAULT_STORE_SETTINGS.name,
-            banner: s.banner || DEFAULT_STORE_SETTINGS.banner,
-            hero_headline: s.hero_headline || DEFAULT_STORE_SETTINGS.hero_headline,
-            hero_headline_color: s.hero_headline_color || DEFAULT_STORE_SETTINGS.hero_headline_color,
-            hero_headline_font: s.hero_headline_font || DEFAULT_STORE_SETTINGS.hero_headline_font,
-            hero_headline_size: s.hero_headline_size || DEFAULT_STORE_SETTINGS.hero_headline_size,
-            hero_headline_weight: s.hero_headline_weight || DEFAULT_STORE_SETTINGS.hero_headline_weight,
-            hero_subheadline: s.hero_subheadline || DEFAULT_STORE_SETTINGS.hero_subheadline,
-            hero_subheadline_color: s.hero_subheadline_color || DEFAULT_STORE_SETTINGS.hero_subheadline_color,
-            hero_subheadline_font: s.hero_subheadline_font || DEFAULT_STORE_SETTINGS.hero_subheadline_font,
-            hero_subheadline_size: s.hero_subheadline_size || DEFAULT_STORE_SETTINGS.hero_subheadline_size,
-            logo: s.logo || '/placeholder.svg'
+            ...DEFAULT_STORE_SETTINGS,
+            ...settingsData[0]
           });
+        } else {
+          setStoreSettings(DEFAULT_STORE_SETTINGS);
         }
       } catch (error) {
         toast({

@@ -7,14 +7,14 @@ import OurStory from '@/components/about/OurStory';
 import ContactSection from '@/components/about/ContactSection';
 import { supabase } from '@/integrations/supabase/client';
 
-interface StoreSettings {
+// Define todos os campos que podem vir de settings
+export interface StoreSettings {
   name: string;
   logo: string;
   banner: string;
   about: string;
   whatsapp_number: string;
   instagram_link: string;
-  // Novos campos:
   about_headline: string;
   about_headline_font: string;
   about_headline_color: string;
@@ -23,9 +23,19 @@ interface StoreSettings {
   about_text_font: string;
   about_text_color: string;
   about_text_size: string;
+  // Hero fields (mantendo compatibilidade, mesmo se não usados)
+  hero_headline?: string;
+  hero_headline_font?: string;
+  hero_headline_color?: string;
+  hero_headline_size?: string;
+  hero_headline_weight?: string;
+  hero_subheadline?: string;
+  hero_subheadline_font?: string;
+  hero_subheadline_color?: string;
+  hero_subheadline_size?: string;
 }
 
-const DEFAULTS = {
+const DEFAULTS: StoreSettings = {
   name: 'Minha Lojinha',
   logo: '/placeholder.svg',
   banner: '/placeholder.svg',
@@ -40,6 +50,16 @@ const DEFAULTS = {
   about_text_font: 'inherit',
   about_text_color: '#44342f',
   about_text_size: '1.1rem',
+  // Hero (ignorado aqui, mas mantido para compatibilidade)
+  hero_headline: 'Gessica Cosméticos e Acessórios',
+  hero_headline_font: "'Playfair Display', serif",
+  hero_headline_color: '#44342f',
+  hero_headline_size: '2.5rem',
+  hero_headline_weight: '500',
+  hero_subheadline: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
+  hero_subheadline_font: 'inherit',
+  hero_subheadline_color: '#44342f',
+  hero_subheadline_size: '1.2rem',
 };
 
 const About = () => {
@@ -48,48 +68,33 @@ const About = () => {
   useEffect(() => {
     const fetchStoreSettings = async () => {
       try {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('store_settings')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(1);
 
-        if (error) {
-          console.error('About: Error fetching store settings:', error);
-          return;
-        }
-
         if (data && data.length > 0) {
-          const settings = data[0] || {};
+          // Misture com defaults para garantir todos os campos tipados
           setStoreSettings({
-            name: settings.name || DEFAULTS.name,
-            logo: settings.logo || DEFAULTS.logo,
-            banner: settings.banner || DEFAULTS.banner,
-            about: settings.about || DEFAULTS.about,
-            whatsapp_number: settings.whatsapp_number || DEFAULTS.whatsapp_number,
-            instagram_link: settings.instagram_link || DEFAULTS.instagram_link,
-            about_headline: settings.about_headline || DEFAULTS.about_headline,
-            about_headline_font: settings.about_headline_font || DEFAULTS.about_headline_font,
-            about_headline_color: settings.about_headline_color || DEFAULTS.about_headline_color,
-            about_headline_size: settings.about_headline_size || DEFAULTS.about_headline_size,
-            about_text: settings.about_text || DEFAULTS.about_text,
-            about_text_font: settings.about_text_font || DEFAULTS.about_text_font,
-            about_text_color: settings.about_text_color || DEFAULTS.about_text_color,
-            about_text_size: settings.about_text_size || DEFAULTS.about_text_size,
+            ...DEFAULTS,
+            ...data[0]
           });
+        } else {
+          setStoreSettings(DEFAULTS);
         }
       } catch (error) {
-        console.error('About: Error in fetchStoreSettings:', error);
+        setStoreSettings(DEFAULTS);
       }
     };
 
     fetchStoreSettings();
   }, []);
 
+  // Os campos agora sempre existem!
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      
       <main className="flex-grow">
         <AboutHero
           storeName={storeSettings.name}
@@ -102,19 +107,16 @@ const About = () => {
           aboutTextColor={storeSettings.about_text_color}
           aboutTextSize={storeSettings.about_text_size}
         />
-
         <OurStory
           storeName={storeSettings.name}
           banner={storeSettings.banner}
         />
-
         <ContactSection
           storeName={storeSettings.name}
           instagramLink={storeSettings.instagram_link}
           whatsappNumber={storeSettings.whatsapp_number}
         />
       </main>
-
       <Footer />
     </div>
   );
