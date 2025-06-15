@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Product } from '@/components/ui/ProductCard';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import MultiImageUpload from './MultiImageUpload';
 
 interface ProductFormProps {
   editingProduct: Product | null;
@@ -9,7 +10,7 @@ interface ProductFormProps {
   categories: string[];
   onBack: () => void;
   onSave: () => void;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onMultiFileChange: (files: File[], index: number) => void;
   onProductChange: (product: Product) => void;
   generateWhatsAppLink: (name: string, price: number) => string;
   uploading: boolean;
@@ -22,22 +23,28 @@ const ProductForm: React.FC<ProductFormProps> = ({
   categories,
   onBack,
   onSave,
-  onFileChange,
+  onMultiFileChange,
   onProductChange,
   generateWhatsAppLink,
   uploading,
   saving
 }) => {
-  const [fileUpload, setFileUpload] = useState<File | null>(null);
+  if (!editingProduct) return null;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFileUpload(e.target.files[0]);
-    }
-    onFileChange(e);
+  const handleImagesChange = (images: string[]) => {
+    onProductChange({
+      ...editingProduct,
+      images,
+      image: images[0] || '/placeholder.svg'
+    });
   };
 
-  if (!editingProduct) return null;
+  const getCurrentImages = (): string[] => {
+    if (editingProduct.images && editingProduct.images.length > 0) {
+      return editingProduct.images;
+    }
+    return editingProduct.image ? [editingProduct.image] : [];
+  };
 
   return (
     <div className="vintage-card p-6">
@@ -132,39 +139,12 @@ const ProductForm: React.FC<ProductFormProps> = ({
           </div>
         </div>
         
-        <div>
-          <label className="block text-sm font-medium text-vintage-dark mb-1">
-            Imagem do Produto
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            <div className="w-full aspect-square bg-vintage-cream rounded-md overflow-hidden border border-vintage-beige/30">
-              <img 
-                src={fileUpload ? URL.createObjectURL(fileUpload) : (editingProduct.image || '/placeholder.svg')} 
-                alt="Preview" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <label 
-                htmlFor="image-upload" 
-                className="vintage-button-secondary flex items-center justify-center w-full cursor-pointer"
-              >
-                <Upload size={16} className="mr-2" />
-                Selecionar Imagem
-              </label>
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-              <p className="text-xs text-vintage-dark/60 mt-2">
-                Formatos recomendados: JPG, PNG. Tamanho máximo: 5MB
-              </p>
-            </div>
-          </div>
-        </div>
+        <MultiImageUpload
+          images={getCurrentImages()}
+          onImagesChange={handleImagesChange}
+          onFileChange={onMultiFileChange}
+          uploading={uploading}
+        />
         
         {editingProduct && editingProduct.name && editingProduct.price > 0 && (
           <div className="bg-vintage-beige/20 p-4 rounded-md">

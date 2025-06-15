@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Product as ProductType } from '@/components/ui/ProductCard';
+import ProductImageGallery from '@/components/ui/ProductImageGallery';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -43,6 +44,7 @@ const Product = () => {
             description: data.description,
             price: parseFloat(data.price.toString()),
             image: data.image || '/placeholder.svg',
+            images: Array.isArray(data.images) ? data.images : (data.image ? [data.image] : []),
             category: data.category,
             purchaseLink: data.purchase_link
           };
@@ -66,6 +68,7 @@ const Product = () => {
               description: item.description,
               price: parseFloat(item.price.toString()),
               image: item.image || '/placeholder.svg',
+              images: Array.isArray(item.images) ? item.images : (item.image ? [item.image] : []),
               category: item.category,
               purchaseLink: item.purchase_link
             }));
@@ -120,6 +123,8 @@ const Product = () => {
     );
   }
   
+  const productImages = product.images && product.images.length > 0 ? product.images : [product.image];
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -132,14 +137,11 @@ const Product = () => {
           </Link>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-            {/* Product Image */}
-            <div className="aspect-square bg-white rounded-md overflow-hidden border border-vintage-beige/30 shadow-sm">
-              <img 
-                src={product.image || "/placeholder.svg"} 
-                alt={product.name} 
-                className="w-full h-full object-cover"
-              />
-            </div>
+            {/* Product Images Gallery */}
+            <ProductImageGallery 
+              images={productImages}
+              productName={product.name}
+            />
             
             {/* Product Info */}
             <div className="flex flex-col">

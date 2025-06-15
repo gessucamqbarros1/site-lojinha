@@ -18,6 +18,8 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const totalImages = product.images?.length || (product.image ? 1 : 0);
+  
   return (
     <Link to={`/product/${product.id}`} className="block group">
       <div className="vintage-card overflow-hidden flex flex-col h-full transition-transform duration-300 group-hover:-translate-y-1">
@@ -29,6 +31,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-vintage-brown/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          {/* Multiple images indicator */}
+          {totalImages > 1 && (
+            <div className="absolute bottom-2 right-2 flex space-x-1">
+              {Array.from({ length: Math.min(totalImages, 3) }).map((_, index) => (
+                <div
+                  key={index}
+                  className="w-2 h-2 rounded-full bg-white/80 shadow-sm"
+                />
+              ))}
+            </div>
+          )}
         </div>
         
         {/* Product info */}

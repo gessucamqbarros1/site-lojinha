@@ -3,7 +3,7 @@ import { Product } from '@/components/ui/ProductCard';
 import ProductList from './ProductList';
 import ProductForm from './ProductForm';
 import { supabase } from '@/integrations/supabase/client';
-import { uploadProductImage, deleteProductImage } from '@/lib/fileUploader';
+import { uploadProductImage, deleteProductImage, uploadMultipleProductImages, deleteMultipleProductImages } from '@/lib/fileUploader';
 
 interface ProductsTabProps {
   productList: Product[];
@@ -32,7 +32,7 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
 }) => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [fileUpload, setFileUpload] = useState<File | null>(null);
+  const [pendingImageUploads, setPendingImageUploads] = useState<File[]>([]);
 
   // Auto-save product when data changes
   useEffect(() => {
@@ -88,7 +88,12 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
 
   const handleDeleteProduct = async (id: string, imageUrl?: string) => {
     try {
-      if (imageUrl && !imageUrl.includes('/placeholder.svg')) {
+      const product = productList.find(p => p.id === id);
+      
+      // Delete all images associated with the product
+      if (product?.images && product.images.length > 0) {
+        await deleteMultipleProductImages(product.images);
+      } else if (imageUrl && !imageUrl.includes('/placeholder.svg')) {
         await deleteProductImage(imageUrl);
       }
       
@@ -120,29 +125,37 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setIsEditing(true);
-    setFileUpload(null);
+    setPendingImageUploads([]);
   };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0] && editingProduct) {
-      const file = e.target.files[0];
-      setFileUpload(file);
+  const handleMultiFileChange = async (files: File[], index: number) => {
+    if (files.length > 0 && editingProduct) {
+      const file = files[0];
       
       try {
         setUploading(true);
         
         const productId = editingProduct.id || `temp_${Date.now()}`;
         
-        if (editingProduct.image && !editingProduct.image.includes('/placeholder.svg')) {
-          await deleteProductImage(editingProduct.image);
-        }
-        
-        const newImageUrl = await uploadProductImage(file, productId);
+        // Upload the new image
+        const newImageUrl = await uploadProductImage(file, productId, index);
         
         if (newImageUrl) {
+          const currentImages = editingProduct.images || [];
+          const newImages = [...currentImages];
+          
+          // If there's an existing image at this index, delete it first
+          if (newImages[index] && !newImages[index].includes('/placeholder.svg')) {
+            await deleteProductImage(newImages[index]);
+          }
+          
+          // Update the images array
+          newImages[index] = newImageUrl;
+          
           setEditingProduct({
             ...editingProduct,
-            image: newImageUrl
+            images: newImages,
+            image: newImages[0] || '/placeholder.svg' // Keep first image as main
           });
           
           toast({
@@ -169,23 +182,6 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
     try {
       setSaving(true);
       
-      let imageUrl = editingProduct.image;
-      
-      if (fileUpload) {
-        setUploading(true);
-        if (isEditing && editingProduct.image && !editingProduct.image.includes('/placeholder.svg')) {
-          await deleteProductImage(editingProduct.image);
-        }
-        
-        const tempId = isEditing ? editingProduct.id : `temp_${Date.now()}`;
-        
-        const newImageUrl = await uploadProductImage(fileUpload, tempId);
-        if (newImageUrl) {
-          imageUrl = newImageUrl;
-        }
-        setUploading(false);
-      }
-
       const whatsappLink = generateWhatsAppLink(editingProduct.name, editingProduct.price);
       
       const productData = {
@@ -193,7 +189,7 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
         description: editingProduct.description,
         price: editingProduct.price,
         category: editingProduct.category,
-        image: imageUrl,
+        image: editingProduct.image,
         images: editingProduct.images || [],
         purchase_link: whatsappLink,
         updated_at: new Date().toISOString()
@@ -228,7 +224,7 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
       
       setIsEditing(false);
       setEditingProduct(null);
-      setFileUpload(null);
+      setPendingImageUploads([]);
       
     } catch (error) {
       console.error('Error saving product:', error);
@@ -254,13 +250,13 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
       purchaseLink: '',
     });
     setIsEditing(false);
-    setFileUpload(null);
+    setPendingImageUploads([]);
   };
 
   const handleBack = () => {
     setIsEditing(false);
     setEditingProduct(null);
-    setFileUpload(null);
+    setPendingImageUploads([]);
   };
 
   if (isEditing || editingProduct) {
@@ -271,7 +267,7 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
         categories={categories}
         onBack={handleBack}
         onSave={handleSaveProduct}
-        onFileChange={handleFileChange}
+        onMultiFileChange={handleMultiFileChange}
         onProductChange={setEditingProduct}
         generateWhatsAppLink={generateWhatsAppLink}
         uploading={uploading}

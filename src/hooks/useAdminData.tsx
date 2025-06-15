@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Product } from '@/components/ui/ProductCard';
 import { useToast } from '@/hooks/use-toast';
@@ -47,18 +48,29 @@ export const useAdminData = () => {
       console.log('Products fetched successfully:', data);
       
       if (data) {
-        const formattedProducts: Product[] = data.map(product => ({
-          id: product.id.toString(),
-          name: product.name || '',
-          description: product.description || '',
-          price: parseFloat(product.price?.toString() || '0'),
-          image: product.image || '/placeholder.svg',
-          images: Array.isArray(product.images) ? 
-            product.images.filter((img): img is string => typeof img === 'string') : 
-            [],
-          category: product.category || 'Maquiagem',
-          purchaseLink: product.purchase_link || ''
-        }));
+        const formattedProducts: Product[] = data.map(product => {
+          // Handle images array - ensure it's properly formatted
+          let images: string[] = [];
+          if (Array.isArray(product.images)) {
+            images = product.images.filter((img): img is string => typeof img === 'string');
+          }
+          
+          // If no images in array but has main image, add it to array
+          if (images.length === 0 && product.image) {
+            images = [product.image];
+          }
+          
+          return {
+            id: product.id.toString(),
+            name: product.name || '',
+            description: product.description || '',
+            price: parseFloat(product.price?.toString() || '0'),
+            image: product.image || images[0] || '/placeholder.svg',
+            images: images,
+            category: product.category || 'Maquiagem',
+            purchaseLink: product.purchase_link || ''
+          };
+        });
         
         setProductList(formattedProducts);
         

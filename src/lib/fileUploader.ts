@@ -3,12 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 
 export async function uploadProductImage(
   file: File,
-  productId: string
+  productId: string,
+  imageIndex?: number
 ): Promise<string | null> {
   try {
     if (!file) return null;
 
-    console.log('Starting file upload for product:', productId);
+    console.log('Starting file upload for product:', productId, 'index:', imageIndex);
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -22,9 +23,10 @@ export async function uploadProductImage(
       throw new Error('Arquivo muito grande. Tamanho máximo: 5MB.');
     }
 
-    // Create a unique file path using the productId and a timestamp
+    // Create a unique file path using the productId, imageIndex, and a timestamp
     const fileExt = file.name.split('.').pop();
-    const fileName = `${productId}_${Date.now()}.${fileExt}`;
+    const indexSuffix = imageIndex !== undefined ? `_${imageIndex}` : '';
+    const fileName = `${productId}${indexSuffix}_${Date.now()}.${fileExt}`;
     const filePath = `products/${fileName}`;
 
     console.log('Uploading file to path:', filePath);
@@ -56,6 +58,18 @@ export async function uploadProductImage(
     console.error('Error in uploadProductImage:', error);
     throw error; // Re-throw to let the calling function handle it
   }
+}
+
+export async function uploadMultipleProductImages(
+  files: File[],
+  productId: string
+): Promise<string[]> {
+  const uploadPromises = files.map((file, index) => 
+    uploadProductImage(file, productId, index)
+  );
+  
+  const results = await Promise.all(uploadPromises);
+  return results.filter((url): url is string => url !== null);
 }
 
 export async function deleteProductImage(url: string): Promise<boolean> {
@@ -103,4 +117,9 @@ export async function deleteProductImage(url: string): Promise<boolean> {
     console.error('Error in deleteProductImage:', error);
     return false;
   }
+}
+
+export async function deleteMultipleProductImages(urls: string[]): Promise<boolean[]> {
+  const deletePromises = urls.map(url => deleteProductImage(url));
+  return await Promise.all(deletePromises);
 }
