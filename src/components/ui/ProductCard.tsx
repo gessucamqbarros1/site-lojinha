@@ -48,7 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         
         {/* Mostrar percentual de desconto se estiver em oferta */}
         {isOnSale && (
-          <div className="absolute top-1 right-10 z-20 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+          <div className="absolute top-0.5 right-8 z-20 bg-red-500 text-white text-[10px] font-bold px-1 py-0.5 rounded-full">
             -{product.discount_percentage}%
           </div>
         )}
@@ -56,14 +56,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Favorite Button */}
         <button
           onClick={handleFavoriteClick}
-          className={`absolute top-1 right-1 z-20 p-1.5 rounded-full backdrop-blur-sm transition-all duration-300 ${
+          className={`absolute top-0.5 right-0.5 z-20 p-1 rounded-full backdrop-blur-sm transition-all duration-300 ${
             isFavorite(product.id)
               ? 'bg-red-500 text-white scale-110'
               : 'bg-white/80 text-vintage-brown/60 hover:bg-white hover:text-red-500'
           }`}
         >
           <Heart 
-            size={14} 
+            size={12} 
             className={isFavorite(product.id) ? 'fill-current' : ''} 
           />
         </button>
@@ -81,17 +81,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
         
         {/* Product info with enhanced spacing and animations */}
-        <div className="p-4 flex flex-col flex-grow relative z-20">
-          <h3 className="font-playfair text-base text-vintage-dark mb-1.5 line-clamp-1 group-hover:text-primary transition-colors duration-300">
+        <div className="p-2 flex flex-col flex-grow relative z-20">
+          <h3 className="font-playfair text-sm text-vintage-dark mb-1 line-clamp-1 group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
-          <p className="text-xs text-vintage-dark/70 mb-3 line-clamp-2 flex-grow leading-relaxed">
+          <p className="text-[10px] text-vintage-dark/70 mb-2 line-clamp-2 flex-grow leading-relaxed">
             {product.description}
           </p>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               {/* Preço atual */}
-              <span className="text-black font-semibold text-base">
+              <span className="text-black font-semibold text-sm">
                 {new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL'
@@ -100,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               
               {/* Preço original riscado se estiver em oferta */}
               {isOnSale && product.original_price && (
-                <span className="text-xs text-gray-500 line-through">
+                <span className="text-[10px] text-gray-500 line-through">
                   {new Intl.NumberFormat('pt-BR', {
                     style: 'currency',
                     currency: 'BRL'
@@ -109,13 +109,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               )}
             </div>
             
-            <span className="text-xs px-2 py-1 bg-gradient-to-r from-vintage-beige/20 to-vintage-beige/30 backdrop-blur-sm rounded-full text-vintage-brown border border-vintage-beige/40 group-hover:scale-110 transition-transform duration-300">
+            <span className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-vintage-beige/20 to-vintage-beige/30 backdrop-blur-sm rounded-full text-vintage-brown border border-vintage-beige/40 group-hover:scale-110 transition-transform duration-300">
               {product.category}
             </span>
           </div>
           
           {/* Enhanced bottom border effect */}
-          <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute bottom-0 left-2 right-2 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         </div>
       </div>
     </Link>
