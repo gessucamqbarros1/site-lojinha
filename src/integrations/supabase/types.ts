@@ -266,25 +266,8 @@ export type Database = {
       store_settings: {
         Row: {
           about: string | null
-          about_headline: string | null
-          about_headline_color: string | null
-          about_headline_font: string | null
-          about_headline_size: string | null
-          about_text: string | null
-          about_text_color: string | null
-          about_text_font: string | null
-          about_text_size: string | null
           banner: string | null
           created_at: string
-          hero_headline: string | null
-          hero_headline_color: string | null
-          hero_headline_font: string | null
-          hero_headline_size: string | null
-          hero_headline_weight: string | null
-          hero_subheadline: string | null
-          hero_subheadline_color: string | null
-          hero_subheadline_font: string | null
-          hero_subheadline_size: string | null
           id: string
           instagram_link: string | null
           logo: string | null
@@ -294,25 +277,8 @@ export type Database = {
         }
         Insert: {
           about?: string | null
-          about_headline?: string | null
-          about_headline_color?: string | null
-          about_headline_font?: string | null
-          about_headline_size?: string | null
-          about_text?: string | null
-          about_text_color?: string | null
-          about_text_font?: string | null
-          about_text_size?: string | null
           banner?: string | null
           created_at?: string
-          hero_headline?: string | null
-          hero_headline_color?: string | null
-          hero_headline_font?: string | null
-          hero_headline_size?: string | null
-          hero_headline_weight?: string | null
-          hero_subheadline?: string | null
-          hero_subheadline_color?: string | null
-          hero_subheadline_font?: string | null
-          hero_subheadline_size?: string | null
           id?: string
           instagram_link?: string | null
           logo?: string | null
@@ -322,25 +288,8 @@ export type Database = {
         }
         Update: {
           about?: string | null
-          about_headline?: string | null
-          about_headline_color?: string | null
-          about_headline_font?: string | null
-          about_headline_size?: string | null
-          about_text?: string | null
-          about_text_color?: string | null
-          about_text_font?: string | null
-          about_text_size?: string | null
           banner?: string | null
           created_at?: string
-          hero_headline?: string | null
-          hero_headline_color?: string | null
-          hero_headline_font?: string | null
-          hero_headline_size?: string | null
-          hero_headline_weight?: string | null
-          hero_subheadline?: string | null
-          hero_subheadline_color?: string | null
-          hero_subheadline_font?: string | null
-          hero_subheadline_size?: string | null
           id?: string
           instagram_link?: string | null
           logo?: string | null

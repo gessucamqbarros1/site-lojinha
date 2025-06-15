@@ -4,7 +4,6 @@ import PhoneInput from './PhoneInput';
 import LogoUpload from './LogoUpload';
 import BannerUpload from './BannerUpload';
 import ThemeSelector from './ThemeSelector';
-import TextStyleControls from "./TextStyleControls";
 
 interface SettingsTabProps {
   storeData: any;
@@ -58,22 +57,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         whatsapp_number: storeData.whatsapp_number || null,
         instagram_link: storeData.instagram_link || null,
         updated_at: new Date().toISOString(),
-        hero_headline: storeData.hero_headline || null,
-        hero_subheadline: storeData.hero_subheadline || null,
-        hero_headline_font: storeData.hero_headline_font || null,
-        hero_headline_color: storeData.hero_headline_color || null,
-        hero_headline_size: storeData.hero_headline_size || null,
-        hero_subheadline_font: storeData.hero_subheadline_font || null,
-        hero_subheadline_color: storeData.hero_subheadline_color || null,
-        hero_subheadline_size: storeData.hero_subheadline_size || null,
-        about_headline: storeData.about_headline || null,
-        about_text: storeData.about_text || null,
-        about_headline_font: storeData.about_headline_font || null,
-        about_headline_color: storeData.about_headline_color || null,
-        about_headline_size: storeData.about_headline_size || null,
-        about_text_font: storeData.about_text_font || null,
-        about_text_color: storeData.about_text_color || null,
-        about_text_size: storeData.about_text_size || null,
       };
       
       console.log('SettingsTab: Settings payload:', settingsPayload);
@@ -127,22 +110,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     } finally {
       setSaving(false);
     }
-  };
-
-  // Novos handlers para campos de texto/fonte/styles
-  const handleTextUpdate = (field: string, val: string) => {
-    setStoreData({
-      ...storeData,
-      [field]: val
-    });
-  };
-  const handleStyleUpdate = (prefix: string, values: { font: string; color: string; size: string }) => {
-    setStoreData({
-      ...storeData,
-      [`${prefix}_font`]: values.font,
-      [`${prefix}_color`]: values.color,
-      [`${prefix}_size`]: values.size
-    });
   };
 
   return (
@@ -207,82 +174,21 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           setUploading={setUploading}
           toast={toast}
         />
-        {/* --- Banner/Hero --- */}
         <div>
-          <label className="block font-medium mb-1 text-vintage-dark">Texto do Banner (cima da página inicial)</label>
-          <input
-            className="vintage-input w-full mb-2"
-            value={storeData.hero_headline || ""}
-            onChange={e => handleTextUpdate("hero_headline", e.target.value)}
-            placeholder="Título principal do banner"
-          />
-          <TextStyleControls
-            value={{
-              font: storeData.hero_headline_font || "'Playfair Display', serif",
-              color: storeData.hero_headline_color || "#44342f",
-              size: storeData.hero_headline_size || "2.5rem",
-            }}
-            onChange={values => handleStyleUpdate("hero_headline", values)}
-            label="Fonte, cor e tamanho"
-          />
-          <input
-            className="vintage-input w-full my-2"
-            value={storeData.hero_subheadline || ""}
-            onChange={e => handleTextUpdate("hero_subheadline", e.target.value)}
-            placeholder="Texto secundário do banner"
-          />
-          <TextStyleControls
-            value={{
-              font: storeData.hero_subheadline_font || "inherit",
-              color: storeData.hero_subheadline_color || "#44342f",
-              size: storeData.hero_subheadline_size || "1.2rem",
-            }}
-            onChange={values => handleStyleUpdate("hero_subheadline", values)}
-            label="Fonte, cor e tamanho (texto secundário)"
-          />
-          <div className="vintage-divider"></div>
-        </div>
-        {/* --- Sobre --- */}
-        <div>
-          <label className="block font-medium mb-1 text-vintage-dark">Título da seção Sobre</label>
-          <input
-            className="vintage-input w-full mb-2"
-            value={storeData.about_headline || ""}
-            onChange={e => handleTextUpdate("about_headline", e.target.value)}
-            placeholder="Título da seção Sobre"
-          />
-          <TextStyleControls
-            value={{
-              font: storeData.about_headline_font || "'Playfair Display', serif",
-              color: storeData.about_headline_color || "#44342f",
-              size: storeData.about_headline_size || "2rem",
-            }}
-            onChange={values => handleStyleUpdate("about_headline", values)}
-            label="Fonte, cor e tamanho"
-          />
-          <label className="block font-medium mb-1 mt-4 text-vintage-dark">
-            Texto 'Sobre a Loja'
+          <label htmlFor="about" className="block text-sm font-medium text-vintage-dark mb-1">
+            Texto Sobre a Loja
           </label>
           <textarea
+            id="about"
             rows={4}
-            className="vintage-input w-full mb-2"
-            value={storeData.about_text || ""}
-            onChange={e => handleTextUpdate("about_text", e.target.value)}
-            placeholder="Descrição sobre a loja"
-          />
-          <TextStyleControls
-            value={{
-              font: storeData.about_text_font || "inherit",
-              color: storeData.about_text_color || "#44342f",
-              size: storeData.about_text_size || "1.1rem",
-            }}
-            onChange={values => handleStyleUpdate("about_text", values)}
-            label="Fonte, cor e tamanho (descrição)"
+            value={storeData.about}
+            onChange={(e) => setStoreData({...storeData, about: e.target.value})}
+            className="vintage-input w-full text-sm md:text-base resize-none"
+            placeholder="Conte um pouco sobre sua loja..."
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
             Você pode usar HTML básico para formatação
           </p>
-          <div className="vintage-divider"></div>
         </div>
         <div className="flex justify-end mt-6">
           <button

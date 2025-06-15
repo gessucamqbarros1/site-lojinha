@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -6,37 +7,14 @@ import { Product } from '@/components/ui/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-const DEFAULT_STORE_SETTINGS = {
-  name: 'Minha Lojinha',
-  banner: '/placeholder.svg',
-  hero_headline: 'Gessica Cosméticos e Acessórios',
-  hero_headline_color: '#44342f',
-  hero_headline_font: "'Playfair Display', serif",
-  hero_headline_size: '2.5rem',
-  hero_headline_weight: '500',
-  hero_subheadline: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
-  hero_subheadline_color: '#44342f',
-  hero_subheadline_font: 'inherit',
-  hero_subheadline_size: '1.2rem',
-  logo: '/placeholder.svg',
-  about_headline: 'Sobre Nossa Loja',
-  about_headline_font: "'Playfair Display', serif",
-  about_headline_color: '#44342f',
-  about_headline_size: '2rem',
-  about_text: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
-  about_text_font: 'inherit',
-  about_text_color: '#44342f',
-  about_text_size: '1.1rem',
-  about: 'Uma boutique online que oferece produtos de beleza e acessórios selecionados com cuidado, para uma experiência de compra exclusiva e elegante.',
-  whatsapp_number: '',
-  instagram_link: '',
-};
-
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(['Todos']);
-  const [storeSettings, setStoreSettings] = useState({ ...DEFAULT_STORE_SETTINGS });
+  const [storeSettings, setStoreSettings] = useState({
+    name: 'Minha Lojinha',
+    banner: '/placeholder.svg'
+  });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -44,23 +22,32 @@ const Index = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        console.log('Index: Fetching data...');
+        
         // Fetch products
         const { data: productsData, error: productsError } = await supabase
           .from('products')
           .select('*')
           .order('created_at', { ascending: false });
-
-        if (productsError) throw productsError;
-
+        
+        if (productsError) {
+          console.error('Index: Error fetching products:', productsError);
+          throw productsError;
+        }
+        
         if (productsData) {
           const formattedProducts = productsData.map(product => {
+            // Handle images array properly
             let images: string[] = [];
             if (Array.isArray(product.images)) {
               images = product.images.filter((img): img is string => typeof img === 'string');
             }
+            
+            // If no images in array but has main image, add it to array
             if (images.length === 0 && product.image) {
               images = [product.image];
             }
+            
             return {
               id: product.id.toString(),
               name: product.name,
@@ -72,29 +59,40 @@ const Index = () => {
               purchaseLink: product.purchase_link
             };
           });
-
+          
           setProducts(formattedProducts);
+          
+          // Extract unique categories from products
           const uniqueCategories = ['Todos', ...new Set(formattedProducts.map(p => p.category))];
           setCategories(uniqueCategories);
         }
 
-        // Fetch store settings
-        const { data: settingsData } = await supabase
+        // Fetch store settings with better error handling
+        console.log('Index: Fetching store settings...');
+        const { data: settingsData, error: settingsError } = await supabase
           .from('store_settings')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(1);
-
-        if (settingsData && settingsData.length > 0) {
-          // Mistura com os defaults SEMPRE!
+        
+        if (settingsError) {
+          console.error('Index: Error fetching store settings:', settingsError);
+          // Don't throw error for store settings, just log it
+        } else if (settingsData && settingsData.length > 0) {
+          const settings = settingsData[0];
+          console.log('Index: Store settings loaded:', settings);
+          
           setStoreSettings({
-            ...DEFAULT_STORE_SETTINGS,
-            ...settingsData[0]
+            name: settings.name || 'Minha Lojinha',
+            banner: settings.banner || '/placeholder.svg'
           });
+          
+          console.log('Index: Banner URL set to:', settings.banner);
         } else {
-          setStoreSettings(DEFAULT_STORE_SETTINGS);
+          console.log('Index: No store settings found, using defaults');
         }
       } catch (error) {
+        console.error('Index: Error fetching data:', error);
         toast({
           title: "Erro ao carregar dados",
           description: "Não foi possível carregar os dados. Tente novamente.",
@@ -104,58 +102,47 @@ const Index = () => {
         setLoading(false);
       }
     };
-
+    
     fetchData();
   }, [toast]);
 
-  const filteredProducts = selectedCategory === "Todos"
-    ? products
+  const filteredProducts = selectedCategory === "Todos" 
+    ? products 
     : products.filter(product => product.category === selectedCategory);
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-
+      
       {/* Hero Banner Section */}
-      <section
-        className="relative bg-center bg-cover h-[18vh] sm:h-[22vh] md:h-[26vh] transition-all duration-300"
-        style={{
+      <section 
+        className="relative bg-center bg-cover h-[30vh] sm:h-[40vh] md:h-[50vh]" 
+        style={{ 
           backgroundImage: `url(${storeSettings.banner})`,
           backgroundPosition: 'center',
           backgroundSize: 'cover'
         }}
       >
         <div className="absolute inset-0 bg-vintage-brown/30"></div>
-        <div className="relative z-10 vintage-container h-full flex flex-col items-center justify-center px-2">
-          <h1
-            className="drop-shadow-lg mb-1 sm:mb-2"
-            style={{
-              color: storeSettings.hero_headline_color,
-              fontFamily: storeSettings.hero_headline_font,
-              fontSize: storeSettings.hero_headline_size,
-              fontWeight: storeSettings.hero_headline_weight,
-            }}
-          >
-            {storeSettings.hero_headline || storeSettings.name}
-          </h1>
-          <p
-            className="max-w-sm md:max-w-md mx-auto drop-shadow-md leading-tight"
-            style={{
-              color: storeSettings.hero_subheadline_color,
-              fontFamily: storeSettings.hero_subheadline_font,
-              fontSize: storeSettings.hero_subheadline_size,
-            }}
-          >
-            {storeSettings.hero_subheadline}
-          </p>
+        <div className="relative z-10 vintage-container h-full flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-playfair font-medium drop-shadow-lg mb-4">
+              {storeSettings.name}
+            </h1>
+            <p className="text-white text-lg md:text-xl max-w-lg mx-auto drop-shadow-md">
+              Produtos de beleza e acessórios com estilo único e elegante
+            </p>
+          </div>
         </div>
+        
+        {/* Debug info - remove this after testing */}
         {process.env.NODE_ENV === 'development' && (
           <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
             Banner URL: {storeSettings.banner}
           </div>
         )}
       </section>
-
+      
       {/* Category Filters */}
       <section className="vintage-section pt-8 pb-4">
         <div className="vintage-container">
@@ -176,7 +163,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-
+      
       {/* Products Grid */}
       <section className="vintage-section py-8 flex-grow">
         <div className="vintage-container">
@@ -213,7 +200,7 @@ const Index = () => {
           )}
         </div>
       </section>
-
+      
       {/* Features Section */}
       <section className="vintage-section bg-vintage-beige/20 py-12">
         <div className="vintage-container">
@@ -257,7 +244,7 @@ const Index = () => {
           </div>
         </div>
       </section>
-
+      
       <Footer />
     </div>
   );
