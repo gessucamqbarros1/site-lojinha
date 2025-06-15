@@ -126,7 +126,7 @@ const Admin = () => {
       {/* Mobile menu button */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="fixed top-4 left-4 z-30 md:hidden bg-white/95 hover:bg-white p-3 rounded-lg shadow-lg border border-vintage-beige/50 backdrop-blur-sm transition-all duration-200 hover:shadow-xl"
+        className="fixed top-4 left-4 z-30 md:hidden bg-white hover:bg-gray-50 p-3 rounded-lg shadow-lg border border-gray-200 transition-all duration-200 hover:shadow-xl"
       >
         <Menu size={20} className="text-vintage-brown" />
       </button>
