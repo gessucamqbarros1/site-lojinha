@@ -38,7 +38,7 @@ const Product = () => {
           }
         } else if (data) {
           // Convert Json array to string array, filtering out non-string values
-          const imagesArray = Array.isArray(data.images) 
+          let imagesArray = Array.isArray(data.images) 
             ? data.images.filter((img): img is string => typeof img === 'string')
             : (data.image ? [data.image] : []);
             
