@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Menu } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdminData } from '@/hooks/useAdminData';
 import AdminLogin from '@/components/admin/AdminLogin';
@@ -31,6 +32,7 @@ const Admin = () => {
   } = useAdminData();
 
   const [activeTab, setActiveTab] = useState('products');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -120,15 +122,27 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-vintage-background flex">
+    <div className="min-h-screen bg-vintage-background flex relative">
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="fixed top-4 left-4 z-30 md:hidden bg-vintage-card p-2 rounded-md shadow-md border border-vintage-beige/30"
+      >
+        <Menu size={20} className="text-vintage-brown" />
+      </button>
+
       <AdminSidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab}
         onLogout={handleLogout}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
       />
       
-      <div className="flex-1 p-8">
-        {renderActiveTab()}
+      <div className="flex-1 p-4 md:p-8 pt-16 md:pt-8">
+        <div className="max-w-full overflow-x-hidden">
+          {renderActiveTab()}
+        </div>
       </div>
     </div>
   );

@@ -62,8 +62,8 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
       <label className="block text-sm font-medium text-vintage-dark mb-2">
         Logo da Loja
       </label>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-        <div className="w-32 h-32 bg-vintage-cream rounded-md overflow-hidden border border-vintage-beige/30 mx-auto">
+      <div className="flex flex-col md:grid md:grid-cols-2 gap-4 items-center">
+        <div className="w-24 h-24 md:w-32 md:h-32 bg-vintage-cream rounded-md overflow-hidden border border-vintage-beige/30 mx-auto flex-shrink-0">
           <img 
             src={logoUpload ? URL.createObjectURL(logoUpload) : (logoUrl || '/placeholder.svg')} 
             alt="Logo Preview" 
@@ -74,13 +74,13 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
             }}
           />
         </div>
-        <div>
+        <div className="w-full">
           <label 
             htmlFor="logo-upload" 
-            className="vintage-button-secondary flex items-center justify-center w-full cursor-pointer"
+            className="vintage-button-secondary flex items-center justify-center w-full cursor-pointer text-sm md:text-base px-3 md:px-4 py-2 md:py-3"
           >
-            <Upload size={16} className="mr-2" />
-            {uploading ? 'Carregando...' : 'Selecionar Logo'}
+            <Upload size={16} className="mr-2 flex-shrink-0" />
+            <span className="truncate">{uploading ? 'Carregando...' : 'Selecionar Logo'}</span>
           </label>
           <input
             id="logo-upload"
@@ -90,8 +90,8 @@ const LogoUpload: React.FC<LogoUploadProps> = ({
             onChange={handleLogoChange}
             disabled={uploading}
           />
-          <p className="text-xs text-vintage-dark/60 mt-2">
-            Formatos recomendados: JPG, PNG. Formato quadrado recomendado. Tamanho máximo: 5MB
+          <p className="text-xs text-vintage-dark/60 mt-2 text-center md:text-left">
+            JPG, PNG. Formato quadrado. Máx: 5MB
           </p>
         </div>
       </div>

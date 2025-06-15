@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from './PhoneInput';
@@ -113,12 +114,12 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   };
 
   return (
-    <div className="vintage-card p-6">
-      <h2 className="font-playfair text-xl mb-6 text-vintage-brown">
+    <div className="vintage-card p-4 md:p-6">
+      <h2 className="font-playfair text-lg md:text-xl mb-4 md:mb-6 text-vintage-brown">
         Configurações da Loja
       </h2>
       
-      <div className="space-y-8">
+      <div className="space-y-6 md:space-y-8">
         {/* Theme Selection */}
         <div>
           <ThemeSelector />
@@ -134,7 +135,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             type="text"
             value={storeData.name}
             onChange={(e) => setStoreData({...storeData, name: e.target.value})}
-            className="vintage-input w-full"
+            className="vintage-input w-full text-sm md:text-base"
             placeholder="Digite o nome da sua loja"
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
@@ -156,7 +157,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             type="text"
             value={storeData.instagram_link}
             onChange={(e) => setStoreData({...storeData, instagram_link: e.target.value})}
-            className="vintage-input w-full"
+            className="vintage-input w-full text-sm md:text-base"
             placeholder="https://instagram.com/seuusuario"
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
@@ -187,10 +188,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           </label>
           <textarea
             id="about"
-            rows={6}
+            rows={4}
             value={storeData.about}
             onChange={(e) => setStoreData({...storeData, about: e.target.value})}
-            className="vintage-input w-full"
+            className="vintage-input w-full text-sm md:text-base resize-none"
             placeholder="Conte um pouco sobre sua loja..."
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
@@ -202,7 +203,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           <button
             onClick={handleSaveSettings}
             disabled={saving || uploading}
-            className="vintage-button"
+            className="vintage-button w-full md:w-auto text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
           >
             {saving ? 'Salvando...' : 'Salvar Configurações'}
           </button>
