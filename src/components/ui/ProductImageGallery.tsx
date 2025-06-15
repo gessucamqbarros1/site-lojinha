@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ZoomableImage from './ZoomableImage';
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -28,12 +27,12 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({ images, produ
   
   return (
     <div className="space-y-4">
-      {/* Main Image with Zoom */}
+      {/* Main Image */}
       <div className="relative aspect-square bg-white rounded-xl overflow-hidden border border-vintage-beige/30 shadow-lg group">
-        <ZoomableImage
+        <img
           src={displayImages[currentImageIndex]}
           alt={`${productName} - Imagem ${currentImageIndex + 1}`}
-          className="w-full h-full"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
         
         {/* Navigation arrows - only show if more than 1 image */}
