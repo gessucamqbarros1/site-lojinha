@@ -25,6 +25,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   toast
 }) => {
   const [logoUpload, setLogoUpload] = useState<File | null>(null);
+  const [bannerUpload, setBannerUpload] = useState<File | null>(null);
 
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -60,6 +61,48 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         toast({
           title: "Erro no upload da logo",
           description: error instanceof Error ? error.message : "Erro ao fazer upload da logo",
+          variant: "destructive",
+        });
+      } finally {
+        setUploading(false);
+      }
+    }
+  };
+
+  const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setBannerUpload(file);
+      
+      try {
+        setUploading(true);
+        
+        if (storeData.banner && !storeData.banner.includes('/placeholder.svg')) {
+          await deleteProductImage(storeData.banner);
+        }
+        
+        const newBannerUrl = await uploadProductImage(file, 'store_banner');
+        
+        if (newBannerUrl) {
+          const updatedStoreData = {
+            ...storeData,
+            banner: newBannerUrl
+          };
+          
+          setStoreData(updatedStoreData);
+          
+          console.log('SettingsTab: Banner uploaded successfully:', newBannerUrl);
+          
+          toast({
+            title: "Banner carregado",
+            description: "O banner foi salvo com sucesso",
+          });
+        }
+      } catch (error) {
+        console.error('SettingsTab: Error uploading banner:', error);
+        toast({
+          title: "Erro no upload do banner",
+          description: error instanceof Error ? error.message : "Erro ao fazer upload do banner",
           variant: "destructive",
         });
       } finally {
@@ -160,7 +203,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         Configurações da Loja
       </h2>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
           <label htmlFor="storeName" className="block text-sm font-medium text-vintage-dark mb-1">
             Nome da Loja
@@ -213,7 +256,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-vintage-dark mb-1">
+          <label className="block text-sm font-medium text-vintage-dark mb-2">
             Logo da Loja
           </label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
@@ -252,20 +295,53 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         </div>
         
         <div>
-          <label htmlFor="bannerUrl" className="block text-sm font-medium text-vintage-dark mb-1">
-            URL do Banner
+          <label className="block text-sm font-medium text-vintage-dark mb-2">
+            Banner da Loja
           </label>
-          <input
-            id="bannerUrl"
-            type="text"
-            value={storeData.banner}
-            onChange={(e) => setStoreData({...storeData, banner: e.target.value})}
-            className="vintage-input w-full"
-            placeholder="https://exemplo.com/banner.jpg"
-          />
-          <p className="text-xs text-vintage-dark/60 mt-1">
-            URL da imagem do banner (recomendado: formato 16:9)
-          </p>
+          <div className="space-y-4">
+            <div className="w-full h-32 bg-vintage-cream rounded-md overflow-hidden border border-vintage-beige/30">
+              <img 
+                src={bannerUpload ? URL.createObjectURL(bannerUpload) : (storeData.banner || '/placeholder.svg')} 
+                alt="Banner Preview" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  console.log('SettingsTab: Banner preview failed to load');
+                  e.currentTarget.src = '/placeholder.svg';
+                }}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label 
+                  htmlFor="banner-upload" 
+                  className="vintage-button-secondary flex items-center justify-center w-full cursor-pointer"
+                >
+                  <Upload size={16} className="mr-2" />
+                  {uploading ? 'Carregando...' : 'Upload Banner'}
+                </label>
+                <input
+                  id="banner-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleBannerChange}
+                  disabled={uploading}
+                />
+              </div>
+              <div>
+                <input
+                  type="text"
+                  value={storeData.banner}
+                  onChange={(e) => setStoreData({...storeData, banner: e.target.value})}
+                  className="vintage-input w-full"
+                  placeholder="ou cole uma URL"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-vintage-dark/60">
+              Faça upload de uma imagem ou cole uma URL. Formato recomendado: 16:9. Tamanho máximo: 5MB
+            </p>
+          </div>
         </div>
         
         <div>
