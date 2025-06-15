@@ -263,7 +263,6 @@ export type Database = {
           banner: string | null
           created_at: string
           id: string
-          instagram_link: string | null
           logo: string | null
           name: string
           updated_at: string
@@ -274,7 +273,6 @@ export type Database = {
           banner?: string | null
           created_at?: string
           id?: string
-          instagram_link?: string | null
           logo?: string | null
           name?: string
           updated_at?: string
@@ -285,7 +283,6 @@ export type Database = {
           banner?: string | null
           created_at?: string
           id?: string
-          instagram_link?: string | null
           logo?: string | null
           name?: string
           updated_at?: string
