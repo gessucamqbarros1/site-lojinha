@@ -139,19 +139,6 @@ const Index = () => {
             </p>
           </div>
         </div>
-        {/* Debug info - sempre mostra a URL do banner para teste */}
-        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
-          Banner URL: {storeSettings.banner}
-          <br />
-          <a
-            href={storeSettings.banner}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline"
-          >
-            Abrir imagem
-          </a>
-        </div>
       </section>
       
       {/* Category Filters */}

@@ -127,6 +127,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       <div className="space-y-6 md:space-y-8">
         {/* Theme Selection */}
         <div>
+          {/* Corrigido: chamar ThemeSelector sem props */}
           <ThemeSelector />
           <div className="vintage-divider"></div>
         </div>
