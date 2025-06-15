@@ -113,7 +113,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   };
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="admin-card p-4 md:p-6">
       <h2 className="font-playfair text-lg md:text-xl mb-4 md:mb-6 text-vintage-brown">
         Configurações da Loja
       </h2>
@@ -194,7 +194,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           <button
             onClick={handleSaveSettings}
             disabled={saving || uploading}
-            className="vintage-button w-full md:w-auto text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
+            className="admin-button w-full md:w-auto text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
           >
             {saving ? 'Salvando...' : 'Salvar Configurações'}
           </button>

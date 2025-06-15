@@ -23,7 +23,7 @@ const AdminLogin: React.FC = () => {
 
   return (
     <div className="py-12">
-      <div className="max-w-md mx-auto vintage-card p-8">
+      <div className="max-w-md mx-auto admin-card p-8">
         <h1 className="text-2xl font-playfair text-vintage-brown mb-6 text-center">
           {isSignUp ? 'Criar Conta' : 'Acesso Administrativo'}
         </h1>
@@ -79,7 +79,7 @@ const AdminLogin: React.FC = () => {
           )}
           <button 
             type="submit" 
-            className="vintage-button w-full py-2 mb-4"
+            className="admin-button w-full py-2 mb-4"
             disabled={loading || (isSignUp && password !== confirmPassword)}
           >
             {loading ? 'Carregando...' : (isSignUp ? 'Criar Conta' : 'Entrar')}

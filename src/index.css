@@ -359,6 +359,26 @@
     transform: translateY(-1px);
     color: var(--theme-primary) !important;
   }
+  
+  .admin-card {
+    background-color: var(--theme-card) !important;
+    border: 1px solid var(--theme-border) !important;
+    border-radius: var(--theme-border-radius) !important;
+    box-shadow: var(--theme-card-shadow) !important;
+    position: relative;
+    overflow: hidden;
+    /* Sem animações ou efeitos de transição */
+  }
+  
+  .admin-button {
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-medium shadow focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50;
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent)) !important;
+    color: var(--theme-background) !important;
+    border-radius: var(--theme-border-radius) !important;
+    position: relative;
+    overflow: hidden;
+    /* Sem transform, transition, hover ou before/after */
+  }
 }
 
 /* Enhanced animations and keyframes */
