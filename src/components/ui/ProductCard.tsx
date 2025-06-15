@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
@@ -44,13 +45,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   return (
     <Link to={`/product/${product.id}`} className="block group" aria-label={product.name}>
-      <div className="vintage-card overflow-hidden flex flex-col h-full hover-lift animate-fade-up relative transform transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10">
+      <div className="vintage-card vintage-card-sm overflow-hidden flex flex-col h-full hover-lift animate-fade-up relative transform transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 min-w-[140px] max-w-[178px] w-full">
         {/* Badge - Automático para ofertas */}
-        {displayBadge && <ProductBadge type={displayBadge} />}
+        {displayBadge && <ProductBadge type={displayBadge} className="text-[11px] px-1.5 py-0.5" />}
 
         {/* Mostrar percentual de desconto se estiver em oferta */}
         {isOnSale && (
-          <div className="absolute top-0.5 right-8 z-20 bg-red-500 text-white text-[10px] font-bold px-1 py-0.5 rounded-full">
+          <div className="absolute top-1 right-8 z-20 bg-red-500 text-white text-[9px] font-bold px-1 py-0.5 rounded-full">
             -{product.discount_percentage}%
           </div>
         )}
@@ -58,7 +59,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         {/* Favorite Button */}
         <button
           onClick={handleFavoriteClick}
-          className={`absolute top-0.5 right-0.5 z-20 p-1 rounded-full backdrop-blur-sm transition-all duration-300 ${
+          className={`absolute top-1 right-1 z-20 p-1 rounded-full backdrop-blur-sm transition-all duration-300 ${
             isFavorite(product.id)
               ? "bg-red-500 text-white scale-110"
               : "bg-white/80 text-vintage-brown/60 hover:bg-white hover:text-red-500"
@@ -66,7 +67,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           aria-label={isFavorite(product.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
         >
           <Heart
-            size={12}
+            size={11}
             className={isFavorite(product.id) ? "fill-current" : ""}
           />
         </button>
@@ -82,9 +83,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               src={productImages[0]}
               alt={mainImageAlt}
               loading="lazy"
-              className="aspect-square object-cover w-full h-full rounded-t-md"
-              width={400}
-              height={400}
+              className="aspect-[1/1] object-cover w-full h-[110px] sm:h-[140px] rounded-t-md"
+              width={180}
+              height={140}
             />
           ) : (
             <ProductImageCarousel
@@ -96,17 +97,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
 
         {/* Product info with enhanced spacing and animations */}
-        <div className="p-2 flex flex-col flex-grow relative z-20">
-          <h3 className="font-playfair text-sm text-vintage-dark mb-1 line-clamp-1 group-hover:text-primary transition-colors duration-300">
+        <div className="p-1.5 flex flex-col flex-grow relative z-20">
+          <h3 className="font-playfair text-xs text-vintage-dark mb-0.5 line-clamp-1 group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
-          <p className="text-[10px] text-vintage-dark/70 mb-2 line-clamp-2 flex-grow leading-relaxed">
+          <p className="text-[9px] text-vintage-dark/70 mb-1 line-clamp-2 flex-grow leading-relaxed">
             {product.description}
           </p>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               {/* Preço atual */}
-              <span className="text-black font-semibold text-sm">
+              <span className="text-black font-semibold text-xs">
                 {new Intl.NumberFormat("pt-BR", {
                   style: "currency",
                   currency: "BRL",
@@ -115,7 +116,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
               {/* Preço original riscado se estiver em oferta */}
               {isOnSale && product.original_price && (
-                <span className="text-[10px] text-gray-500 line-through">
+                <span className="text-[9px] text-gray-500 line-through">
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
                     currency: "BRL",
@@ -124,7 +125,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               )}
             </div>
 
-            <span className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-vintage-beige/20 to-vintage-beige/30 backdrop-blur-sm rounded-full text-vintage-brown border border-vintage-beige/40 group-hover:scale-110 transition-transform duration-300">
+            <span className="text-[9px] px-1 py-0.5 bg-gradient-to-r from-vintage-beige/20 to-vintage-beige/30 backdrop-blur-sm rounded-full text-vintage-brown border border-vintage-beige/40 group-hover:scale-110 transition-transform duration-300">
               {product.category}
             </span>
           </div>

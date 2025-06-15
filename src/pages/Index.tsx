@@ -168,13 +168,13 @@ const Index = () => {
           </h2>
           
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="vintage-card overflow-hidden animate-pulse">
-                  <div className="aspect-square bg-vintage-beige/30"></div>
-                  <div className="p-4">
-                    <div className="h-6 bg-vintage-beige/30 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-vintage-beige/30 rounded w-1/2"></div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+              {[...Array(6)].map((_, index) => (
+                <div key={index} className="vintage-card vintage-card-sm overflow-hidden animate-pulse min-w-[140px] max-w-[178px] w-full">
+                  <div className="aspect-[1/1] bg-vintage-beige/30 h-[110px] sm:h-[140px]"></div>
+                  <div className="p-2">
+                    <div className="h-4 bg-vintage-beige/30 rounded w-3/4 mb-1"></div>
+                    <div className="h-3 bg-vintage-beige/30 rounded w-1/2"></div>
                   </div>
                 </div>
               ))}
@@ -186,7 +186,7 @@ const Index = () => {
                   <p>Nenhum produto encontrado nesta categoria.</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
                   {filteredProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
                   ))}
