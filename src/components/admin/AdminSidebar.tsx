@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Package, Settings, Database, FolderOpen, LogOut } from 'lucide-react';
 
 interface AdminSidebarProps {
   activeTab: string;
@@ -8,60 +9,49 @@ interface AdminSidebarProps {
 }
 
 const AdminSidebar: React.FC<AdminSidebarProps> = ({ activeTab, setActiveTab, onLogout }) => {
+  const menuItems = [
+    { id: 'products', label: 'Produtos', icon: Package },
+    { id: 'categories', label: 'Categorias', icon: FolderOpen },
+    { id: 'settings', label: 'Configurações', icon: Settings },
+    { id: 'backup', label: 'Backup/Restaurar', icon: Database },
+  ];
+
   return (
-    <div className="md:w-1/4">
-      <div className="vintage-card p-6">
-        <h2 className="font-playfair text-xl mb-6 text-vintage-brown">
+    <div className="w-64 bg-vintage-cream/50 border-r border-vintage-beige/30 min-h-screen">
+      <div className="p-6">
+        <h1 className="font-playfair text-xl text-vintage-brown mb-8">
           Painel Admin
-        </h2>
-        <nav>
-          <ul className="space-y-2">
-            <li>
+        </h1>
+        
+        <nav className="space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
               <button
-                onClick={() => setActiveTab('products')}
-                className={`w-full text-left px-4 py-2 rounded-md ${
-                  activeTab === 'products'
-                    ? 'bg-vintage-beige text-vintage-brown'
-                    : 'hover:bg-vintage-beige/30 text-vintage-dark/80'
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center px-4 py-3 text-left rounded-md transition-colors ${
+                  activeTab === item.id
+                    ? 'bg-primary text-white'
+                    : 'text-vintage-dark/80 hover:bg-vintage-beige/30'
                 }`}
               >
-                Produtos
+                <Icon size={18} className="mr-3" />
+                {item.label}
               </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`w-full text-left px-4 py-2 rounded-md ${
-                  activeTab === 'settings'
-                    ? 'bg-vintage-beige text-vintage-brown'
-                    : 'hover:bg-vintage-beige/30 text-vintage-dark/80'
-                }`}
-              >
-                Configurações
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setActiveTab('backup')}
-                className={`w-full text-left px-4 py-2 rounded-md ${
-                  activeTab === 'backup'
-                    ? 'bg-vintage-beige text-vintage-brown'
-                    : 'hover:bg-vintage-beige/30 text-vintage-dark/80'
-                }`}
-              >
-                Backup & Dados
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={onLogout}
-                className="w-full text-left px-4 py-2 rounded-md hover:bg-vintage-beige/30 text-vintage-dark/80"
-              >
-                Sair
-              </button>
-            </li>
-          </ul>
+            );
+          })}
         </nav>
+        
+        <div className="mt-8 pt-8 border-t border-vintage-beige/30">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center px-4 py-3 text-left rounded-md text-vintage-dark/80 hover:bg-vintage-beige/30 transition-colors"
+          >
+            <LogOut size={18} className="mr-3" />
+            Sair
+          </button>
+        </div>
       </div>
     </div>
   );

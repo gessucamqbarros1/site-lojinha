@@ -1,110 +1,135 @@
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
+import { useAuth } from '@/hooks/useAuth';
+import { useAdminData } from '@/hooks/useAdminData';
 import AdminLogin from '@/components/admin/AdminLogin';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import ProductsTab from '@/components/admin/ProductsTab';
+import CategoriesTab from '@/components/admin/CategoriesTab';
 import SettingsTab from '@/components/admin/SettingsTab';
 import BackupTab from '@/components/admin/BackupTab';
-import { useAdminData } from '@/hooks/useAdminData';
-import { useAuth } from '@/hooks/useAuth';
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState('products');
-  const { user, loading, signOut } = useAuth();
-  const adminData = useAdminData();
+  const { user, logout } = useAuth();
+  const {
+    storeData,
+    setStoreData,
+    productList,
+    setProductList,
+    categories,
+    setCategories,
+    uploading,
+    setUploading,
+    saving,
+    setSaving,
+    deleting,
+    setDeleting,
+    fetchProducts,
+    fetchStoreSettings,
+    generateWhatsAppLink,
+    toast
+  } = useAdminData();
 
-  // Fetch data when user is authenticated
+  const [activeTab, setActiveTab] = useState('products');
+
   useEffect(() => {
     if (user) {
-      adminData.fetchProducts();
-      adminData.fetchStoreSettings();
+      fetchProducts();
+      fetchStoreSettings();
     }
   }, [user]);
 
   const handleLogout = async () => {
-    await signOut();
-    setActiveTab('products');
+    try {
+      await logout();
+      toast({
+        title: "Logout realizado",
+        description: "Você foi deslogado com sucesso",
+      });
+    } catch (error) {
+      console.error('Error during logout:', error);
+      toast({
+        title: "Erro no logout",
+        description: "Não foi possível fazer logout. Tente novamente.",
+        variant: "destructive",
+      });
+    }
   };
 
-  // Show loading while checking auth
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-vintage-brown mx-auto mb-4"></div>
-            <p className="text-vintage-dark">Carregando...</p>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+  if (!user) {
+    return <AdminLogin />;
   }
 
-  const renderAdminPanel = () => (
-    <div className="vintage-container py-8">
-      <div className="flex flex-col md:flex-row gap-8">
-        <AdminSidebar 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          onLogout={handleLogout} 
-        />
-        
-        <div className="md:w-3/4">
-          {activeTab === 'products' && (
-            <ProductsTab
-              productList={adminData.productList}
-              setProductList={adminData.setProductList}
-              categories={adminData.categories}
-              fetchProducts={adminData.fetchProducts}
-              generateWhatsAppLink={adminData.generateWhatsAppLink}
-              uploading={adminData.uploading}
-              setUploading={adminData.setUploading}
-              saving={adminData.saving}
-              setSaving={adminData.setSaving}
-              toast={adminData.toast}
-            />
-          )}
-          
-          {activeTab === 'settings' && (
-            <SettingsTab
-              storeData={adminData.storeData}
-              setStoreData={adminData.setStoreData}
-              uploading={adminData.uploading}
-              setUploading={adminData.setUploading}
-              saving={adminData.saving}
-              setSaving={adminData.setSaving}
-              toast={adminData.toast}
-            />
-          )}
+  const renderActiveTab = () => {
+    switch (activeTab) {
+      case 'products':
+        return (
+          <ProductsTab
+            productList={productList}
+            setProductList={setProductList}
+            categories={categories}
+            fetchProducts={fetchProducts}
+            generateWhatsAppLink={generateWhatsAppLink}
+            uploading={uploading}
+            setUploading={setUploading}
+            saving={saving}
+            setSaving={setSaving}
+            toast={toast}
+          />
+        );
+      case 'categories':
+        return (
+          <CategoriesTab
+            categories={categories}
+            setCategories={setCategories}
+            toast={toast}
+          />
+        );
+      case 'settings':
+        return (
+          <SettingsTab
+            storeData={storeData}
+            setStoreData={setStoreData}
+            uploading={uploading}
+            setUploading={setUploading}
+            saving={saving}
+            setSaving={setSaving}
+            deleting={deleting}
+            setDeleting={setDeleting}
+            fetchStoreSettings={fetchStoreSettings}
+            toast={toast}
+          />
+        );
+      case 'backup':
+        return (
+          <BackupTab
+            productList={productList}
+            storeData={storeData}
+            categories={categories}
+            setProductList={setProductList}
+            setStoreData={setStoreData}
+            setCategories={setCategories}
+            fetchProducts={fetchProducts}
+            fetchStoreSettings={fetchStoreSettings}
+            toast={toast}
+          />
+        );
+      default:
+        return <ProductsTab productList={productList} setProductList={setProductList} categories={categories} fetchProducts={fetchProducts} generateWhatsAppLink={generateWhatsAppLink} uploading={uploading} setUploading={setUploading} saving={saving} setSaving={setSaving} toast={toast} />;
+    }
+  };
 
-          {activeTab === 'backup' && (
-            <BackupTab
-              storeData={adminData.storeData}
-              productList={adminData.productList}
-              setProductList={adminData.setProductList}
-              saving={adminData.saving}
-              setSaving={adminData.setSaving}
-              deleting={adminData.deleting}
-              setDeleting={adminData.setDeleting}
-              toast={adminData.toast}
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  );
-  
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow">
-        {user ? renderAdminPanel() : <AdminLogin />}
-      </main>
-      <Footer />
+    <div className="min-h-screen bg-vintage-background flex">
+      <AdminSidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab}
+        onLogout={handleLogout}
+      />
+      
+      <div className="flex-1 p-8">
+        {renderActiveTab()}
+      </div>
     </div>
   );
 };
