@@ -60,12 +60,15 @@ export const useAdminData = () => {
             images = [product.image];
           }
           
+          // Ensure main image is the first one in the array
+          const mainImage = images.length > 0 ? images[0] : (product.image || '/placeholder.svg');
+          
           return {
             id: product.id.toString(),
             name: product.name || '',
             description: product.description || '',
             price: parseFloat(product.price?.toString() || '0'),
-            image: product.image || images[0] || '/placeholder.svg',
+            image: mainImage,
             images: images,
             category: product.category || 'Maquiagem',
             purchaseLink: product.purchase_link || ''

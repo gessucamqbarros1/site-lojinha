@@ -27,15 +27,32 @@ const Products = () => {
         }
         
         if (data) {
-          const formattedProducts = data.map(product => ({
-            id: product.id.toString(),
-            name: product.name,
-            description: product.description,
-            price: parseFloat(product.price.toString()),
-            image: product.image || '/placeholder.svg',
-            category: product.category,
-            purchaseLink: product.purchase_link
-          }));
+          const formattedProducts = data.map(product => {
+            // Handle images array - ensure it's properly formatted
+            let images: string[] = [];
+            if (Array.isArray(product.images)) {
+              images = product.images.filter((img): img is string => typeof img === 'string');
+            }
+            
+            // If no images in array but has main image, add it to array
+            if (images.length === 0 && product.image) {
+              images = [product.image];
+            }
+            
+            // Ensure main image is the first one in the array
+            const mainImage = images.length > 0 ? images[0] : (product.image || '/placeholder.svg');
+            
+            return {
+              id: product.id.toString(),
+              name: product.name,
+              description: product.description,
+              price: parseFloat(product.price.toString()),
+              image: mainImage,
+              images: images, // Now includes all images
+              category: product.category,
+              purchaseLink: product.purchase_link
+            };
+          });
           
           setProducts(formattedProducts);
           

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Product } from '@/components/ui/ProductCard';
 import ProductList from './ProductList';
@@ -53,13 +54,17 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
       
       const whatsappLink = generateWhatsAppLink(editingProduct.name, editingProduct.price);
       
+      // Ensure images array is properly formatted and image is the first one
+      const images = editingProduct.images || [];
+      const mainImage = images.length > 0 ? images[0] : '/placeholder.svg';
+      
       const productData = {
         name: editingProduct.name,
         description: editingProduct.description,
         price: editingProduct.price,
         category: editingProduct.category,
-        image: editingProduct.image,
-        images: editingProduct.images || [],
+        image: mainImage,
+        images: images, // Save all images
         purchase_link: whatsappLink,
         updated_at: new Date().toISOString()
       };
@@ -73,11 +78,16 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
         throw error;
       }
       
-      console.log('Product auto-saved successfully');
+      console.log('Product auto-saved successfully with images:', images);
       
-      // Fixed TypeScript error: update productList directly with new array
+      // Update productList with the saved data
       const updatedProducts = productList.map(p => 
-        p.id === editingProduct.id ? { ...editingProduct, purchaseLink: whatsappLink } : p
+        p.id === editingProduct.id ? { 
+          ...editingProduct, 
+          image: mainImage,
+          images: images,
+          purchaseLink: whatsappLink 
+        } : p
       );
       setProductList(updatedProducts);
       
@@ -152,6 +162,7 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
           // Update the images array
           newImages[index] = newImageUrl;
           
+          // Update the editing product with all images
           setEditingProduct({
             ...editingProduct,
             images: newImages,
@@ -184,13 +195,17 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
       
       const whatsappLink = generateWhatsAppLink(editingProduct.name, editingProduct.price);
       
+      // Ensure images array is properly formatted and image is the first one
+      const images = editingProduct.images || [];
+      const mainImage = images.length > 0 ? images[0] : '/placeholder.svg';
+      
       const productData = {
         name: editingProduct.name,
         description: editingProduct.description,
         price: editingProduct.price,
         category: editingProduct.category,
-        image: editingProduct.image,
-        images: editingProduct.images || [],
+        image: mainImage,
+        images: images, // Save all images
         purchase_link: whatsappLink,
         updated_at: new Date().toISOString()
       };
@@ -212,6 +227,8 @@ const ProductsTab: React.FC<ProductsTabProps> = ({
       if (result.error) {
         throw result.error;
       }
+      
+      console.log('Product saved successfully with images:', images);
       
       fetchProducts();
       
