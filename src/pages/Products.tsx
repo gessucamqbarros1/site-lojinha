@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
+import SearchBar from '@/components/ui/SearchBar';
+import ProductSkeleton from '@/components/ui/ProductSkeleton';
+import Newsletter from '@/components/ui/Newsletter';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/components/ui/ProductCard';
@@ -10,8 +13,11 @@ import { Product } from '@/components/ui/ProductCard';
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(['Todos']);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filters, setFilters] = useState<{ minPrice?: number; maxPrice?: number; category?: string }>({});
   const { toast } = useToast();
 
   useEffect(() => {
@@ -27,7 +33,7 @@ const Products = () => {
         }
         
         if (data) {
-          const formattedProducts = data.map(product => {
+          const formattedProducts = data.map((product, index) => {
             // Handle images array - ensure it's properly formatted
             let images: string[] = [];
             if (Array.isArray(product.images)) {
@@ -42,19 +48,25 @@ const Products = () => {
             // Ensure main image is the first one in the array
             const mainImage = images.length > 0 ? images[0] : (product.image || '/placeholder.svg');
             
+            // Add random badges for demonstration
+            const badges: ('new' | 'popular' | 'sale')[] = ['new', 'popular', 'sale'];
+            const randomBadge = Math.random() > 0.7 ? badges[index % 3] : undefined;
+            
             return {
               id: product.id.toString(),
               name: product.name,
               description: product.description,
               price: parseFloat(product.price.toString()),
               image: mainImage,
-              images: images, // Now includes all images
+              images: images,
               category: product.category,
-              purchaseLink: product.purchase_link
+              purchaseLink: product.purchase_link,
+              badge: randomBadge
             };
           });
           
           setProducts(formattedProducts);
+          setFilteredProducts(formattedProducts);
           
           // Extract unique categories from products
           const uniqueCategories = ['Todos', ...new Set(formattedProducts.map(p => p.category))];
@@ -75,29 +87,88 @@ const Products = () => {
     fetchProducts();
   }, [toast]);
 
-  const filteredProducts = selectedCategory === "Todos" 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
+  useEffect(() => {
+    let filtered = products;
+
+    // Apply category filter
+    if (selectedCategory !== "Todos") {
+      filtered = filtered.filter(product => product.category === selectedCategory);
+    }
+
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply price filters
+    if (filters.minPrice) {
+      filtered = filtered.filter(product => product.price >= filters.minPrice!);
+    }
+    if (filters.maxPrice) {
+      filtered = filtered.filter(product => product.price <= filters.maxPrice!);
+    }
+
+    // Apply category filter from advanced filters
+    if (filters.category) {
+      filtered = filtered.filter(product => product.category === filters.category);
+    }
+
+    setFilteredProducts(filtered);
+  }, [products, selectedCategory, searchQuery, filters]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleFilterChange = (newFilters: { minPrice?: number; maxPrice?: number; category?: string }) => {
+    setFilters(newFilters);
+    if (newFilters.category) {
+      setSelectedCategory(newFilters.category);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Category Filters */}
-      <section className="vintage-section pt-8 pb-4">
+      {/* Hero Section with Search */}
+      <section className="vintage-section pt-8 pb-4 bg-gradient-to-br from-vintage-cream to-vintage-beige/30">
         <div className="vintage-container">
-          <h1 className="text-3xl font-playfair text-vintage-brown mb-6 text-center">Nossos Produtos</h1>
+          <h1 className="text-4xl md:text-5xl font-playfair text-vintage-brown mb-4 text-center animate-fade-up">
+            Nossos Produtos
+          </h1>
+          <p className="text-center text-vintage-dark/70 mb-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+            Descubra nossa coleção cuidadosamente selecionada
+          </p>
           
+          <div className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
+            <SearchBar
+              onSearch={handleSearch}
+              onFilterChange={handleFilterChange}
+              categories={categories}
+              searchQuery={searchQuery}
+            />
+          </div>
+        </div>
+      </section>
+      
+      {/* Category Filters */}
+      <section className="vintage-section py-4">
+        <div className="vintage-container">
           <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4">
-            {categories.map((category) => (
+            {categories.map((category, index) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-4 py-2 rounded-full text-sm md:text-base transition-colors ${
+                className={`px-6 py-3 rounded-full text-sm md:text-base transition-all duration-300 transform hover:scale-105 animate-fade-up ${
                   selectedCategory === category
-                    ? 'bg-primary text-white'
-                    : 'bg-vintage-beige/30 text-vintage-brown hover:bg-vintage-beige/50'
+                    ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg'
+                    : 'bg-white/80 backdrop-blur-sm border border-vintage-beige/50 text-vintage-brown hover:bg-vintage-beige/30 hover:shadow-md'
                 }`}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {category}
               </button>
@@ -109,39 +180,54 @@ const Products = () => {
       {/* Products Grid */}
       <section className="vintage-section py-8 flex-grow">
         <div className="vintage-container">
-          {selectedCategory !== "Todos" && (
-            <h2 className="text-2xl md:text-3xl font-playfair text-vintage-brown mb-8 text-center">
+          {selectedCategory !== "Todos" && !filters.category && (
+            <h2 className="text-2xl md:text-3xl font-playfair text-vintage-brown mb-8 text-center animate-fade-up">
               {selectedCategory}
             </h2>
           )}
           
+          {searchQuery && (
+            <p className="text-center text-vintage-dark/70 mb-6 animate-fade-up">
+              {filteredProducts.length} resultado(s) para "{searchQuery}"
+            </p>
+          )}
+          
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="vintage-card overflow-hidden animate-pulse">
-                  <div className="aspect-square bg-vintage-beige/30"></div>
-                  <div className="p-4">
-                    <div className="h-6 bg-vintage-beige/30 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-vintage-beige/30 rounded w-1/2"></div>
-                  </div>
-                </div>
+              {[...Array(8)].map((_, index) => (
+                <ProductSkeleton key={index} />
               ))}
             </div>
           ) : (
             <>
               {filteredProducts.length === 0 ? (
-                <div className="text-center py-12">
-                  <p>Nenhum produto encontrado nesta categoria.</p>
+                <div className="text-center py-16 animate-fade-up">
+                  <div className="text-6xl mb-4">🔍</div>
+                  <h3 className="text-xl font-playfair text-vintage-brown mb-2">Nenhum produto encontrado</h3>
+                  <p className="text-vintage-dark/70">Tente ajustar os filtros ou buscar por outros termos.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {filteredProducts.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                  {filteredProducts.map((product, index) => (
+                    <div
+                      key={product.id}
+                      className="animate-fade-up"
+                      style={{ animationDelay: `${index * 0.1}s` }}
+                    >
+                      <ProductCard product={product} />
+                    </div>
                   ))}
                 </div>
               )}
             </>
           )}
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="vintage-section py-8 bg-gradient-to-r from-vintage-beige/20 to-vintage-pink/20">
+        <div className="vintage-container max-w-2xl">
+          <Newsletter />
         </div>
       </section>
       

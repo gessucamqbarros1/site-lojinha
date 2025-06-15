@@ -1,7 +1,10 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Heart } from 'lucide-react';
 import ProductImageCarousel from './ProductImageCarousel';
+import ProductBadge from './ProductBadge';
+import { useFavorites } from '@/hooks/useFavorites';
 
 export interface Product {
   id: string;
@@ -12,6 +15,7 @@ export interface Product {
   images?: string[];
   category: string;
   purchaseLink?: string;
+  badge?: 'new' | 'popular' | 'sale';
 }
 
 interface ProductCardProps {
@@ -19,15 +23,40 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
   const productImages = product.images && product.images.length > 0 
     ? product.images 
     : (product.image ? [product.image] : ['/placeholder.svg']);
   
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFavorite(product.id);
+  };
+
   return (
     <Link to={`/product/${product.id}`} className="block group">
-      <div className="vintage-card overflow-hidden flex flex-col h-full hover-lift animate-fade-up relative">
-        {/* Subtle shimmer effect overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out z-10 pointer-events-none"></div>
+      <div className="vintage-card overflow-hidden flex flex-col h-full hover-lift animate-fade-up relative transform transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10">
+        {/* Badge */}
+        {product.badge && <ProductBadge type={product.badge} />}
+        
+        {/* Favorite Button */}
+        <button
+          onClick={handleFavoriteClick}
+          className={`absolute top-2 right-2 z-20 p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
+            isFavorite(product.id)
+              ? 'bg-red-500 text-white scale-110'
+              : 'bg-white/80 text-vintage-brown/60 hover:bg-white hover:text-red-500'
+          }`}
+        >
+          <Heart 
+            size={16} 
+            className={isFavorite(product.id) ? 'fill-current' : ''} 
+          />
+        </button>
+
+        {/* Enhanced shimmer effect overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out z-10 pointer-events-none"></div>
         
         {/* Product image carousel with enhanced effects */}
         <div className="relative overflow-hidden">
@@ -35,7 +64,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             images={productImages}
             productName={product.name}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         </div>
         
         {/* Product info with enhanced spacing and animations */}
@@ -58,8 +87,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </span>
           </div>
           
-          {/* Subtle bottom border effect */}
-          <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-vintage-beige/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          {/* Enhanced bottom border effect */}
+          <div className="absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         </div>
       </div>
     </Link>

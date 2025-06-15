@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import ZoomableImage from './ZoomableImage';
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -26,13 +27,13 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({ images, produ
   };
   
   return (
-    <div className="space-y-3">
-      {/* Main Image */}
-      <div className="relative aspect-square bg-white rounded-md overflow-hidden border border-vintage-beige/30 shadow-sm">
-        <img 
-          src={displayImages[currentImageIndex]} 
-          alt={`${productName} - Imagem ${currentImageIndex + 1}`} 
-          className="w-full h-full object-cover"
+    <div className="space-y-4">
+      {/* Main Image with Zoom */}
+      <div className="relative aspect-square bg-white rounded-xl overflow-hidden border border-vintage-beige/30 shadow-lg group">
+        <ZoomableImage
+          src={displayImages[currentImageIndex]}
+          alt={`${productName} - Imagem ${currentImageIndex + 1}`}
+          className="w-full h-full"
         />
         
         {/* Navigation arrows - only show if more than 1 image */}
@@ -40,22 +41,22 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({ images, produ
           <>
             <button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all"
+              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg transition-all duration-300 opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0"
             >
-              <ChevronLeft size={16} className="text-vintage-dark" />
+              <ChevronLeft size={20} className="text-vintage-dark" />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-2 shadow-md transition-all"
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full p-3 shadow-lg transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0"
             >
-              <ChevronRight size={16} className="text-vintage-dark" />
+              <ChevronRight size={20} className="text-vintage-dark" />
             </button>
           </>
         )}
         
         {/* Image counter */}
         {displayImages.length > 1 && (
-          <div className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+          <div className="absolute bottom-3 left-3 bg-black/70 text-white text-sm px-3 py-1 rounded-full backdrop-blur-sm">
             {currentImageIndex + 1} / {displayImages.length}
           </div>
         )}
@@ -63,15 +64,15 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({ images, produ
       
       {/* Thumbnails - only show if more than 1 image */}
       {displayImages.length > 1 && (
-        <div className="flex space-x-2 justify-center">
+        <div className="flex space-x-3 justify-center">
           {displayImages.map((image, index) => (
             <button
               key={index}
               onClick={() => selectImage(index)}
-              className={`w-16 h-16 rounded border-2 overflow-hidden transition-all ${
+              className={`w-20 h-20 rounded-lg border-2 overflow-hidden transition-all duration-300 ${
                 index === currentImageIndex 
-                  ? 'border-primary shadow-md' 
-                  : 'border-vintage-beige/30 hover:border-vintage-beige/60'
+                  ? 'border-primary shadow-lg scale-105' 
+                  : 'border-vintage-beige/30 hover:border-vintage-beige/60 hover:scale-105'
               }`}
             >
               <img 
