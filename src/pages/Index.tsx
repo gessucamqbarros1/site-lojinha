@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -114,9 +113,9 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Hero Banner Section */}
+      {/* Hero Banner Section: Versão compactada */}
       <section 
-        className="relative bg-center bg-cover h-[30vh] sm:h-[40vh] md:h-[50vh]" 
+        className="relative bg-center bg-cover h-[18vh] sm:h-[22vh] md:h-[26vh] transition-all duration-300"
         style={{ 
           backgroundImage: `url(${storeSettings.banner})`,
           backgroundPosition: 'center',
@@ -124,17 +123,14 @@ const Index = () => {
         }}
       >
         <div className="absolute inset-0 bg-vintage-brown/30"></div>
-        <div className="relative z-10 vintage-container h-full flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-white text-3xl md:text-5xl lg:text-6xl font-playfair font-medium drop-shadow-lg mb-4">
-              {storeSettings.name}
-            </h1>
-            <p className="text-white text-lg md:text-xl max-w-lg mx-auto drop-shadow-md">
-              Produtos de beleza e acessórios com estilo único e elegante
-            </p>
-          </div>
+        <div className="relative z-10 vintage-container h-full flex flex-col items-center justify-center px-2">
+          <h1 className="text-white text-base sm:text-2xl md:text-3xl lg:text-4xl font-playfair font-medium drop-shadow-lg mb-1 sm:mb-2">
+            {storeSettings.name}
+          </h1>
+          <p className="text-white text-xs sm:text-[1rem] md:text-base max-w-sm md:max-w-md mx-auto drop-shadow-md leading-tight">
+            Produtos de beleza e acessórios com estilo único e elegante
+          </p>
         </div>
-        
         {/* Debug info - remove this after testing */}
         {process.env.NODE_ENV === 'development' && (
           <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
