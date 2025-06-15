@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -38,13 +37,18 @@ const Product = () => {
             throw error;
           }
         } else if (data) {
+          // Convert Json array to string array, filtering out non-string values
+          const imagesArray = Array.isArray(data.images) 
+            ? data.images.filter((img): img is string => typeof img === 'string')
+            : (data.image ? [data.image] : []);
+            
           const formattedProduct: ProductType = {
             id: data.id.toString(),
             name: data.name,
             description: data.description,
             price: parseFloat(data.price.toString()),
             image: data.image || '/placeholder.svg',
-            images: Array.isArray(data.images) ? data.images : (data.image ? [data.image] : []),
+            images: imagesArray,
             category: data.category,
             purchaseLink: data.purchase_link
           };
@@ -62,16 +66,23 @@ const Product = () => {
           if (suggestedError) {
             console.error('Error fetching suggested products:', suggestedError);
           } else if (suggested) {
-            const formattedSuggested = suggested.map(item => ({
-              id: item.id.toString(),
-              name: item.name,
-              description: item.description,
-              price: parseFloat(item.price.toString()),
-              image: item.image || '/placeholder.svg',
-              images: Array.isArray(item.images) ? item.images : (item.image ? [item.image] : []),
-              category: item.category,
-              purchaseLink: item.purchase_link
-            }));
+            const formattedSuggested = suggested.map(item => {
+              // Convert Json array to string array for suggested products too
+              const suggestedImagesArray = Array.isArray(item.images) 
+                ? item.images.filter((img): img is string => typeof img === 'string')
+                : (item.image ? [item.image] : []);
+                
+              return {
+                id: item.id.toString(),
+                name: item.name,
+                description: item.description,
+                price: parseFloat(item.price.toString()),
+                image: item.image || '/placeholder.svg',
+                images: suggestedImagesArray,
+                category: item.category,
+                purchaseLink: item.purchase_link
+              };
+            });
             
             setSuggestedProducts(formattedSuggested);
           }
