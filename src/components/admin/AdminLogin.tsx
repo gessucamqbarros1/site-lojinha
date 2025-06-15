@@ -11,7 +11,6 @@ const AdminLogin: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (isSignUp) {
       if (password !== confirmPassword) {
         return;
@@ -23,12 +22,11 @@ const AdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="vintage-container py-12">
+    <div className="py-12">
       <div className="max-w-md mx-auto vintage-card p-8">
         <h1 className="text-2xl font-playfair text-vintage-brown mb-6 text-center">
           {isSignUp ? 'Criar Conta' : 'Acesso Administrativo'}
         </h1>
-        
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-vintage-dark mb-1">
@@ -44,7 +42,6 @@ const AdminLogin: React.FC = () => {
               required
             />
           </div>
-          
           <div className="mb-4">
             <label htmlFor="password" className="block text-sm font-medium text-vintage-dark mb-1">
               Senha
@@ -59,7 +56,6 @@ const AdminLogin: React.FC = () => {
               required
             />
           </div>
-
           {isSignUp && (
             <div className="mb-4">
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-vintage-dark mb-1">
@@ -81,7 +77,6 @@ const AdminLogin: React.FC = () => {
               )}
             </div>
           )}
-          
           <button 
             type="submit" 
             className="vintage-button w-full py-2 mb-4"
@@ -90,7 +85,6 @@ const AdminLogin: React.FC = () => {
             {loading ? 'Carregando...' : (isSignUp ? 'Criar Conta' : 'Entrar')}
           </button>
         </form>
-
         <div className="text-center">
           <button
             type="button"

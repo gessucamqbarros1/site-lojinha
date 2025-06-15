@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from './PhoneInput';
@@ -114,18 +113,16 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   };
 
   return (
-    <div className="vintage-card p-4 md:p-6">
+    <div className="p-4 md:p-6">
       <h2 className="font-playfair text-lg md:text-xl mb-4 md:mb-6 text-vintage-brown">
         Configurações da Loja
       </h2>
-      
       <div className="space-y-6 md:space-y-8">
         {/* Theme Selection */}
         <div>
           <ThemeSelector />
           <div className="vintage-divider"></div>
         </div>
-
         <div>
           <label htmlFor="storeName" className="block text-sm font-medium text-vintage-dark mb-1">
             Nome da Loja
@@ -142,12 +139,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             Este nome aparecerá ao lado da logo no site
           </p>
         </div>
-
         <PhoneInput
           value={storeData.whatsapp_number}
           onChange={(value) => setStoreData({...storeData, whatsapp_number: value})}
         />
-
         <div>
           <label htmlFor="instagramLink" className="block text-sm font-medium text-vintage-dark mb-1">
             Link do Instagram
@@ -164,7 +159,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             Link completo do seu perfil no Instagram
           </p>
         </div>
-        
         <LogoUpload
           logoUrl={storeData.logo}
           onLogoChange={(newLogoUrl) => setStoreData({...storeData, logo: newLogoUrl})}
@@ -172,7 +166,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           setUploading={setUploading}
           toast={toast}
         />
-        
         <BannerUpload
           bannerUrl={storeData.banner}
           onBannerChange={(newBannerUrl) => setStoreData({...storeData, banner: newBannerUrl})}
@@ -181,7 +174,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           setUploading={setUploading}
           toast={toast}
         />
-        
         <div>
           <label htmlFor="about" className="block text-sm font-medium text-vintage-dark mb-1">
             Texto Sobre a Loja
@@ -198,7 +190,6 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             Você pode usar HTML básico para formatação
           </p>
         </div>
-        
         <div className="flex justify-end mt-6">
           <button
             onClick={handleSaveSettings}
