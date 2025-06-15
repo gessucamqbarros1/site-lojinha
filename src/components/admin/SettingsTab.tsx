@@ -10,6 +10,7 @@ interface SettingsTabProps {
   setUploading: (uploading: boolean) => void;
   saving: boolean;
   setSaving: (saving: boolean) => void;
+  fetchStoreSettings: () => Promise<void>;
   toast: any;
 }
 
@@ -20,6 +21,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   setUploading,
   saving,
   setSaving,
+  fetchStoreSettings,
   toast
 }) => {
   const [logoUpload, setLogoUpload] = useState<File | null>(null);

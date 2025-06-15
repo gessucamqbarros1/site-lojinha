@@ -10,7 +10,7 @@ import SettingsTab from '@/components/admin/SettingsTab';
 import BackupTab from '@/components/admin/BackupTab';
 
 const Admin = () => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const {
     storeData,
     setStoreData,
@@ -41,7 +41,7 @@ const Admin = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await signOut();
       toast({
         title: "Logout realizado",
         description: "Você foi deslogado com sucesso",
@@ -94,8 +94,6 @@ const Admin = () => {
             setUploading={setUploading}
             saving={saving}
             setSaving={setSaving}
-            deleting={deleting}
-            setDeleting={setDeleting}
             fetchStoreSettings={fetchStoreSettings}
             toast={toast}
           />
@@ -105,12 +103,14 @@ const Admin = () => {
           <BackupTab
             productList={productList}
             storeData={storeData}
-            categories={categories}
             setProductList={setProductList}
             setStoreData={setStoreData}
-            setCategories={setCategories}
             fetchProducts={fetchProducts}
             fetchStoreSettings={fetchStoreSettings}
+            saving={saving}
+            setSaving={setSaving}
+            deleting={deleting}
+            setDeleting={setDeleting}
             toast={toast}
           />
         );

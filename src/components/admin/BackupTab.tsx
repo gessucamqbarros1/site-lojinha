@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Save, Trash2 } from 'lucide-react';
 import { Product } from '@/components/ui/ProductCard';
@@ -9,6 +8,9 @@ interface BackupTabProps {
   storeData: any;
   productList: Product[];
   setProductList: (products: Product[]) => void;
+  setStoreData: (data: any) => void;
+  fetchProducts: () => Promise<void>;
+  fetchStoreSettings: () => Promise<void>;
   saving: boolean;
   setSaving: (saving: boolean) => void;
   deleting: boolean;
@@ -20,6 +22,9 @@ const BackupTab: React.FC<BackupTabProps> = ({
   storeData,
   productList,
   setProductList,
+  setStoreData,
+  fetchProducts,
+  fetchStoreSettings,
   saving,
   setSaving,
   deleting,
