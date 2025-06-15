@@ -113,47 +113,27 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Banner Premium */}
-      <section
-        className="relative flex items-stretch justify-center bg-center bg-cover h-[26vh] sm:h-[32vh] md:h-[38vh] lg:h-[43vh] transition-all duration-500"
-        style={{
+      {/* Hero Banner Section (ALTURA MAIS REDUZIDA, mas não mínima) */}
+      <section 
+        className="relative bg-center bg-cover h-[22vh] sm:h-[26vh] md:h-[30vh] lg:h-[34vh]" 
+        style={{ 
           backgroundImage: `url(${storeSettings.banner})`,
           backgroundPosition: 'center',
-          backgroundSize: 'cover',
+          backgroundSize: 'cover'
         }}
       >
-        {/* Overlay Premium com degradê escuro + glass */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-vintage-brown/60 to-black/30" />
-        {/* Efeito Glass Morphism */}
+        <div className="absolute inset-0 bg-vintage-brown/30"></div>
         <div className="relative z-10 vintage-container h-full flex items-center justify-center">
-          <div
-            className="glass-premium-banner px-8 py-6 rounded-2xl max-w-lg mx-auto text-center animate-fade-up shadow-lg"
-            style={{
-              background: 'rgba(250,249,246,0.18)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              border: '1.5px solid rgba(255,255,255,0.15)',
-            }}
-          >
-            <h1 className="gradient-text text-3xl md:text-4xl lg:text-5xl font-playfair font-bold tracking-widest drop-shadow-lg mb-4 uppercase"
-              style={{ letterSpacing: '0.05em', lineHeight: 1.13 }}>
+          <div className="text-center">
+            <h1 className="text-white text-2xl md:text-3xl lg:text-4xl font-playfair font-medium drop-shadow-lg mb-2 md:mb-3">
               {storeSettings.name}
             </h1>
-            <p className="text-white/90 text-base md:text-lg mb-5 tracking-wide font-medium drop-shadow-md" style={{letterSpacing: '0.02em'}}>
-              Produtos de beleza e acessórios com estilo único e elegância francesa
+            <p className="text-white text-base md:text-lg max-w-md mx-auto drop-shadow-md">
+              Produtos de beleza e acessórios com estilo único e elegante
             </p>
-            <a
-              href="#products"
-              className="vintage-button text-xs md:text-sm px-7 py-2 rounded-full shadow-md mt-2 font-semibold uppercase tracking-widest hover-lift"
-              style={{
-                background: 'linear-gradient(90deg, #8B6F61 20%, #DCC8B6 85%)',
-                letterSpacing: '0.1em'
-              }}
-            >
-              Conheça a coleção
-            </a>
           </div>
         </div>
+        
         {/* Debug info - remove this after testing */}
         {process.env.NODE_ENV === 'development' && (
           <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs p-2 rounded">
