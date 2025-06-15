@@ -27,6 +27,40 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
   const [logoUpload, setLogoUpload] = useState<File | null>(null);
   const [bannerUpload, setBannerUpload] = useState<File | null>(null);
 
+  const formatPhoneNumber = (value: string): string => {
+    // Remove todos os caracteres não numéricos
+    const numbers = value.replace(/\D/g, '');
+    
+    // Aplica formatação brasileira com código do país
+    if (numbers.length <= 2) {
+      return numbers;
+    } else if (numbers.length <= 4) {
+      return `+${numbers.slice(0, 2)} (${numbers.slice(2)}`;
+    } else if (numbers.length <= 6) {
+      return `+${numbers.slice(0, 2)} (${numbers.slice(2, 4)}) ${numbers.slice(4)}`;
+    } else if (numbers.length <= 10) {
+      return `+${numbers.slice(0, 2)} (${numbers.slice(2, 4)}) ${numbers.slice(4, 8)}-${numbers.slice(8)}`;
+    } else {
+      return `+${numbers.slice(0, 2)} (${numbers.slice(2, 4)}) ${numbers.slice(4, 9)}-${numbers.slice(9, 13)}`;
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    const numbersOnly = e.target.value.replace(/\D/g, '');
+    
+    // Armazena apenas números para o banco de dados
+    setStoreData({
+      ...storeData, 
+      whatsapp_number: numbersOnly
+    });
+  };
+
+  const getDisplayPhoneNumber = (): string => {
+    if (!storeData.whatsapp_number) return '';
+    return formatPhoneNumber(storeData.whatsapp_number);
+  };
+
   const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -228,14 +262,20 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
           <input
             id="whatsappNumber"
             type="text"
-            value={storeData.whatsapp_number}
-            onChange={(e) => setStoreData({...storeData, whatsapp_number: e.target.value})}
+            value={getDisplayPhoneNumber()}
+            onChange={handlePhoneChange}
             className="vintage-input w-full"
-            placeholder="5511999999999"
+            placeholder="+55 (11) 99999-9999"
+            maxLength={19}
           />
           <p className="text-xs text-vintage-dark/60 mt-1">
-            Número no formato: 5511999999999 (código do país + DDD + número)
+            Digite apenas números. Exemplo: 5511999999999 será formatado automaticamente
           </p>
+          {storeData.whatsapp_number && storeData.whatsapp_number.length >= 13 && (
+            <p className="text-xs text-green-600 mt-1">
+              ✓ Número válido: {getDisplayPhoneNumber()}
+            </p>
+          )}
         </div>
 
         <div>
