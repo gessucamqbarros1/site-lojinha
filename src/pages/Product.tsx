@@ -42,13 +42,21 @@ const Product = () => {
             ? data.images.filter((img): img is string => typeof img === 'string')
             : (data.image ? [data.image] : []);
             
+          // If no images in array but has main image, add it to array
+          if (imagesArray.length === 0 && data.image) {
+            imagesArray = [data.image];
+          }
+          
+          // Ensure main image is the first one in the array
+          const mainImage = imagesArray.length > 0 ? imagesArray[0] : (data.image || '/placeholder.svg');
+          
           const formattedProduct: ProductType = {
             id: data.id.toString(),
             name: data.name,
             description: data.description,
             price: parseFloat(data.price.toString()),
-            image: data.image || '/placeholder.svg',
-            images: imagesArray,
+            image: mainImage,
+            images: imagesArray, // Now includes all images
             category: data.category,
             purchaseLink: data.purchase_link
           };
@@ -166,7 +174,7 @@ const Product = () => {
                 {product.name}
               </h1>
               
-              <div className="text-2xl text-primary font-medium mb-6">
+              <div className="text-2xl text-black font-medium mb-6">
                 {new Intl.NumberFormat('pt-BR', {
                   style: 'currency',
                   currency: 'BRL'
@@ -222,7 +230,7 @@ const Product = () => {
                         <h3 className="font-playfair text-lg text-vintage-dark mb-1 line-clamp-1">
                           {product.name}
                         </h3>
-                        <div className="text-primary font-medium">
+                        <div className="text-black font-medium">
                           {new Intl.NumberFormat('pt-BR', {
                             style: 'currency',
                             currency: 'BRL'

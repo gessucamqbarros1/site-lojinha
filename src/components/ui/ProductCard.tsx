@@ -47,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.description}
           </p>
           <div className="flex items-center justify-between">
-            <span className="text-primary font-semibold text-lg gradient-text">
+            <span className="text-black font-semibold text-lg">
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',
                 currency: 'BRL'

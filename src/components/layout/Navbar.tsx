@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User } from 'lucide-react';
@@ -111,7 +110,7 @@ const Navbar = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
-            <h1 className="text-xl md:text-2xl font-playfair font-medium text-vintage-brown group-hover:text-primary transition-all duration-300 gradient-text">
+            <h1 className="text-xl md:text-2xl font-playfair font-medium text-black transition-all duration-300">
               {storeName}
             </h1>
           </Link>
