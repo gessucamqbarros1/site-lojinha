@@ -12,7 +12,16 @@ const Index = () => {
   const [categories, setCategories] = useState<string[]>(['Todos']);
   const [storeSettings, setStoreSettings] = useState({
     name: 'Minha Lojinha',
-    banner: '/placeholder.svg'
+    banner: '/placeholder.svg',
+    hero_headline: 'Minha Lojinha',
+    hero_headline_color: '#000',
+    hero_headline_font: 'Playfair Display',
+    hero_headline_size: '48px',
+    hero_headline_weight: '500',
+    hero_subheadline: 'Produtos de beleza e acessórios com estilo único e elegante',
+    hero_subheadline_color: '#000',
+    hero_subheadline_font: 'Playfair Display',
+    hero_subheadline_size: '16px',
   });
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -83,7 +92,16 @@ const Index = () => {
           
           setStoreSettings({
             name: settings.name || 'Minha Lojinha',
-            banner: settings.banner || '/placeholder.svg'
+            banner: settings.banner || '/placeholder.svg',
+            hero_headline: settings.hero_headline || 'Minha Lojinha',
+            hero_headline_color: settings.hero_headline_color || '#000',
+            hero_headline_font: settings.hero_headline_font || 'Playfair Display',
+            hero_headline_size: settings.hero_headline_size || '48px',
+            hero_headline_weight: settings.hero_headline_weight || '500',
+            hero_subheadline: settings.hero_subheadline || "Produtos de beleza e acessórios com estilo único e elegante",
+            hero_subheadline_color: settings.hero_subheadline_color || '#000',
+            hero_subheadline_font: settings.hero_subheadline_font || 'Playfair Display',
+            hero_subheadline_size: settings.hero_subheadline_size || '16px',
           });
           
           console.log('Index: Banner URL set to:', settings.banner);
@@ -113,10 +131,10 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      {/* Hero Banner Section: Versão compactada */}
+      {/* Hero Banner Section: agora estilos e textos são customizáveis */}
       <section 
         className="relative bg-center bg-cover h-[18vh] sm:h-[22vh] md:h-[26vh] transition-all duration-300"
-        style={{ 
+        style={{
           backgroundImage: `url(${storeSettings.banner})`,
           backgroundPosition: 'center',
           backgroundSize: 'cover'
@@ -124,11 +142,26 @@ const Index = () => {
       >
         <div className="absolute inset-0 bg-vintage-brown/30"></div>
         <div className="relative z-10 vintage-container h-full flex flex-col items-center justify-center px-2">
-          <h1 className="text-white text-base sm:text-2xl md:text-3xl lg:text-4xl font-playfair font-medium drop-shadow-lg mb-1 sm:mb-2">
-            {storeSettings.name}
+          <h1
+            className="drop-shadow-lg mb-1 sm:mb-2"
+            style={{
+              color: storeSettings.hero_headline_color,
+              fontFamily: storeSettings.hero_headline_font,
+              fontSize: storeSettings.hero_headline_size,
+              fontWeight: 500,
+            }}
+          >
+            {storeSettings.hero_headline || storeSettings.name}
           </h1>
-          <p className="text-white text-xs sm:text-[1rem] md:text-base max-w-sm md:max-w-md mx-auto drop-shadow-md leading-tight">
-            Produtos de beleza e acessórios com estilo único e elegante
+          <p
+            className="max-w-sm md:max-w-md mx-auto drop-shadow-md leading-tight"
+            style={{
+              color: storeSettings.hero_subheadline_color,
+              fontFamily: storeSettings.hero_subheadline_font,
+              fontSize: storeSettings.hero_subheadline_size,
+            }}
+          >
+            {storeSettings.hero_subheadline || "Produtos de beleza e acessórios com estilo único e elegante"}
           </p>
         </div>
         {/* Debug info - remove this after testing */}
