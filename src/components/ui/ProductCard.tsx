@@ -97,17 +97,17 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
         </div>
 
         {/* Product info with enhanced spacing and animations */}
-        <div className="p-2 flex flex-col flex-grow relative z-20">
-          <h3 className="font-playfair text-sm text-vintage-dark mb-1 line-clamp-1 group-hover:text-primary transition-colors duration-300">
+        <div className="p-2 md:p-3 flex flex-col flex-grow relative z-20">
+          <h3 className="font-playfair text-xs md:text-sm text-vintage-dark mb-0.5 md:mb-1 line-clamp-1 group-hover:text-primary transition-colors duration-300">
             {product.name}
           </h3>
-          <p className="text-[10px] text-vintage-dark/70 mb-2 line-clamp-2 flex-grow leading-relaxed">
+          <p className="text-[9px] md:text-[10px] text-vintage-dark/70 mb-1.5 md:mb-2 line-clamp-2 flex-grow leading-relaxed">
             {product.description}
           </p>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               {/* Preço atual */}
-              <span className="text-black font-semibold text-sm">
+              <span className="text-black font-semibold text-xs md:text-sm">
                 {new Intl.NumberFormat("pt-BR", {
                   style: "currency",
                   currency: "BRL",
@@ -116,7 +116,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
 
               {/* Preço original riscado se estiver em oferta */}
               {isOnSale && product.original_price && (
-                <span className="text-[10px] text-gray-500 line-through">
+                <span className="text-[9px] md:text-[10px] text-gray-500 line-through">
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
                     currency: "BRL",
@@ -125,7 +125,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
               )}
             </div>
 
-            <span className="text-[10px] px-1.5 py-0.5 bg-gradient-to-r from-vintage-beige/20 to-vintage-beige/30 backdrop-blur-sm rounded-full text-vintage-brown border border-vintage-beige/40 group-hover:scale-110 transition-transform duration-300">
+            <span className="text-[9px] md:text-[10px] px-1 md:px-1.5 py-0.5 bg-gradient-to-r from-vintage-beige/20 to-vintage-beige/30 backdrop-blur-sm rounded-full text-vintage-brown border border-vintage-beige/40 group-hover:scale-110 transition-transform duration-300">
               {product.category}
             </span>
           </div>

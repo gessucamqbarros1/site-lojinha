@@ -9,7 +9,7 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ banner, storeName }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
-    <section className="relative h-[50vh] md:h-[70vh] overflow-hidden group">
+    <section className="relative h-[35vh] md:h-[45vh] overflow-hidden group">
       {/* Blur placeholder */}
       {!imageLoaded && (
         <div className="absolute inset-0 bg-gradient-to-br from-vintage-beige/40 to-vintage-pink/40 animate-pulse" />
@@ -31,10 +31,10 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ banner, storeName }) => {
       {/* Content */}
       <div className="absolute inset-0 flex items-center justify-center text-center px-4">
         <div className="text-white animate-fade-up">
-          <h1 className="text-4xl md:text-6xl font-playfair font-bold mb-4 drop-shadow-2xl">
+          <h1 className="text-3xl md:text-5xl font-playfair font-bold mb-2 md:mb-3 drop-shadow-2xl">
             Bem-vindo à {storeName}
           </h1>
-          <p className="text-lg md:text-2xl font-light drop-shadow-lg max-w-2xl mx-auto">
+          <p className="text-base md:text-xl font-light drop-shadow-lg max-w-xl mx-auto">
             Descubra nossa coleção exclusiva
           </p>
         </div>

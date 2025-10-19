@@ -80,12 +80,12 @@ const Products = () => {
       <Navbar />
       
       {/* Hero Section with Search */}
-      <section className="vintage-section pt-8 pb-4 bg-gradient-to-br from-vintage-cream to-vintage-beige/30">
+      <section className="vintage-section pt-6 pb-3 md:pt-8 md:pb-4 bg-gradient-to-br from-vintage-cream to-vintage-beige/30">
         <div className="vintage-container">
-          <h1 className="text-4xl md:text-5xl font-playfair text-vintage-brown mb-4 text-center animate-fade-up">
+          <h1 className="text-3xl md:text-4xl font-playfair text-vintage-brown mb-3 md:mb-4 text-center animate-fade-up">
             Nossos Produtos
           </h1>
-          <p className="text-center text-vintage-dark/70 mb-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
+          <p className="text-sm md:text-base text-center text-vintage-dark/70 mb-6 md:mb-8 animate-fade-up" style={{ animationDelay: '0.2s' }}>
             Descubra nossa coleção cuidadosamente selecionada
           </p>
           
@@ -101,7 +101,7 @@ const Products = () => {
       </section>
       
       {/* Category Filters */}
-      <section className="vintage-section py-4">
+      <section className="vintage-section py-3 md:py-4">
         <div className="vintage-container">
           <CategoryFilter
             categories={categories}
@@ -113,28 +113,28 @@ const Products = () => {
       </section>
       
       {/* Products Grid */}
-      <section className="vintage-section py-8 flex-grow">
+      <section className="vintage-section py-4 md:py-8 flex-grow">
         <div className="vintage-container">
           {selectedCategory !== "Todos" && !filters.category && (
-            <h2 className="text-2xl md:text-3xl font-playfair text-vintage-brown mb-8 text-center animate-fade-up">
+            <h2 className="text-xl md:text-2xl font-playfair text-vintage-brown mb-4 md:mb-6 text-center animate-fade-up">
               {selectedCategory}
             </h2>
           )}
           
           {searchQuery && (
-            <p className="text-center text-vintage-dark/70 mb-6 animate-fade-up">
+            <p className="text-sm text-center text-vintage-dark/70 mb-4 animate-fade-up">
               {filteredProducts.length} resultado(s) para "{searchQuery}"
             </p>
           )}
           
-          <div className="mb-3 text-center text-xs text-vintage-dark/60">
+          <div className="mb-2 md:mb-3 text-center text-[10px] md:text-xs text-vintage-dark/60">
             {filteredProducts.length === 0
               ? "Nenhum produto encontrado"
               : `Mostrando ${startIdx + 1}–${Math.min(startIdx + currentProducts.length, filteredProducts.length)} de ${filteredProducts.length} produto(s)`}
           </div>
           
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {[...Array(8)].map((_, index) => (
                 <ProductSkeleton key={index} />
               ))}
@@ -142,14 +142,14 @@ const Products = () => {
           ) : (
             <>
               {filteredProducts.length === 0 ? (
-                <div className="text-center py-16 animate-fade-up">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-playfair text-vintage-brown mb-2">Nenhum produto encontrado</h3>
-                  <p className="text-vintage-dark/70">Tente ajustar os filtros ou buscar por outros termos.</p>
+                <div className="text-center py-8 md:py-12 animate-fade-up">
+                  <div className="text-4xl md:text-5xl mb-3">🔍</div>
+                  <h3 className="text-lg md:text-xl font-playfair text-vintage-brown mb-2">Nenhum produto encontrado</h3>
+                  <p className="text-sm text-vintage-dark/70">Tente ajustar os filtros ou buscar por outros termos.</p>
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                     {currentProducts.map((product, index) => (
                       <div
                         key={product.id}
@@ -173,7 +173,7 @@ const Products = () => {
       </section>
 
       {/* Newsletter Section */}
-      <section className="vintage-section py-8 bg-gradient-to-r from-vintage-beige/20 to-vintage-pink/20">
+      <section className="vintage-section py-6 md:py-8 bg-gradient-to-r from-vintage-beige/20 to-vintage-pink/20">
         <div className="vintage-container max-w-2xl">
           <Newsletter />
         </div>

@@ -12,14 +12,14 @@ interface ProductGridProps {
 const ProductGrid: React.FC<ProductGridProps> = ({ products, loading, title }) => {
   if (loading) {
     return (
-      <section className="vintage-section py-16">
+      <section className="vintage-section py-8 md:py-12">
         <div className="vintage-container">
           {title && (
-            <h2 className="text-3xl md:text-4xl font-playfair text-vintage-brown mb-12 text-center animate-fade-up">
+            <h2 className="text-2xl md:text-3xl font-playfair text-vintage-brown mb-6 md:mb-8 text-center animate-fade-up">
               {title}
             </h2>
           )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
             {[...Array(8)].map((_, index) => (
               <ProductSkeleton key={index} />
             ))}
@@ -31,13 +31,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, loading, title }) =
 
   if (products.length === 0) {
     return (
-      <section className="vintage-section py-16">
+      <section className="vintage-section py-8 md:py-12">
         <div className="vintage-container text-center">
-          <div className="text-6xl mb-4">📦</div>
-          <h3 className="text-xl font-playfair text-vintage-brown mb-2">
+          <div className="text-5xl mb-3">📦</div>
+          <h3 className="text-lg font-playfair text-vintage-brown mb-2">
             Nenhum produto disponível
           </h3>
-          <p className="text-vintage-dark/70">
+          <p className="text-sm text-vintage-dark/70">
             Em breve teremos novidades por aqui!
           </p>
         </div>
@@ -46,14 +46,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, loading, title }) =
   }
 
   return (
-    <section className="vintage-section py-16">
+    <section className="vintage-section py-8 md:py-12">
       <div className="vintage-container">
         {title && (
-          <h2 className="text-3xl md:text-4xl font-playfair text-vintage-brown mb-12 text-center animate-fade-up">
+          <h2 className="text-2xl md:text-3xl font-playfair text-vintage-brown mb-6 md:mb-8 text-center animate-fade-up">
             {title}
           </h2>
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {products.map((product, index) => (
             <div
               key={product.id}

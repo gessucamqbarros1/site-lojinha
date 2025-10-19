@@ -41,7 +41,7 @@ const Index = () => {
       />
       
       {/* Category Filters */}
-      <section className="vintage-section pt-8 pb-4">
+      <section className="vintage-section py-4 md:py-6">
         <div className="vintage-container">
           <CategoryFilter
             categories={categories}
