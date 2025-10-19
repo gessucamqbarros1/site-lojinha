@@ -1,119 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
 import SearchBar from '@/components/ui/SearchBar';
 import ProductSkeleton from '@/components/ui/ProductSkeleton';
 import Newsletter from '@/components/ui/Newsletter';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/components/ui/ProductCard';
 import SEOHead from "@/components/SEO/SEOHead";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import ProductPagination from "@/components/ui/ProductPagination";
+import { useProducts } from '@/hooks/useProducts';
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>(['Todos']);
-  const [loading, setLoading] = useState(true);
+  const { products, categories, loading } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<{ minPrice?: number; maxPrice?: number; category?: string }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const PRODUCTS_PER_PAGE = 8;
-  const { toast } = useToast();
   const title = "Nossos Produtos | Minha Lojinha";
   const description = "Conheça nossos produtos de beleza e acessórios estilo provençal francês. Produtos exclusivos, promoções e novidades da sua lojinha favorita!";
   const url = typeof window !== "undefined" ? window.location.origin + "/products" : "";
   const image = "/opengraph-image-p98pqg.png";
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*');
-        
-        if (error) {
-          throw error;
-        }
-        
-        if (data) {
-          const formattedProducts = data.map((product, index) => {
-            // Handle images array - ensure it's properly formatted
-            let images: string[] = [];
-            if (Array.isArray(product.images)) {
-              images = product.images.filter((img): img is string => typeof img === 'string');
-            }
-            
-            // If no images in array but has main image, add it to array
-            if (images.length === 0 && product.image) {
-              images = [product.image];
-            }
-            
-            // Ensure main image is the first one in the array
-            const mainImage = images.length > 0 ? images[0] : (product.image || '/placeholder.svg');
-            
-            // Add random badges for demonstration - mas não se já estiver em oferta
-            const badges: ('new' | 'popular' | 'sale')[] = ['new', 'popular', 'sale'];
-            const randomBadge = Math.random() > 0.7 ? badges[index % 3] : undefined;
-            
-            return {
-              id: product.id.toString(),
-              name: product.name,
-              description: product.description,
-              price: parseFloat(product.price.toString()),
-              original_price: product.original_price ? parseFloat(product.original_price.toString()) : undefined,
-              discount_percentage: product.discount_percentage ? parseFloat(product.discount_percentage.toString()) : undefined,
-              image: mainImage,
-              images: images,
-              category: product.category,
-              purchaseLink: product.purchase_link,
-              badge: randomBadge
-            };
-          });
-          
-          setProducts(formattedProducts);
-          setFilteredProducts(formattedProducts);
-          
-          // Extract unique categories from products
-          const uniqueCategories = ['Todos', ...new Set(formattedProducts.map(p => p.category))];
-          setCategories(uniqueCategories);
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        toast({
-          title: "Erro ao carregar produtos",
-          description: "Não foi possível carregar os produtos. Tente novamente.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchProducts();
-  }, [toast]);
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
 
-  useEffect(() => {
+  const handleFilterChange = useCallback((newFilters: { minPrice?: number; maxPrice?: number; category?: string }) => {
+    setFilters(newFilters);
+    if (newFilters.category) {
+      setSelectedCategory(newFilters.category);
+    }
+  }, []);
+
+  // Memoize filtered products
+  const filteredProducts = useMemo(() => {
     let filtered = products;
 
-    // Apply category filter
     if (selectedCategory !== "Todos") {
       filtered = filtered.filter(product => product.category === selectedCategory);
     }
 
-    // Apply search filter
     if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase())
+        product.name.toLowerCase().includes(query) ||
+        product.description.toLowerCase().includes(query)
       );
     }
 
-    // Apply price filters
     if (filters.minPrice) {
       filtered = filtered.filter(product => product.price >= filters.minPrice!);
     }
@@ -121,24 +57,12 @@ const Products = () => {
       filtered = filtered.filter(product => product.price <= filters.maxPrice!);
     }
 
-    // Apply category filter from advanced filters
     if (filters.category) {
       filtered = filtered.filter(product => product.category === filters.category);
     }
 
-    setFilteredProducts(filtered);
+    return filtered;
   }, [products, selectedCategory, searchQuery, filters]);
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const handleFilterChange = (newFilters: { minPrice?: number; maxPrice?: number; category?: string }) => {
-    setFilters(newFilters);
-    if (newFilters.category) {
-      setSelectedCategory(newFilters.category);
-    }
-  };
 
   // Cálculo de paginação
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);

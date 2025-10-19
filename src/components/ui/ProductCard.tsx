@@ -17,13 +17,14 @@ export interface Product {
   category: string;
   purchaseLink?: string;
   badge?: 'new' | 'popular' | 'sale';
+  created_at?: string;
 }
 
 interface ProductCardProps {
   product: Product;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const productImages = product.images && product.images.length > 0
     ? product.images
@@ -135,6 +136,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
     </Link>
   );
-};
+});
 
 export default ProductCard;

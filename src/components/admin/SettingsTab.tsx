@@ -98,7 +98,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
       
       // Força recarregar a página com cache bust nos banners/logo
       setTimeout(() => {
-        window.location.reload(true);
+        window.location.reload();
       }, 1500);
       
     } catch (error) {
