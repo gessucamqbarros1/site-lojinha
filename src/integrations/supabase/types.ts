@@ -7,355 +7,14 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
+  }
   public: {
     Tables: {
-      clients: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      form_responses: {
-        Row: {
-          answers: Json
-          created_at: string
-          form_id: string
-          id: string
-        }
-        Insert: {
-          answers?: Json
-          created_at?: string
-          form_id: string
-          id?: string
-        }
-        Update: {
-          answers?: Json
-          created_at?: string
-          form_id?: string
-          id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "form_responses_form_id_fkey"
-            columns: ["form_id"]
-            isOneToOne: false
-            referencedRelation: "forms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      forms: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          pixel_code: string | null
-          questions: Json
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          pixel_code?: string | null
-          questions?: Json
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          pixel_code?: string | null
-          questions?: Json
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      link_clicks: {
-        Row: {
-          contact_index: number
-          contact_used: string
-          created_at: string
-          id: string
-          ip_address: string | null
-          link_id: string
-          referrer: string | null
-          user_agent: string | null
-        }
-        Insert: {
-          contact_index: number
-          contact_used: string
-          created_at?: string
-          id?: string
-          ip_address?: string | null
-          link_id: string
-          referrer?: string | null
-          user_agent?: string | null
-        }
-        Update: {
-          contact_index?: number
-          contact_used?: string
-          created_at?: string
-          id?: string
-          ip_address?: string | null
-          link_id?: string
-          referrer?: string | null
-          user_agent?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "link_clicks_link_id_fkey"
-            columns: ["link_id"]
-            isOneToOne: false
-            referencedRelation: "links"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      links: {
-        Row: {
-          contacts: Json
-          created_at: string
-          current_contact_index: number
-          default_message: string | null
-          id: string
-          name: string
-          project_id: string
-          slug: string
-          updated_at: string
-          utm_campaign: string | null
-          utm_medium: string | null
-          utm_source: string | null
-        }
-        Insert: {
-          contacts?: Json
-          created_at?: string
-          current_contact_index?: number
-          default_message?: string | null
-          id?: string
-          name: string
-          project_id: string
-          slug: string
-          updated_at?: string
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Update: {
-          contacts?: Json
-          created_at?: string
-          current_contact_index?: number
-          default_message?: string | null
-          id?: string
-          name?: string
-          project_id?: string
-          slug?: string
-          updated_at?: string
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "links_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      products: {
-        Row: {
-          category: string
-          created_at: string
-          description: string | null
-          discount_percentage: number | null
-          id: string
-          image: string | null
-          images: Json | null
-          name: string
-          original_price: number | null
-          price: number
-          purchase_link: string | null
-          updated_at: string
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          description?: string | null
-          discount_percentage?: number | null
-          id?: string
-          image?: string | null
-          images?: Json | null
-          name: string
-          original_price?: number | null
-          price: number
-          purchase_link?: string | null
-          updated_at?: string
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          description?: string | null
-          discount_percentage?: number | null
-          id?: string
-          image?: string | null
-          images?: Json | null
-          name?: string
-          original_price?: number | null
-          price?: number
-          purchase_link?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      projects: {
-        Row: {
-          client_id: string
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          client_id: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          client_id?: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "projects_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      store_settings: {
-        Row: {
-          about: string | null
-          about_headline: string | null
-          about_headline_color: string | null
-          about_headline_font: string | null
-          about_headline_size: string | null
-          about_text: string | null
-          about_text_color: string | null
-          about_text_font: string | null
-          about_text_size: string | null
-          banner: string | null
-          created_at: string
-          hero_headline: string | null
-          hero_headline_color: string | null
-          hero_headline_font: string | null
-          hero_headline_size: string | null
-          hero_headline_weight: string | null
-          hero_subheadline: string | null
-          hero_subheadline_color: string | null
-          hero_subheadline_font: string | null
-          hero_subheadline_size: string | null
-          id: string
-          instagram_link: string | null
-          logo: string | null
-          name: string
-          story_image: string | null
-          story_text: string | null
-          updated_at: string
-          whatsapp_number: string | null
-        }
-        Insert: {
-          about?: string | null
-          about_headline?: string | null
-          about_headline_color?: string | null
-          about_headline_font?: string | null
-          about_headline_size?: string | null
-          about_text?: string | null
-          about_text_color?: string | null
-          about_text_font?: string | null
-          about_text_size?: string | null
-          banner?: string | null
-          created_at?: string
-          hero_headline?: string | null
-          hero_headline_color?: string | null
-          hero_headline_font?: string | null
-          hero_headline_size?: string | null
-          hero_headline_weight?: string | null
-          hero_subheadline?: string | null
-          hero_subheadline_color?: string | null
-          hero_subheadline_font?: string | null
-          hero_subheadline_size?: string | null
-          id?: string
-          instagram_link?: string | null
-          logo?: string | null
-          name?: string
-          story_image?: string | null
-          story_text?: string | null
-          updated_at?: string
-          whatsapp_number?: string | null
-        }
-        Update: {
-          about?: string | null
-          about_headline?: string | null
-          about_headline_color?: string | null
-          about_headline_font?: string | null
-          about_headline_size?: string | null
-          about_text?: string | null
-          about_text_color?: string | null
-          about_text_font?: string | null
-          about_text_size?: string | null
-          banner?: string | null
-          created_at?: string
-          hero_headline?: string | null
-          hero_headline_color?: string | null
-          hero_headline_font?: string | null
-          hero_headline_size?: string | null
-          hero_headline_weight?: string | null
-          hero_subheadline?: string | null
-          hero_subheadline_color?: string | null
-          hero_subheadline_font?: string | null
-          hero_subheadline_size?: string | null
-          id?: string
-          instagram_link?: string | null
-          logo?: string | null
-          name?: string
-          story_image?: string | null
-          story_text?: string | null
-          updated_at?: string
-          whatsapp_number?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
@@ -372,21 +31,25 @@ export type Database = {
   }
 }
 
-type DefaultSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
@@ -404,14 +67,16 @@ export type Tables<
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
@@ -427,14 +92,16 @@ export type TablesInsert<
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
@@ -450,14 +117,16 @@ export type TablesUpdate<
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
@@ -465,14 +134,16 @@ export type Enums<
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
