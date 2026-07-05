@@ -7,6 +7,12 @@ interface HeroBannerProps {
 
 const HeroBanner: React.FC<HeroBannerProps> = ({ banner, storeName }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageSrc, setImageSrc] = useState(banner || '/placeholder.svg');
+
+  React.useEffect(() => {
+    setImageLoaded(false);
+    setImageSrc(banner || '/placeholder.svg');
+  }, [banner]);
 
   return (
     <section className="relative h-[35vh] md:h-[45vh] overflow-hidden group">
@@ -16,13 +22,19 @@ const HeroBanner: React.FC<HeroBannerProps> = ({ banner, storeName }) => {
       )}
       
       <img
-        src={banner}
+        src={imageSrc}
         alt={`Banner da loja ${storeName}`}
         className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
           imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
         }`}
         loading="eager"
         onLoad={() => setImageLoaded(true)}
+        onError={() => {
+          if (imageSrc !== '/placeholder.svg') {
+            setImageSrc('/placeholder.svg');
+          }
+          setImageLoaded(true);
+        }}
       />
       
       {/* Parallax overlay */}

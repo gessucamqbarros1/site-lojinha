@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import ProductImageCarousel from './ProductImageCarousel';
@@ -29,6 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
   const productImages = product.images && product.images.length > 0
     ? product.images
     : (product.image ? [product.image] : ["/placeholder.svg"]);
+  const [singleImageSrc, setSingleImageSrc] = useState(productImages[0] || '/placeholder.svg');
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -80,12 +81,13 @@ const ProductCard: React.FC<ProductCardProps> = React.memo(({ product }) => {
           {/* Se tiver só uma imagem, usa <img> para SEO. Senão, mantém carousel. */}
           {productImages.length === 1 ? (
             <img
-              src={productImages[0]}
+              src={singleImageSrc}
               alt={mainImageAlt}
               loading="lazy"
               className="aspect-square object-cover w-full h-full rounded-t-md"
               width={400}
               height={400}
+              onError={() => setSingleImageSrc('/placeholder.svg')}
             />
           ) : (
             <ProductImageCarousel

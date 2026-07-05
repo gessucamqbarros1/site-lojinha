@@ -15,8 +15,9 @@ const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [failedImages, setFailedImages] = useState<string[]>([]);
 
-  const validImages = images.filter(img => img && !img.includes('/placeholder.svg'));
+  const validImages = images.filter(img => img && !img.includes('/placeholder.svg') && !failedImages.includes(img));
   const displayImages = validImages.length > 0 ? validImages : ['/placeholder.svg'];
   const hasMultipleImages = displayImages.length > 1;
 
@@ -55,6 +56,13 @@ const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
         src={displayImages[currentImageIndex]} 
         alt={`${productName} - Imagem ${currentImageIndex + 1}`}
         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        onError={() => {
+          const failedImage = displayImages[currentImageIndex];
+          if (failedImage !== '/placeholder.svg') {
+            setFailedImages((current) => [...new Set([...current, failedImage])]);
+            setCurrentImageIndex(0);
+          }
+        }}
       />
       
       {/* Overlay on hover */}

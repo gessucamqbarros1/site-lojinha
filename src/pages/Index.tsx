@@ -9,6 +9,8 @@ import SEOHead from "@/components/SEO/SEOHead";
 import { useProducts } from "@/hooks/useProducts";
 import { useStoreSettings } from "@/hooks/useStoreSettings";
 
+const FALLBACK_BANNER = "/placeholder.svg";
+
 const Index = () => {
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const { products, categories, loading: productsLoading } = useProducts();
@@ -19,7 +21,7 @@ const Index = () => {
   const title = `${storeSettings.name} - Produtos de Beleza e Acessórios`;
   const description = "Descubra nossa coleção exclusiva de produtos de beleza e acessórios com estilo provençal francês. Qualidade premium e preços justos.";
   const url = typeof window !== "undefined" ? window.location.origin : "";
-  const image = storeSettings.banner || "/lovable-uploads/b0a2f738-0c82-4bc0-baef-73ecd1437c15.png";
+  const image = storeSettings.banner || FALLBACK_BANNER;
 
   // Memoize filtered products to avoid unnecessary recalculations
   const filteredProducts = useMemo(
@@ -36,7 +38,7 @@ const Index = () => {
       
       {/* Hero Banner */}
       <HeroBanner
-        banner={storeSettings.banner || "/lovable-uploads/b0a2f738-0c82-4bc0-baef-73ecd1437c15.png"}
+        banner={storeSettings.banner || FALLBACK_BANNER}
         storeName={storeSettings.name}
       />
       
