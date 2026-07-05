@@ -24,6 +24,7 @@ export type Database = {
           image: string | null
           images: string[] | null
           name: string
+          original_price: number | null
           price: number
           purchase_link: string | null
           updated_at: string
@@ -37,6 +38,7 @@ export type Database = {
           image?: string | null
           images?: string[] | null
           name: string
+          original_price?: number | null
           price?: number
           purchase_link?: string | null
           updated_at?: string
@@ -50,6 +52,7 @@ export type Database = {
           image?: string | null
           images?: string[] | null
           name?: string
+          original_price?: number | null
           price?: number
           purchase_link?: string | null
           updated_at?: string
@@ -59,6 +62,7 @@ export type Database = {
       store_settings: {
         Row: {
           about: string | null
+          about_headline: string | null
           about_text: string | null
           banner: string | null
           created_at: string
@@ -73,6 +77,7 @@ export type Database = {
         }
         Insert: {
           about?: string | null
+          about_headline?: string | null
           about_text?: string | null
           banner?: string | null
           created_at?: string
@@ -87,6 +92,7 @@ export type Database = {
         }
         Update: {
           about?: string | null
+          about_headline?: string | null
           about_text?: string | null
           banner?: string | null
           created_at?: string
