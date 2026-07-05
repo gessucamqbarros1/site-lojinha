@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      products: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          discount_percentage: number | null
+          id: string
+          image: string | null
+          images: string[] | null
+          name: string
+          original_price: number | null
+          price: number
+          purchase_link: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percentage?: number | null
+          id?: string
+          image?: string | null
+          images?: string[] | null
+          name: string
+          original_price?: number | null
+          price?: number
+          purchase_link?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percentage?: number | null
+          id?: string
+          image?: string | null
+          images?: string[] | null
+          name?: string
+          original_price?: number | null
+          price?: number
+          purchase_link?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      store_settings: {
+        Row: {
+          about: string | null
+          about_headline: string | null
+          about_text: string | null
+          banner: string | null
+          created_at: string
+          id: string
+          instagram_link: string | null
+          logo: string | null
+          name: string | null
+          story_image: string | null
+          story_text: string | null
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          about?: string | null
+          about_headline?: string | null
+          about_text?: string | null
+          banner?: string | null
+          created_at?: string
+          id?: string
+          instagram_link?: string | null
+          logo?: string | null
+          name?: string | null
+          story_image?: string | null
+          story_text?: string | null
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          about?: string | null
+          about_headline?: string | null
+          about_text?: string | null
+          banner?: string | null
+          created_at?: string
+          id?: string
+          instagram_link?: string | null
+          logo?: string | null
+          name?: string | null
+          story_image?: string | null
+          story_text?: string | null
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
