@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
+const DEFAULT_STORE_SETTINGS: StoreSettings = {
+  name: 'Minha Loja',
+  logo: '',
+  banner: '',
+  about: '',
+  whatsapp_number: '',
+  instagram_link: ''
+};
+
 interface StoreSettings {
   id?: string;
   name: string;
@@ -12,14 +21,7 @@ interface StoreSettings {
 }
 
 export const useStoreSettings = () => {
-  const [storeSettings, setStoreSettings] = useState<StoreSettings>({
-    name: 'Minha Loja',
-    logo: '',
-    banner: '',
-    about: '',
-    whatsapp_number: '',
-    instagram_link: ''
-  });
+  const [storeSettings, setStoreSettings] = useState<StoreSettings>(DEFAULT_STORE_SETTINGS);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,8 +31,9 @@ export const useStoreSettings = () => {
         const { data, error } = await supabase
           .from('store_settings')
           .select('*')
+          .order('created_at', { ascending: false })
           .limit(1)
-          .single();
+          .maybeSingle();
         
         if (error) throw error;
         
@@ -44,6 +47,8 @@ export const useStoreSettings = () => {
             whatsapp_number: data.whatsapp_number || '',
             instagram_link: data.instagram_link || ''
           });
+        } else {
+          setStoreSettings(DEFAULT_STORE_SETTINGS);
         }
       } catch (error) {
         console.error('Error fetching store settings:', error);

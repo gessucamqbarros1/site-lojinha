@@ -9,8 +9,9 @@ interface ProductImageGalleryProps {
 
 const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({ images, productName }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [failedImages, setFailedImages] = useState<string[]>([]);
   
-  const validImages = images.filter(img => img && !img.includes('/placeholder.svg'));
+  const validImages = images.filter(img => img && !img.includes('/placeholder.svg') && !failedImages.includes(img));
   const displayImages = validImages.length > 0 ? validImages : ['/placeholder.svg'];
   
   const nextImage = () => {
@@ -33,6 +34,13 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({ images, produ
           src={displayImages[currentImageIndex]}
           alt={`${productName} - Imagem ${currentImageIndex + 1}`}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          onError={() => {
+            const failedImage = displayImages[currentImageIndex];
+            if (failedImage !== '/placeholder.svg') {
+              setFailedImages((current) => [...new Set([...current, failedImage])]);
+              setCurrentImageIndex(0);
+            }
+          }}
         />
         
         {/* Navigation arrows - only show if more than 1 image */}
@@ -78,6 +86,11 @@ const ProductImageGallery: React.FC<ProductImageGalleryProps> = ({ images, produ
                 src={image} 
                 alt={`${productName} - Miniatura ${index + 1}`}
                 className="w-full h-full object-cover"
+                onError={() => {
+                  if (image !== '/placeholder.svg') {
+                    setFailedImages((current) => [...new Set([...current, image])]);
+                  }
+                }}
               />
             </button>
           ))}
